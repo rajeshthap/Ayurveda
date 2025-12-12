@@ -1,0 +1,33 @@
+/* Slider image responsive control */
+.ayur-ban-slide .banner-img {
+  width: 100%;
+  height: auto;
+  max-height: 420px; /* Adjust for best view */
+  object-fit: cover;
+  border-radius: 15px;
+}
+
+/* Make slides same height */
+.swiper-slide {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Fix container so 3D effect works */
+.ayur-banner-slider {
+  padding: 40px 0;
+  overflow: visible;
+}
+
+@media (max-width: 768px) {
+  .ayur-ban-slide .banner-img {
+    max-height: 260px;
+  }
+}
+
+@media (max-width: 480px) {
+  .ayur-ban-slide .banner-img {
+    max-height: 200px;
+  }
+}

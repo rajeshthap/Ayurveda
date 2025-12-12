@@ -1,0 +1,108 @@
+/* ==========================================================================
+   Mobile Navigation Menu
+   ========================================================================== */
+
+@media (max-width: 991px) {
+  /* --- Hide the default menu on mobile --- */
+  .ayur-nav-menu {
+    position: fixed;
+    top: 0;
+    left: -100%; /* Start off-screen */
+    width: 280px;
+    max-width: 80%;
+    height: 100vh;
+    background-color: #fff;
+    padding-top: 100px; /* Adjust based on your header height */
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+    transition: left 0.4s ease-in-out;
+    z-index: 999;
+    overflow-y: auto;
+  }
+
+  /* --- Show the menu when the 'menu-open' class is added --- */
+  .ayur-navmenu-wrapper.menu-open .ayur-nav-menu {
+    left: 0; /* Slide in from the left */
+  }
+
+  /* --- Style the navigation links for mobile --- */
+  .ayur-nav-menu ul {
+    flex-direction: column;
+    padding: 0 20px;
+  }
+
+  .ayur-nav-menu ul li {
+    width: 100%;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .ayur-nav-menu ul li a {
+    display: block;
+    padding: 15px 0;
+    color: #333;
+  }
+
+  /* --- Style the dropdown arrow for mobile --- */
+  .ayur-nav-menu .ayur-has-menu > a svg {
+    width: 12px;
+    height: 12px;
+    fill: #555;
+  }
+
+  /* --- Show submenus by default on mobile (or you can add another toggle) --- */
+  .ayur-submenu {
+    display: block;
+    position: static;
+    width: 100%;
+    background-color: #f9f9f9;
+    box-shadow: none;
+    padding-left: 20px;
+  }
+  
+  .ayur-submenu li a {
+    font-size: 14px;
+  }
+
+  /* --- Style the hamburger toggle button --- */
+  .ayur-toggle-btn {
+    display: flex; /* Make it visible */
+    flex-direction: column;
+    justify-content: space-around;
+    width: 30px;
+    height: 25px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    z-index: 1001;
+  }
+
+  .ayur-toggle-btn span {
+    width: 30px;
+    height: 3px;
+    background-color: #333; /* Change to your desired color */
+    border-radius: 10px;
+    transition: all 0.3s linear;
+    position: relative;
+    transform-origin: 1px;
+  }
+
+  /* --- Hamburger to 'X' animation --- */
+  .ayur-toggle-btn.active span:nth-child(1) {
+    transform: rotate(45deg);
+  }
+
+  .ayur-toggle-btn.active span:nth-child(2) {
+    opacity: 0;
+  }
+
+  .ayur-toggle-btn.active span:nth-child(3) {
+    transform: rotate(-45deg);
+  }
+}
+
+/* --- Hide the toggle button on desktop --- */
+@media (min-width: 992px) {
+  .ayur-toggle-btn {
+    display: none;
+  }
+}
