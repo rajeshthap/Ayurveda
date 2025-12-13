@@ -1292,9 +1292,11 @@ a.likeproduct img.like {
   z-index: 999;
   transition: all .3s linear;
 }
-.ayur-ban-slide{
-    text-align: center;
+
+.ayur-ban-slide {
+  text-align: center;
 }
+
 .ayur-popup-content {
   position: absolute;
   top: 50%;
@@ -2909,3 +2911,40 @@ tr.ayur-cartsubtotal td {
 }
 
 /* Top-product section css End */
+.about-bg {
+  position: relative;
+  background-image: url(../images/about-bg.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  padding: 170px 0 100px;
+  margin-top: -13px;
+}
+
+.ayur-bread-content {
+  text-align: center;
+}
+
+.ayur-bread-list {
+  font-weight: 500;
+  color: #fff;
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  grid-gap: 10px;
+  font-size: 18px;
+}
+
+.ayur-bread-list span a {
+  color: #e6420c;
+  text-transform: capitalize;
+}
+
+span {
+  font-family: "Archivo", sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  transition: all .3s linear;
+  -webkit-transition: all .3s linear;
+  -moz-transition: all .3s linear;
+}

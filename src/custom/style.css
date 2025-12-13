@@ -71,15 +71,16 @@ body {
 
 
 
-a{
-    text-decoration: none !important;
+a {
+  text-decoration: none !important;
 }
+
 .about-us {
-  margin-top: 80px;
+  margin-top: 20px;
   padding: 40px;
-  background-color: #ffffff; 
+  background-color: #ffffff;
   border-radius: 16px;
-  box-shadow: 
+  box-shadow:
     0 10px 30px rgba(0, 0, 0, 0.08),
     0 4px 10px rgba(0, 0, 0, 0.04);
 
@@ -92,18 +93,21 @@ a{
   .br-login {
     margin: var(--gov-space-200) var(--gov-space-0) var(--gov-space-0) var(--gov-space-0) !important;
   }
-/* .ayur-menu-wrapper {
+
+  /* .ayur-menu-wrapper {
   margin-top: 100px !important;
 } */
- .ayur-achieve-box{
-padding: 0px !important;
- }
- .ayur-nav-menu {
+  .ayur-achieve-box {
+    padding: 0px !important;
+  }
+
+  .ayur-nav-menu {
     top: 0px !important;
 
- }
- .ayur-nav-menu{
+  }
+
+  .ayur-nav-menu {
     padding-top: 0px !important;
- }
+  }
 
 }
