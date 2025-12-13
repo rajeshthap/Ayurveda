@@ -52,8 +52,8 @@ function NavBar() {
 
                       <ul className="ayur-submenu">
                         <li><Link to="/AboutUs">About Us</Link></li>
-                        <li><Link to="#">The Journey</Link></li>
-                        <li><Link to="#">Vaidya Harsh Sehgal, M.D. (Ayu.)</Link></li>
+                        <li><Link to="/Thejourney">The Journey</Link></li>
+                        <li><Link to="/Vaidyaharshsehgal">Vaidya Harsh Sehgal, M.D. (Ayu.)</Link></li>
                         <li><Link to="#">Vaidya Jasmine Sehgal, M.D. (Ayu.)</Link></li>
                         <li><Link to="#">Prof.(Dr.) Bhavna Singh, M.D. (Ayu.), Ph.D.</Link></li>
                       </ul>

@@ -180,11 +180,15 @@
     .ayur-banner-slider .swiper-button-prev {
         left: 1%;
     }
-
+    .ayur-nav-menu{
+        padding-top: 0px !important;
+    }
     .ayur-banner-slider .swiper-button-next {
         right: 1%;
     }
-
+.ayur-navmenu-wrapper{
+text-align: left !important;
+}
     .ayur-banner-slider>.swiper-button-prev,
     .ayur-banner-slider .swiper-button-next {
         top: 57%;

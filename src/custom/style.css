@@ -100,7 +100,9 @@ a {
   .ayur-achieve-box {
     padding: 0px !important;
   }
-
+.ayur-navmenu-wrapper{
+text-align: left !important;
+}
   .ayur-nav-menu {
     top: 0px !important;
 

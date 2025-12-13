@@ -16,6 +16,8 @@ import NavBar from './componets/topnav/NavBar';
 import Footer from './componets/footer/Footer';
 import Dashboard from './componets/dash_board/Dashboard';
 import AboutUs from './componets/pages/about_us/AboutUs';
+import Thejourney from './componets/pages/about_us/Thejourney';
+import Vaidyaharshsehgal from './componets/pages/about_us/Vaidyaharshsehgal';
 function App() {
   
    const location = useLocation();
@@ -42,6 +44,8 @@ function App() {
 
 <Route path="/Dashboard" element={<Dashboard />} />
 <Route path="/AboutUs" element={<AboutUs />} />
+<Route path="/Thejourney" element={<Thejourney />} />
+<Route path="/Vaidyaharshsehgal" element={<Vaidyaharshsehgal />} />
 
 {/* <Route path="*" element={<NotFound />} />  */}
 </Routes>
