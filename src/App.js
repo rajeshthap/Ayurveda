@@ -15,6 +15,7 @@ import Home from './componets/pages/Home';
 import NavBar from './componets/topnav/NavBar';
 import Footer from './componets/footer/Footer';
 import Dashboard from './componets/dash_board/Dashboard';
+import AboutUs from './componets/pages/about_us/AboutUs';
 function App() {
   
    const location = useLocation();
@@ -38,7 +39,9 @@ function App() {
 
 <Routes>
 <Route path="/" element={<Home />} />
+
 <Route path="/Dashboard" element={<Dashboard />} />
+<Route path="/AboutUs" element={<AboutUs />} />
 
 {/* <Route path="*" element={<NotFound />} />  */}
 </Routes>

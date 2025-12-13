@@ -41,7 +41,7 @@ function NavBar() {
                     <li className="active"><Link to="#">Home</Link></li>
 
                     <li className="ayur-has-menu">
-                      <Link to="">
+                      <Link to="/">
                         About Us
                         <svg version="1.1" x="0" y="0" viewBox="0 0 491.996 491.996">
                           <g>
@@ -51,7 +51,7 @@ function NavBar() {
                       </Link>
 
                       <ul className="ayur-submenu">
-                        <li><Link to="#">About Us</Link></li>
+                        <li><Link to="/AboutUs">About Us</Link></li>
                         <li><Link to="#">The Journey</Link></li>
                         <li><Link to="#">Vaidya Harsh Sehgal, M.D. (Ayu.)</Link></li>
                         <li><Link to="#">Vaidya Jasmine Sehgal, M.D. (Ayu.)</Link></li>
