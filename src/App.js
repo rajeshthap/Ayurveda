@@ -18,6 +18,8 @@ import Dashboard from './componets/dash_board/Dashboard';
 import AboutUs from './componets/pages/about_us/AboutUs';
 import Thejourney from './componets/pages/about_us/Thejourney';
 import Vaidyaharshsehgal from './componets/pages/about_us/Vaidyaharshsehgal';
+import Profbhavnasingh from './componets/pages/about_us/Profbhavnasingh';
+import Vaidyajasminesehgal from './componets/pages/about_us/Vaidyajasminesehgal';
 function App() {
   
    const location = useLocation();
@@ -46,6 +48,8 @@ function App() {
 <Route path="/AboutUs" element={<AboutUs />} />
 <Route path="/Thejourney" element={<Thejourney />} />
 <Route path="/Vaidyaharshsehgal" element={<Vaidyaharshsehgal />} />
+<Route path="/Profbhavnasingh" element={<Profbhavnasingh />} />
+<Route path="/Vaidyajasminesehgal" element={<Vaidyajasminesehgal />} />
 
 {/* <Route path="*" element={<NotFound />} />  */}
 </Routes>

@@ -54,8 +54,8 @@ function NavBar() {
                         <li><Link to="/AboutUs">About Us</Link></li>
                         <li><Link to="/Thejourney">The Journey</Link></li>
                         <li><Link to="/Vaidyaharshsehgal">Vaidya Harsh Sehgal, M.D. (Ayu.)</Link></li>
-                        <li><Link to="#">Vaidya Jasmine Sehgal, M.D. (Ayu.)</Link></li>
-                        <li><Link to="#">Prof.(Dr.) Bhavna Singh, M.D. (Ayu.), Ph.D.</Link></li>
+                        <li><Link to="/Vaidyajasminesehgal ">Vaidya Jasmine Sehgal, M.D. (Ayu.)</Link></li>
+                        <li><Link to="/Profbhavnasingh">Prof.(Dr.) Bhavna Singh, M.D. (Ayu.), Ph.D.</Link></li>
                       </ul>
                     </li>
 
