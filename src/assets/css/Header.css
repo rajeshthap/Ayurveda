@@ -1,78 +1,166 @@
-/* General styles for the top navigation bar */
+/* ===============================
+   TOP HEADER BAR
+================================= */
 .top-nav {
-  background-color: #2c2c2c; /* A dark background color */
-  color: #e4d4cf; /* The light text color from your original SVGs */
+  /* background: #2f5f3f;  */
+  padding: 8px 0;
   font-size: 14px;
-}
-
-/* Remove underline from links and add a subtle hover effect */
-.top-nav a {
   color: #e4d4cf;
-  text-decoration: none;
-  transition: color 0.3s ease;
 }
 
-.top-nav a:hover {
-  color: #ffffff; /* Brighten on hover */
+.top-nav .container {
+  gap: 15px;
+}
+/* Common social icon */
+.social-icon {
+  font-size: 14px;
+  color: #E4D4CF;
+  transition: all 0.3s ease;
+}
+.mail-icon {
+  font-size: 16px;
+  color: #E4D4CF;
 }
 
-/* Style for the social links list */
-.ayur-social-link {
+/* Facebook specific */
+
+
+/* ===============================
+   CONTACT INFO
+================================= */
+.contact-info,
+.bi-phone {
+  white-space: nowrap;
+  font-weight: 500;
   display: flex;
+  align-items: center;
+}
+
+.contact-info {
+  margin-right: 15px;
+}
+
+/* ===============================
+   SOCIAL LINKS
+================================= */
+.ayur-social-link {
   list-style: none;
   padding: 0;
   margin: 0;
-  gap: 15px; /* Creates space between icons */
+  display: flex;
+  gap: 14px;
 }
 
-/* 
-  This class targets the icon itself.
-  We set the color and size here.
-*/
-.social-icon {
+.ayur-social-link li {
+  display: flex;
+  align-items: center;
+}
+
+.ayur-social-link a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.ayur-social-link a:hover {
+  background: #e4d4cf;
+}
+
+.ayur-social-link a:hover svg path {
+  fill: #2f5f3f;
+}
+
+.ayur-social-link a svg {
+  width: 14px;
+  height: auto;
+}
+
+/* Instagram icon */
+.ayur-social-link .text-light {
   color: #e4d4cf;
-  font-size: 18px; /* Adjust size as needed */
-  transition: transform 0.3s ease, color 0.3s ease;
 }
 
-/* Add a slight scale effect on hover for icons */
-.social-icon:hover {
-  transform: scale(1.1);
-  color: #ffffff;
+.ayur-social-link .text-light:hover {
+  color: #2f5f3f;
 }
 
-
-/* Custom styling for the "Consult Now" button */
-.btn-success {
-  background-color: #28a745;
-  border-color: #28a745;
+/* ===============================
+   CONSULT BUTTON
+================================= */
+.top-nav .btn-success {
+  background: #8bc34a;
+  border: none;
+  padding: 6px 16px;
+  font-size: 14px;
   font-weight: 600;
-  padding: 8px 20px;
-  border-radius: 5px;
-  transition: background-color 0.3s ease, border-color 0.3s ease;
+  border-radius: 20px;
+  margin-left: 15px;
+  transition: all 0.3s ease;
 }
 
-.btn-success:hover {
-  background-color: #218838;
-  border-color: #1e7e34;
+.top-nav .btn-success:hover {
+  background: #7cb342;
+  transform: translateY(-1px);
+}
+/* Desktop & tablet – show email */
+.contact-info {
+  display: flex;
 }
 
-/* --- Responsive Design --- */
 
-/* For screens smaller than 768px (tablets and phones) */
-@media (max-width: 767.98px) {
-  .contact-info-group {
-    margin-bottom: 15px; /* Add space between contact info and the button */
-  }
 
-  .contact-info {
+/* ===============================
+   RESPONSIVE FIXES
+================================= */
+@media (max-width: 991px) {
+  .contact-info,
+  .bi-phone {
     font-size: 13px;
-    line-height: 1.5;
+  }
+}
+
+@media (max-width: 767px) {
+  .top-nav {
+    padding: 10px 0;
   }
 
-  .action-items-group {
-    /* Center the button on mobile */
-    width: 100%;
-    justify-content: center;
+  .top-nav .container {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .contact-info,
+  .bi-phone {
+    margin-bottom: 6px;
+  }
+
+  .social-links {
+    margin-top: 8px;
+  }
+
+  .top-nav .btn-success {
+    margin-left: 0;
+    margin-top: 8px;
+  }
+}
+
+/* Extra small devices */
+@media (max-width: 568px) {
+  .contact-info,
+  .bi-phone {
+    font-size: 12px;
+  }
+ .contact-info {
+    display: none !important;
+  }
+  .ayur-social-link a {
+    width: 28px;
+    height: 28px;
   }
 }
