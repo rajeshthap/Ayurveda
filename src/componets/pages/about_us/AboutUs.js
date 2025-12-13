@@ -54,12 +54,12 @@ function AboutUs() {
                   <h3>Trilok Ayurveda</h3>
                   <h4>"Wellness Center and Speciality Clinic for Chronic Disorders"</h4>
                   <div>
-                    <Row>
-                      <h5>Internal Medicine:</h5>
-                      <p>Two decades of rich clinical experience and expertise in treating, Degenerative, Auto-immune, Metabolic and other Chronic Non-Communicable Disorders (CNCD’s) through herbs based internal medicines. The key to holistic treatment is the portfolio of self manufactured 125 (and growing) herbal formulations. The purpose is to provide individualized precision medicine and to maintain the quality.</p>
-                      <h5>Wellness Program:</h5>
-                      <p>From “Illness to Wellness”, “Nirvana” is the core program of Trilok Ayurveda Wellness Center, nestled in the quaint environs of Himalayas settled at the banks of divine Ganga, dedicated to improving total health in terms of mind, body and soul detoxification and rejuvenation. It encompasses Yoga, Pranayam, Meditation, Panchkarma, Ayurvedic Dietetics and life-style related guidelines, Nadi pariksha (pulse assessment) and Ayurvedic Consultations.</p>
-                    </Row>
+
+                    <h5 className='pt-3'>Internal Medicine:</h5>
+                    <p>Two decades of rich clinical experience and expertise in treating, Degenerative, Auto-immune, Metabolic and other Chronic Non-Communicable Disorders (CNCD’s) through herbs based internal medicines. The key to holistic treatment is the portfolio of self manufactured 125 (and growing) herbal formulations. The purpose is to provide individualized precision medicine and to maintain the quality.</p>
+                    <h5>Wellness Program:</h5>
+                    <p>From “Illness to Wellness”, “Nirvana” is the core program of Trilok Ayurveda Wellness Center, nestled in the quaint environs of Himalayas settled at the banks of divine Ganga, dedicated to improving total health in terms of mind, body and soul detoxification and rejuvenation. It encompasses Yoga, Pranayam, Meditation, Panchkarma, Ayurvedic Dietetics and life-style related guidelines, Nadi pariksha (pulse assessment) and Ayurvedic Consultations.</p>
+
                   </div>
 
                   <Link to="#" className="ayur-btn">
