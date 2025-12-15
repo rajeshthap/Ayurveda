@@ -2921,6 +2921,16 @@ tr.ayur-cartsubtotal td {
   margin-top: -13px;
 }
 
+.The-Journey-bg {
+  position: relative;
+  background-image: url(../images/The-Journey-bg.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  padding: 170px 0 100px;
+  margin-top: -13px;
+}
+
 .ayur-bread-content {
   text-align: center;
 }

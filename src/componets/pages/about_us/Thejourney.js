@@ -11,7 +11,7 @@ import { Row } from "react-bootstrap";
 function Thejourney() {
   return (
     <div className="ayur-bgcover ayur-about-sec">
-      <div className="about-bg">
+      <div className="The-Journey-bg ">
         <div className="ayur-bread-content">
           <h2>The Journey</h2>
           <div class="ayur-bread-list">

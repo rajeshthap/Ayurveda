@@ -21,7 +21,7 @@ function OurTeam() {
         </div>
         <div className="row">
           {/* Team Member 1 */}
-          <div className="col-lg-3 col-md-6 col-sm-6">
+          <div className="col-lg-4 col-md-6 col-sm-6">
             <div className="ayur-team-box">
               <div className="ayur-team-img-wrapper">
                 <div className="ayur-team-img">
@@ -31,7 +31,7 @@ function OurTeam() {
                   <div className="ayur-team-hoversmall">
                     <img src={team1} alt="team member 1" />
                   </div>
-                  <p>Manager</p>
+                  <p>Founder and CEO</p>
                   <div className="ayur-team-sociallink">
                     <Link to="">{/* Facebook SVG */}</Link>
                     <Link to="">{/* Twitter SVG */}</Link>
@@ -41,14 +41,15 @@ function OurTeam() {
                 </div>
               </div>
               <div className="ayur-team-name">
-                <h3>Esther Howard</h3>
-                <p>Manager</p>
+                <h3>Vaidya Harsh Sehgal, M.D. (Ayu.)</h3>
+                <p>Physician, Researcher</p>
+                <p>Founder and CEO</p>
               </div>
             </div>
           </div>
 
           {/* Team Member 2 */}
-          <div className="col-lg-3 col-md-6 col-sm-6">
+          <div className="col-lg-4 col-md-6 col-sm-6">
             <div className="ayur-team-box">
               <div className="ayur-team-img-wrapper">
                 <div className="ayur-team-img">
@@ -58,7 +59,7 @@ function OurTeam() {
                   <div className="ayur-team-hoversmall">
                     <img src={team2} alt="team member 2" />
                   </div>
-                  <p>Manager</p>
+                  <p>Director</p>
                   <div className="ayur-team-sociallink">
                     <Link to="">{/* Facebook SVG */}</Link>
                     <Link to="">{/* Twitter SVG */}</Link>
@@ -68,14 +69,15 @@ function OurTeam() {
                 </div>
               </div>
               <div className="ayur-team-name">
-                <h3>Darlene Robertson</h3>
-                <p>Manager</p>
+                <h3>Vaidya Jasmine Sehgal, M.D. (Ayu.)</h3>
+                <p>Ayurvedic Dietetics and Wellness Expert</p>
+                <p>Director</p>
               </div>
             </div>
           </div>
 
           {/* Team Member 3 */}
-          <div className="col-lg-3 col-md-6 col-sm-6">
+          <div className="col-lg-4 col-md-6 col-sm-6">
             <div className="ayur-team-box">
               <div className="ayur-team-img-wrapper">
                 <div className="ayur-team-img">
@@ -85,7 +87,7 @@ function OurTeam() {
                   <div className="ayur-team-hoversmall">
                     <img src={team3} alt="team member 3" />
                   </div>
-                  <p>Manager</p>
+                  <p>Research Associate</p>
                   <div className="ayur-team-sociallink">
                     <Link to="">{/* Facebook SVG */}</Link>
                     <Link to="">{/* Twitter SVG */}</Link>
@@ -95,38 +97,14 @@ function OurTeam() {
                 </div>
               </div>
               <div className="ayur-team-name">
-                <h3>Robert Fox</h3>
-                <p>Manager</p>
+                <h3>Prof.(Dr.) Bhavna Singh, M.D. (Ayu.), Ph.D.</h3>
+                <p>Academician, Researcher and Author</p>
+                <p>Research Associate</p>
               </div>
             </div>
           </div>
 
-          {/* Team Member 4 */}
-          <div className="col-lg-3 col-md-6 col-sm-6">
-            <div className="ayur-team-box">
-              <div className="ayur-team-img-wrapper">
-                <div className="ayur-team-img">
-                  <img src={team4} alt="team member 4" />
-                </div>
-                <div className="ayur-team-hoverimg">
-                  <div className="ayur-team-hoversmall">
-                    <img src={team4} alt="team member 4" />
-                  </div>
-                  <p>Manager</p>
-                  <div className="ayur-team-sociallink">
-                    <Link to="">{/* Facebook SVG */}</Link>
-                    <Link to="">{/* Twitter SVG */}</Link>
-                    <Link to="">{/* Github SVG */}</Link>
-                    <Link to="">{/* Instagram SVG */}</Link>
-                  </div>
-                </div>
-              </div>
-              <div className="ayur-team-name">
-                <h3>Jenny Wilson</h3>
-                <p>Manager</p>
-              </div>
-            </div>
-          </div>
+
         </div>
       </div>
 
