@@ -1,10 +1,10 @@
 import React from 'react';
 
 // Import images at the top
-import AboutImg from '../../../assets/images/about-img.png';
+
 import BgShape2 from '../../../assets/images/bg-shape2.png';
 import BgLeaf2 from '../../../assets/images/bg-leaf2.png';
-import Inneraboutimg from '../../../assets/images/about-img-inner.png'
+
 import { Link, useNavigate } from 'react-router-dom';
 import { Row,Col } from 'react-bootstrap';
 import { FaHeartbeat } from 'react-icons/fa';
@@ -57,12 +57,12 @@ function AutoImmune() {
     <div className="ayur-bgcover ayur-about-sec">
       <div className='about-bg'>
         <div className='ayur-bread-content'>
-          <h2>About Us</h2>
+          <h2>Auto-Immune Diseases</h2>
           <div class="ayur-bread-list">
             <span>
-              <a href="index.html">Home </a>
+              <a href="AutoImmune">Home </a>
             </span>
-            <span class="ayur-active-page">/ About Us</span>
+            <span class="ayur-active-page">/ Auto-Immune Diseases</span>
           </div>
         </div>
       </div>
@@ -71,9 +71,11 @@ function AutoImmune() {
 
       <div className="row ">
         <div className="ayur-bgcover ayur-about-sec">
-          <div className="container fluid about-us">
+          <div className="container fluid about-us ann-heading ">
+            <h3>List of Diseases</h3>
+               <h5>Wellness Center and Speciality Clinic for Chronic Disorders</h5>
             <Row className="ayur-cards-row">
-       
+         
           {cardData.map((card) => (
             <Col lg={3} md={6} sm={12} key={card.id} className="mb-4"  onClick={() => navigate("/Diseases")}
   style={{ cursor: "pointer" }} >
