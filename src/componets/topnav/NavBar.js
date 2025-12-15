@@ -71,12 +71,12 @@ function NavBar() {
                       </Link>
 
                       <ul className="ayur-submenu">
-                        <li><Link to="#">Auto-Immune Diseases</Link></li>
-                        <li><Link to="#">Degenerative Disorders</Link></li>
-                        <li><Link to="#">Metabolic Disorders</Link></li>
-                        <li><Link to="#">Other CNCD's</Link></li>
-                        <li><Link to="#">Wellness Solutions</Link></li>
-                        <li><Link to="#">Own Manufacturing</Link></li>
+                        <li><Link to="/AutoImmune">Auto-Immune Diseases</Link></li>
+                        <li><Link to="/Degenerative">Degenerative Disorders</Link></li>
+                        <li><Link to="/">Metabolic Disorders</Link></li>
+                        <li><Link to="InternalOthercnds">Other CNCD's</Link></li>
+                        <li><Link to="/Internalwellnesssol">Wellness Solutions</Link></li>
+                        <li><Link to="/OwnManufacturing">Own Manufacturing</Link></li>
                       </ul>
                     </li>
 

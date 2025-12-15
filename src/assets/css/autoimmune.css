@@ -1,0 +1,98 @@
+/* Card row spacing */
+.ayur-cards-row {
+  margin-top: 30px;
+}
+
+/* Link reset */
+.ayur-card-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  height: 100%;
+}
+
+/* Card container */
+.ayur-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 30px 20px;
+  height: 100%;
+  text-align: center;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
+  transition: all 0.35s ease;
+  position: relative;
+}
+
+/* Hover animation */
+.ayur-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.16);
+}
+
+/* Icon wrapper */
+.ayur-card-icon {
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, #43a047, #1b5e20);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 18px;
+  font-size: 26px;
+  color: #ffffff;
+  transition: all 0.3s ease;
+}
+.card-text h5{
+    font-size: 12px !important;
+}
+  
+
+/* Icon animation */
+.ayur-card:hover .ayur-card-icon {
+  transform: scale(1.15) rotate(6deg);
+}
+
+/* Card title */
+.ayur-card-content h5 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1b5e20;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Hover text color */
+.ayur-card:hover .ayur-card-content h5 {
+  color: #2e7d32;
+}
+
+/* Decorative top line */
+.ayur-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 60px;
+  height: 4px;
+  background: #43a047;
+  border-radius: 0 0 6px 6px;
+  transform: translateX(-50%);
+}
+
+/* Mobile adjustments */
+@media (max-width: 767px) {
+  .ayur-card {
+    padding: 24px 16px;
+  }
+
+  .ayur-card-icon {
+    width: 65px;
+    height: 65px;
+    font-size: 28px;
+  }
+
+  .ayur-card-content h5 {
+    font-size: 16px;
+  }
+}
