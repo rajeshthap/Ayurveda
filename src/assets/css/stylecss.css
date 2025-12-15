@@ -99,8 +99,10 @@ span {
   -moz-transition: all .3s linear;
 }
 
-ul li {
-  list-style-type: none;
+ul {
+  padding-left: 32px;
+  font-size: 14px;
+  color: var(--ayur-para-color);
 }
 
 a {
@@ -315,7 +317,7 @@ input.ayur-btn {
 }
 
 p {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 400;
   line-height: 24px;
   color: var(--ayur-para-color);
@@ -985,7 +987,7 @@ a.likeproduct img.like {
 }
 
 .ayur-about-head p {
-  padding: 14px 0 2px;
+  padding: 10px 0 2px;
 }
 
 .ayur-about-img {
@@ -2929,6 +2931,45 @@ tr.ayur-cartsubtotal td {
   background-position: center;
   padding: 170px 0 100px;
   margin-top: -13px;
+}
+
+.award-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: none;
+  border-radius: 10px;
+}
+
+.award-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+.award-icon {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 123, 255, 0.1);
+  border-radius: 50%;
+}
+
+.award-icon i {
+  transition: transform 0.3s ease;
+}
+
+.award-card:hover .award-icon i {
+  transform: scale(1.1);
+}
+
+
+.year-txt {
+  background-color: #28a745;
+  color: #fff;
+  padding: 6px;
+  border-radius: 5px;
+  font-size: 12px;
 }
 
 .ayur-bread-content {
