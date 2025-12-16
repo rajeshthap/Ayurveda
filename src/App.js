@@ -44,7 +44,7 @@ function App() {
      ]);
 
   const hiddenFooter1 = new Set([
-    "",
+    "/Dashboard",
   ]);
 
     const shouldHideNavbar = hiddenPaths.has(location.pathname);

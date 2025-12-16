@@ -62,7 +62,7 @@ function AboutUs() {
 
                   </div>
 
-                  <Link to="#" className="ayur-btn">
+                  <Link to="/Thejourney" className="ayur-btn">
                     Know More
                   </Link>
                 </div>

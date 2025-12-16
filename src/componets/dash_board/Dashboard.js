@@ -3,7 +3,7 @@ import { Container } from "react-bootstrap";
 
 import "../../assets/css/dashboard.css";
 import DashBoardHeader from "./DashBoardHeader";
-import LeftNav from "./LeftNav";
+import LeftNav  from "./LeftNav";
 
 const Dashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -26,6 +26,7 @@ const Dashboard = () => {
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
   return (
+    <>
     <div className="dashboard-container">
       {/* Left Sidebar */}
       <LeftNav
@@ -39,13 +40,14 @@ const Dashboard = () => {
       <div className="main-content">
         <DashBoardHeader toggleSidebar={toggleSidebar} />
 
-        <Container fluid className="dashboard-body">
+        <Container fluid className="dashboard-body dashboard-main-container">
           <h1 className="page-title">Dashboard</h1>
-
+          <p>Welcome to the Dashboard!</p>
        
         </Container>
       </div>
     </div>
+    </>
   );
 };
 

@@ -64,7 +64,6 @@ function DegenerativeDiseases() {
                   <li>Alzheimer’s Type</li>
                 </ul>
               </div>
-
               {/* SYMPTOMS CARD */}
               <div className="ayur-info-card mt-4">
                 <h5>

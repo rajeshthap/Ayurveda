@@ -5,6 +5,8 @@ import "../../assets/css/Header.css";
 import { MdOutlinePhoneAndroid } from "react-icons/md";
 import {  FaFacebookF, FaInstagram, FaTwitter, FaWhatsapp } from "react-icons/fa";
 import { HiOutlineMail } from "react-icons/hi";
+import { Button } from "react-bootstrap";
+
 
 function Header() {
   return (
@@ -57,6 +59,10 @@ function Header() {
             <li>
               <Link to="" className="text-light"><FaInstagram size={15} /></Link>
             </li>
+         <Link to="/Dashboard">
+  <Button className="login-btn">Login</Button>
+</Link>
+
 
           </ul>
            
