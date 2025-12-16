@@ -92,13 +92,13 @@ function NavBar() {
                       </Link>
 
                       <ul className="ayur-submenu">
-                        <li><Link to="#">FAQs</Link></li>
-                        <li><Link to="#">Presentations & Awards</Link></li>
-                        <li><Link to="#">Media Gallery</Link></li>
-                        <li><Link to="#">Patient's Guide</Link></li>
-                        <li><Link to="#">Feedback</Link></li>
-                        <li><Link to="#">External Links</Link></li>
-                        <li><Link to="#">Disclaimer</Link></li>
+                        <li><Link to="/Faqs">FAQs</Link></li>
+                        <li><Link to="/PresentationAwards">Presentations & Awards</Link></li>
+                        <li><Link to="/MediaGallery">Media Gallery</Link></li>
+                        <li><Link to="/PatientsGuide">Patient's Guide</Link></li>
+                        <li><Link to="/Feedback">Feedback</Link></li>
+                        <li><Link to="/ExternalLinks">External Links</Link></li>
+                        <li><Link to="/Disclaimer">Disclaimer</Link></li>
                       </ul>
                     </li>
 
