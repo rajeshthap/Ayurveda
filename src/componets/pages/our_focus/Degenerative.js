@@ -17,52 +17,100 @@ function Degenerative() {
      const cardData = [
     {
       id: 1,
-      title: "Ankylosing Spondylosis (AS)",
+      title: "Alzheimer disease ",
       icon: <FaHeartbeat />,
       link: "/internal-medicine" // The route this card will navigate to
     },
     {
       id: 2,
-      title: "Arthritic Heart Disease (AHD)",
+      title: "Atherosclerosis",
       icon: <FaHeartbeat />,
       link: "/internal-medicine" // The route this card will navigate to
     },
  {
       id: 3,
-      title: "Auto-immune Hepatitis (AIH)",
+      title: "Avascular Necrosis ",
       icon: <FaHeartbeat />,
       link: "/internal-medicine" // The route this card will navigate to
     },
      {
       id: 4,
-      title: "Auto-immune Pancreatitis (AIP)",
+      title: "Cardiovascular Diseases ",
       icon: <FaHeartbeat />,
       link: "/internal-medicine" // The route this card will navigate to
     },
      {
       id: 5,
-      title: "Auto-immune Thyroiditis (AIT)",
+      title: "Cervical Spondylosis ",
       icon: <FaHeartbeat />,
       link: "/internal-medicine" // The route this card will navigate to
     },
       {
-      id: 5,
-      title: "Auto-immune Urticaria (AIU)",
+      id: 6,
+      title: "Chronic Obstructive Pulmonary Disease ",
       icon: <FaHeartbeat />,
       link: "/internal-medicine" // The route this card will navigate to
     },
+     {
+      id: 7,
+      title: "Lumbar Spondylosis  ",
+      icon: <FaHeartbeat />,
+      link: "/internal-medicine" // The route this card will navigate to
+    },
+    {
+      id: 8,
+      title: "Osteo-Arthritis    ",
+      icon: <FaHeartbeat />,
+      link: "/internal-medicine" // The route this card will navigate to
+    },
+    {
+      id: 9,
+      title: "Osteoporosis    ",
+      icon: <FaHeartbeat />,
+      link: "/internal-medicine" // The route this card will navigate to
+    }, 
+     {
+      id: 10,
+      title: "Paralysis    ",
+      icon: <FaHeartbeat />,
+      link: "/internal-medicine" // The route this card will navigate to
+    },  
+     {
+      id: 11,
+      title: "Parkinson Disease     ",
+      icon: <FaHeartbeat />,
+      link: "/internal-medicine" // The route this card will navigate to
+    },  
+     {
+      id: 12,
+      title: "Progressive Supranuclear Palsy      ",
+      icon: <FaHeartbeat />,
+      link: "/internal-medicine" // The route this card will navigate to
+    },  
+     {
+      id: 13,
+      title: "Sciatica      ",
+      icon: <FaHeartbeat />,
+      link: "/internal-medicine" // The route this card will navigate to
+    },  
+     {
+      id: 14,
+      title: "Vascular Dementia       ",
+      icon: <FaHeartbeat />,
+      link: "/internal-medicine" // The route this card will navigate to
+    },  
   ];
   return (
 
     <div className="ayur-bgcover ayur-about-sec">
       <div className='about-bg'>
         <div className='ayur-bread-content'>
-          <h2>Auto-Immune Diseases</h2>
+          <h2>Degenerative Disorders</h2>
           <div class="ayur-bread-list">
             <span>
               <a href="AutoImmune">Home </a>
             </span>
-            <span class="ayur-active-page">/ Auto-Immune Diseases</span>
+            <span class="ayur-active-page">/Degenerative Disorders</span>
           </div>
         </div>
       </div>
@@ -77,7 +125,7 @@ function Degenerative() {
             <Row className="ayur-cards-row">
          
           {cardData.map((card) => (
-            <Col lg={3} md={6} sm={12} key={card.id} className="mb-4"  onClick={() => navigate("/Diseases")}
+            <Col lg={3} md={6} sm={12} key={card.id} className="mb-4"  onClick={() => navigate("/DegenerativeDiseases")}
   style={{ cursor: "pointer" }} >
               {/* The entire card is now a Link */}
               <Link to={card.link} className="ayur-card-link">
