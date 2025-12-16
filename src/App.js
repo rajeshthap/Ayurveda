@@ -34,6 +34,9 @@ import Feedback from './componets/pages/Features/Feedback';
 import ExternalLinks from './componets/pages/Features/ExternalLinks';
 import Disclaimer from './componets/pages/Features/Disclaimer';
 import DegenerativeDiseases from './componets/pages/our_focus/DegenerativeDiseases';
+import Researchers from './componets/pages/Researchers';
+import Blogs from './componets/pages/Blogs';
+import ContactUs from './componets/pages/ContactUs';
 function App() {
   
    const location = useLocation();
@@ -78,6 +81,9 @@ function App() {
 <Route path="/ExternalLinks" element={<ExternalLinks/>} />
 <Route path="/Disclaimer" element={<Disclaimer/>} />
 <Route path="/DegenerativeDiseases" element={<DegenerativeDiseases/>} />
+<Route path="/Researchers" element={<Researchers/>} />
+<Route path="/Blogs" element={<Blogs/>} />
+<Route path="/ContactUs" element={<ContactUs/>} />
 
 {/* <Route path="*" element={<NotFound />} />  */}
 </Routes>

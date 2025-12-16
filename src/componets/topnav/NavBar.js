@@ -102,9 +102,9 @@ function NavBar() {
                       </ul>
                     </li>
 
-                    <li><Link to="#">Researches</Link></li>
-                    <li><Link to="#">Blogs</Link></li>
-                    <li><Link to="#">Contact Us</Link></li>
+                    <li><Link to="/Researchers">Researches</Link></li>
+                    <li><Link to="/Blogs">Blogs</Link></li>
+                    <li><Link to="/ContactUs">Contact Us</Link></li>
                  
           <button type="button" className="btn btn-success">Consult Now</button>
       
