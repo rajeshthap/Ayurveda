@@ -81,7 +81,20 @@
   border-radius: 0 0 6px 6px;
   transform: translateX(-50%);
 }
-
+.about-us-ann {
+    margin-top: 20px;
+    /* padding: 40px; */
+    background-color: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08), 0 4px 10px rgba(0, 0, 0, 0.04);
+    position: relative;
+    z-index: 2;
+}
+.ann-heading h3{
+    color: #43a047;
+    font-weight: 600;
+    font-size: 24px;
+}
 /* Mobile adjustments */
 @media (max-width: 767px) {
   .ayur-card {
