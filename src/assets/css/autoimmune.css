@@ -13,7 +13,7 @@
 
 /* Card container */
 .ayur-card {
-  background: #ffffff;
+
   border-radius: 16px;
   padding: 30px 20px;
   height: 100%;
@@ -21,6 +21,7 @@
   box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
   transition: all 0.35s ease;
   position: relative;
+  background: url(../images/achievement-bg.png);
 }
 
 /* Hover animation */
@@ -33,7 +34,7 @@
 .ayur-card-icon {
   width: 50px;
   height: 50px;
-  background: linear-gradient(135deg, #43a047, #1b5e20);
+  background-color: var(--ayur-primary-color);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -43,10 +44,11 @@
   color: #ffffff;
   transition: all 0.3s ease;
 }
-.card-text h5{
-    font-size: 12px !important;
+
+.card-text h5 {
+  font-size: 12px !important;
 }
-  
+
 
 /* Icon animation */
 .ayur-card:hover .ayur-card-icon {
@@ -55,9 +57,9 @@
 
 /* Card title */
 .ayur-card-content h5 {
-  font-size: 18px;
-  font-weight: 600;
-  color: #1b5e20;
+  font-size: 14px !important;
+  font-weight: 500;
+  color: var(--ayur-primary-color);
   margin: 0;
   line-height: 1.4;
 }
