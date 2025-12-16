@@ -26,6 +26,13 @@ import Degenerative from './componets/pages/our_focus/Degenerative';
 import AutoImmune from './componets/pages/our_focus/AutoImmune';
 import Internalwellnesssol from './componets/pages/our_focus/Internalwellnesssol';
 import Diseases from './componets/pages/our_focus/Diseases';
+import Faqs from './componets/pages/Features/Faqs';
+import PresentationAwards from './componets/pages/Features/PresentationAwards';
+import MediaGallery from './componets/pages/Features/MediaGallery';
+import PatientsGuide from './componets/pages/Features/PatientsGuide';
+import Feedback from './componets/pages/Features/Feedback';
+import ExternalLinks from './componets/pages/Features/ExternalLinks';
+import Disclaimer from './componets/pages/Features/Disclaimer';
 function App() {
   
    const location = useLocation();
@@ -62,6 +69,14 @@ function App() {
 <Route path="/Degenerative" element={<Degenerative />} />
 <Route path="/AutoImmune" element={<AutoImmune />} />
 <Route path="/Diseases" element={<Diseases />} />
+<Route path="/Faqs" element={<Faqs/>} />
+<Route path="/PresentationAwards" element={<PresentationAwards/>} />
+<Route path="/MediaGallery" element={<MediaGallery/>} />
+<Route path="/PatientsGuide" element={<PatientsGuide/>} />
+<Route path="/Feedback" element={<Feedback/>} />
+<Route path="/ExternalLinks" element={<ExternalLinks/>} />
+<Route path="/Disclaimer" element={<Disclaimer/>} />
+
 
 
 {/* <Route path="*" element={<NotFound />} />  */}
