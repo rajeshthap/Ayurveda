@@ -37,6 +37,8 @@ import DegenerativeDiseases from './componets/pages/our_focus/DegenerativeDiseas
 import Researchers from './componets/pages/Researchers';
 import Blogs from './componets/pages/Blogs';
 import ContactUs from './componets/pages/ContactUs';
+import Login from './componets/all_login/Login';
+
 function App() {
   
    const location = useLocation();
@@ -84,6 +86,7 @@ function App() {
 <Route path="/Researchers" element={<Researchers/>} />
 <Route path="/Blogs" element={<Blogs/>} />
 <Route path="/ContactUs" element={<ContactUs/>} />
+<Route path="/Login" element={<Login />} />
 
 {/* <Route path="*" element={<NotFound />} />  */}
 </Routes>

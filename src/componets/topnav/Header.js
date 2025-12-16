@@ -52,18 +52,12 @@ function Header() {
               </Link>
               </Link>
             </li>
-
-          
-         
-          
             <li>
               <Link to="" className="text-light"><FaInstagram size={15} /></Link>
             </li>
-         <Link to="/Dashboard">
+         <Link to="/Login">
   <Button className="login-btn">Login</Button>
 </Link>
-
-
           </ul>
            
         </div>

@@ -434,6 +434,9 @@ border: none !important;
 .btn-emp{
     font-size: 12px;
 }
+.sidebar-closed .submenu-container .br-text-sub {
+  font-size: 10px !important;
+}
 
 /* Responsive Design */
 /* Mobile Styles */

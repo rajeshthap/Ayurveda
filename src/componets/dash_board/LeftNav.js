@@ -47,13 +47,29 @@ const menuItems = [
       path: "/WebsiteManagement",
       active: true,
     },
+    
+    {
+      icon: <FaProjectDiagram />,
+      label: "The Journey",
+      submenu: [
+        {
+          label: "Add Journey",
+          path: "/AddJourney",
+          icon: <FaImage />,
+        },
+         {
+          label: "Manage Journey",
+          path: "/ManageJourney",
+          icon: <FaImage />,
+        },
+      ],
+    },
     {
       icon: <FaImages />,
       label: "About Us",
  
       submenu: [
         
-       
         {
           label: "Add About Us",
           path: "/AddAboutUs",
@@ -64,6 +80,7 @@ const menuItems = [
           path: "/ManageAboutUs",
           icon: <FaImage />,
         },
+
         
         
        
