@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import '../../assets/css/contact.css';
 import { Link } from 'react-router-dom';
+import { Form, Button } from 'react-bootstrap';
 
 const ContactUs = () => {
   const [formData, setFormData] = useState({
-    name: '',
+    full_name: '',
     email: '',
+    subject: '',
     message: ''
   });
 
@@ -19,9 +21,34 @@ const ContactUs = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
-    alert('Thank you for your message! We will contact you soon.');
-    setFormData({ name: '', email: '', message: '' });
+    
+    // Create FormData object
+    const data = new FormData();
+    data.append('full_name', formData.full_name);
+    data.append('email', formData.email);
+    data.append('subject', formData.subject);
+    data.append('message', formData.message);
+    
+    // API call
+    fetch('https://mahadevaaya.com/trilokayurveda/trilokabackend/api/contact-us/', {
+      method: 'POST',
+      body: data
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    })
+    .then(data => {
+      console.log('Success:', data);
+      alert('Thank you for your message! We will contact you soon.');
+      setFormData({ full_name: '', email: '', subject: '', message: '' });
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert('There was an error sending your message. Please try again later.');
+    });
   };
 
   return (
@@ -94,45 +121,60 @@ const ContactUs = () => {
             
             <div className="trilok-contact-form">
               <h3>Get In Touch</h3>
-              <form onSubmit={handleSubmit}>
-                <div className="trilok-form-group">
-                  <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    placeholder="Your Name"
-                    value={formData.name}
+              <Form onSubmit={handleSubmit}>
+                <Form.Group className="mb-3" controlId="full_name">
+                  <Form.Label>Full Name</Form.Label>
+                  <Form.Control 
+                    type="text" 
+                    name="full_name"
+                    placeholder="Full Name" 
+                    value={formData.full_name}
                     onChange={handleChange}
                     required
                   />
-                </div>
+                </Form.Group>
                 
-                <div className="trilok-form-group">
-                  <input
-                    type="email"
-                    id="email"
+                <Form.Group className="mb-3" controlId="email">
+                  <Form.Label>Email address</Form.Label>
+                  <Form.Control 
+                    type="email" 
                     name="email"
-                    placeholder="Your Email"
+                    placeholder="name@example.com" 
                     value={formData.email}
                     onChange={handleChange}
                     required
                   />
-                </div>
+                </Form.Group>
+
+                <Form.Group className="mb-3" controlId="subject">
+                  <Form.Label>Subject</Form.Label>
+                  <Form.Control 
+                    type="text" 
+                    name="subject"
+                    placeholder="Subject" 
+                    value={formData.subject}
+                    onChange={handleChange}
+                    required
+                  />
+                </Form.Group>
                 
-                <div className="trilok-form-group">
-                  <textarea
-                    id="message"
+                <Form.Group className="mb-3" controlId="message">
+                  <Form.Label>Message</Form.Label>
+                  <Form.Control 
+                    as="textarea" 
+                    rows={5}
                     name="message"
-                    rows="5"
-                    placeholder="Your Message"
+                    placeholder="Your Message" 
                     value={formData.message}
                     onChange={handleChange}
                     required
-                  ></textarea>
-                </div>
+                  />
+                </Form.Group>
                 
-                <button type="submit" className="trilok-submit-btn">Send Message</button>
-              </form>
+                <Button variant="primary" type="submit" className="trilok-submit-btn">
+                  Send Message
+                </Button>
+              </Form>
             </div>
           </div>
         </div>
