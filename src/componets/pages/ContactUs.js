@@ -11,16 +11,84 @@ const ContactUs = () => {
     message: ''
   });
 
+  const [errors, setErrors] = useState({
+    full_name: '',
+    email: '',
+    subject: '',
+    message: ''
+  });
+
+  const [validated, setValidated] = useState(false);
+
+  const validateForm = () => {
+    let newErrors = {
+      full_name: '',
+      email: '',
+      subject: '',
+      message: ''
+    };
+    let isValid = true;
+
+    // Validate full name
+    if (!formData.full_name.trim()) {
+      newErrors.full_name = 'Full name is required';
+      isValid = false;
+    }
+
+    // Validate email
+    if (!formData.email.trim()) {
+      newErrors.email = 'Email is required';
+      isValid = false;
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = 'Email is invalid';
+      isValid = false;
+    }
+
+    // Validate subject
+    if (!formData.subject.trim()) {
+      newErrors.subject = 'Subject is required';
+      isValid = false;
+    }
+
+    // Validate message
+    if (!formData.message.trim()) {
+      newErrors.message = 'Message is required';
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
       [name]: value
     }));
+    
+    // Clear error when user starts typing
+    if (errors[name]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: ''
+      }));
+    }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    
+    const form = e.currentTarget;
+    if (form.checkValidity() === false) {
+      e.stopPropagation();
+    }
+    
+    setValidated(true);
+    
+    if (!validateForm()) {
+      return;
+    }
     
     // Create FormData object
     const data = new FormData();
@@ -44,6 +112,13 @@ const ContactUs = () => {
       console.log('Success:', data);
       alert('Thank you for your message! We will contact you soon.');
       setFormData({ full_name: '', email: '', subject: '', message: '' });
+      setErrors({
+        full_name: '',
+        email: '',
+        subject: '',
+        message: ''
+      });
+      setValidated(false);
     })
     .catch(error => {
       console.error('Error:', error);
@@ -121,9 +196,9 @@ const ContactUs = () => {
             
             <div className="trilok-contact-form">
               <h3>Get In Touch</h3>
-              <Form onSubmit={handleSubmit}>
+              <Form noValidate validated={validated} onSubmit={handleSubmit}>
                 <Form.Group className="mb-3" controlId="full_name">
-                  <Form.Label>Full Name</Form.Label>
+                  <Form.Label>Full Name *</Form.Label>
                   <Form.Control 
                     type="text" 
                     name="full_name"
@@ -131,11 +206,15 @@ const ContactUs = () => {
                     value={formData.full_name}
                     onChange={handleChange}
                     required
+                    isInvalid={!!errors.full_name}
                   />
+                  <Form.Control.Feedback type="invalid">
+                    {errors.full_name}
+                  </Form.Control.Feedback>
                 </Form.Group>
                 
                 <Form.Group className="mb-3" controlId="email">
-                  <Form.Label>Email address</Form.Label>
+                  <Form.Label>Email address *</Form.Label>
                   <Form.Control 
                     type="email" 
                     name="email"
@@ -143,11 +222,15 @@ const ContactUs = () => {
                     value={formData.email}
                     onChange={handleChange}
                     required
+                    isInvalid={!!errors.email}
                   />
+                  <Form.Control.Feedback type="invalid">
+                    {errors.email}
+                  </Form.Control.Feedback>
                 </Form.Group>
 
                 <Form.Group className="mb-3" controlId="subject">
-                  <Form.Label>Subject</Form.Label>
+                  <Form.Label>Subject *</Form.Label>
                   <Form.Control 
                     type="text" 
                     name="subject"
@@ -155,11 +238,15 @@ const ContactUs = () => {
                     value={formData.subject}
                     onChange={handleChange}
                     required
+                    isInvalid={!!errors.subject}
                   />
+                  <Form.Control.Feedback type="invalid">
+                    {errors.subject}
+                  </Form.Control.Feedback>
                 </Form.Group>
                 
                 <Form.Group className="mb-3" controlId="message">
-                  <Form.Label>Message</Form.Label>
+                  <Form.Label>Message *</Form.Label>
                   <Form.Control 
                     as="textarea" 
                     rows={5}
@@ -168,7 +255,11 @@ const ContactUs = () => {
                     value={formData.message}
                     onChange={handleChange}
                     required
+                    isInvalid={!!errors.message}
                   />
+                  <Form.Control.Feedback type="invalid">
+                    {errors.message}
+                  </Form.Control.Feedback>
                 </Form.Group>
                 
                 <Button variant="primary" type="submit" className="trilok-submit-btn">
