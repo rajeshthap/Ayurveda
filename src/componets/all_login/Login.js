@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Button, Col, Container, Row, Form, Alert, Spinner } from "react-bootstrap";
+import {
+  Button,
+  Col,
+  Container,
+  Row,
+  Form,
+  Alert,
+  Spinner,
+} from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useAuth } from "../context/AuthContext";
@@ -18,19 +26,13 @@ export default function Login() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  // Redirect if already logged in
+  // 🔁 Redirect if logged in
   useEffect(() => {
-    if (isAuthenticated) {
-      navigate("/Dashboard", { replace: true });
-    }
+    if (isAuthenticated) navigate("/Dashboard", { replace: true });
   }, [isAuthenticated, navigate]);
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
+  const handleChange = (e) =>
+    setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -48,9 +50,7 @@ export default function Login() {
         "https://mahadevaaya.com/trilokayurveda/trilokabackend/api/login/",
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(formData),
         }
       );
@@ -58,31 +58,12 @@ export default function Login() {
       const data = await response.json();
 
       if (response.ok) {
-        /*
-          Expected backend response example:
-          {
-            "token": "xxxxx",
-            "user": { ... }
-          }
-        */
-
-        // Save token
-        localStorage.setItem("token", data.token);
-
-        // Update auth context
         login(data);
-
-        // Redirect
         navigate("/Dashboard", { replace: true });
       } else {
-        setError(
-          data.message ||
-            data.error ||
-            "लॉगिन विफल। कृपया सही जानकारी दर्ज करें।"
-        );
+        setError(data.message || "लॉगिन विफल");
       }
-    } catch (err) {
-      console.error("Login Error:", err);
+    } catch {
       setError("सर्वर से कनेक्ट नहीं हो पाया");
     } finally {
       setIsLoading(false);
@@ -90,76 +71,42 @@ export default function Login() {
   };
 
   return (
-    <div className="login-page">
-      <Container>
-        <Row className="justify-content-center align-items-center">
-          <Col md={10} lg={8} xl={6} className="mt-5">
-            <div className="login-container shadow-lg">
-              <Row className="g-0">
-                <Col md={6} className="login-image d-none d-md-block">
-                  <div className="image-overlay">
-                    <h2>स्वागत है</h2>
-                    <p>कृपया अपने खाते में लॉगिन करें</p>
-                  </div>
-                </Col>
+    <Container className="login-page">
+      <Row className="justify-content-center">
+        <Col md={6}>
+          <h3 className="text-center mb-3">Login</h3>
 
-                <Col md={6} className="p-4 p-md-5">
-                  <h3 className="mb-4 text-center">Login</h3>
+          {error && <Alert variant="danger">{error}</Alert>}
 
-                  {error && <Alert variant="danger">{error}</Alert>}
+          <Form onSubmit={handleSubmit}>
+            <Form.Control
+              className="mb-3"
+              name="email_or_phone"
+              placeholder="Email or Phone"
+              onChange={handleChange}
+            />
 
-                  <Form onSubmit={handleSubmit}>
-                    <Form.Group className="mb-3">
-                      <Form.Label>Email or Phone</Form.Label>
-                      <Form.Control
-                        type="text"
-                        name="email_or_phone"
-                        value={formData.email_or_phone}
-                        onChange={handleChange}
-                        placeholder="ईमेल या मोबाइल दर्ज करें"
-                      />
-                    </Form.Group>
-
-                    <Form.Group className="mb-3">
-                      <Form.Label>Password</Form.Label>
-                      <div className="password-input-container">
-                        <Form.Control
-                          type={showPassword ? "text" : "password"}
-                          name="password"
-                          value={formData.password}
-                          onChange={handleChange}
-                          placeholder="पासवर्ड दर्ज करें"
-                        />
-                        <button
-                          type="button"
-                          className="password-toggle"
-                          onClick={() => setShowPassword(!showPassword)}
-                        >
-                          {showPassword ? <FaEyeSlash /> : <FaEye />}
-                        </button>
-                      </div>
-                    </Form.Group>
-
-                    <Button
-                      type="submit"
-                      className="login-btn w-100"
-                      disabled={isLoading}
-                    >
-                      {isLoading ? (
-                        <>
-                          <Spinner size="sm" animation="border" /> लॉगिन हो रहा है...
-                        </>
-                      ) : (
-                        "लॉगिन"
-                      )}
-                    </Button>
-                  </Form>
-                </Col>
-              </Row>
+            <div className="password-input-container mb-3">
+              <Form.Control
+                type={showPassword ? "text" : "password"}
+                name="password"
+                placeholder="Password"
+                onChange={handleChange}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </button>
             </div>
-          </Col>
-        </Row>
-      </Container>
-    </div>
+
+            <Button disabled={isLoading} type="submit" className="w-100">
+              {isLoading ? <Spinner size="sm" /> : "Login"}
+            </Button>
+          </Form>
+        </Col>
+      </Row>
+    </Container>
   );
 }

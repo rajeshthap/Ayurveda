@@ -1,198 +1,369 @@
+/* Login Page Styles */
 .login-page {
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
   min-height: 100vh;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif, 'Noto Sans Devanagari', sans-serif;
-}
-
-.login-container {
-  border-radius: 12px;
-  overflow: hidden;
-  background: white;
-  box-shadow: 0 10px 25px rgba(50, 50, 93, 0.1), 0 5px 15px rgba(0, 0, 0, 0.07);
-  margin: 20px 0;
-}
-
-.login-image {
-  background: url('https://picsum.photos/seed/login/800/1200.jpg') center center/cover;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
   position: relative;
+  overflow: hidden;
 }
 
-.image-overlay {
+/* Animated background particles */
+.login-page::before {
+  content: '';
   position: absolute;
   top: 0;
   left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
+  animation: float 20s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+}
+
+/* Main container */
+.login-page .row {
   width: 100%;
-  height: 100%;
-  background: linear-gradient(135deg, rgba(0, 123, 255, 0.8) 0%, rgba(0, 82, 212, 0.8) 100%);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  color: white;
-  text-align: center;
-  padding: 2rem;
+  max-width: 450px;
 }
 
-.image-overlay h2 {
-  font-weight: 600;
-  margin-bottom: 0.8rem;
-  font-size: 1.5rem;
+.login-page .col-md-6 {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 40px 30px;
+  box-shadow: 
+    0 20px 60px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+  position: relative;
+  z-index: 1;
+  animation: slideUp 0.5s ease-out;
 }
 
-.image-overlay p {
-  font-size: 0.95rem;
-  opacity: 0.9;
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.login-form {
-  padding: 20px 0;
-}
-
-.login-form h3 {
-  font-weight: 600;
+/* Title styling */
+.login-page h3 {
   color: #333;
-  font-size: 1.3rem;
+  font-weight: 700;
+  font-size: 28px;
+  margin-bottom: 30px;
+  position: relative;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
-.form-label {
-  font-weight: 500;
-  color: #555;
-  margin-bottom: 0.4rem;
-  font-size: 0.7rem;
+.login-page h3::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50px;
+  height: 3px;
+  background: linear-gradient(90deg, #667eea, #764ba2);
+  border-radius: 2px;
 }
 
-.form-control {
-  border: 1px solid #e0e0e0;
-  border-radius: 6px;
-  padding: 10px 12px;
+/* Form controls */
+.login-page .form-control {
+  background: #f8f9fa;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  padding: 12px 15px;
+  font-size: 16px;
   transition: all 0.3s ease;
-  font-size: 0.9rem;
+  color: #333;
 }
 
-.form-control:focus {
-  border-color: #007bff;
-  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-}
-.account-not {
-  font-size: 0.75rem;
+.login-page .form-control:focus {
+  background: white;
+  border-color: #667eea;
+  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+  outline: none;
 }
 
-/* Fix for password input container */
+.login-page .form-control::placeholder {
+  color: #999;
+  font-weight: 400;
+}
+
+/* Password input container */
 .password-input-container {
-  position: relative !important;
-  display: flex;
-  align-items: center;
+  position: relative;
 }
 
 .password-input-container .form-control {
-  padding-right: 45px;
-  width: 100%;
+  padding-right: 50px;
 }
 
-/* Updated password toggle button */
-.password-toggle {
+.password-input-container button {
   position: absolute;
   right: 12px;
-  top: 33%;
+  top: 50%;
   transform: translateY(-50%);
   background: none;
   border: none;
-  color: #777;
+  color: #666;
   cursor: pointer;
-  font-size: 1.1rem;
-  z-index: 10;
-  padding: 0px;
+  padding: 5px;
+  transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 35px;
+  height: 35px;
+  border-radius: 8px;
 }
 
-.password-toggle:hover {
-  color: #007bff;
+.password-input-container button:hover {
+  background: rgba(102, 126, 234, 0.1);
+  color: #667eea;
 }
 
-.remember-me {
-  font-size: 0.7rem;
+.password-input-container button svg {
+  font-size: 18px;
 }
 
-.forgot-password-btn {
-  background: none;
+/* Submit button */
+.login-page .btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   border: none;
-  color: #007bff;
-  font-size: 0.7rem;
-  cursor: pointer;
-}
-
-.forgot-password-btn:hover {
-  text-decoration: underline;
-  color: #0056b3;
-}
-
-.login-btn {
-  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
-  border: none;
-  border-radius: 6px;
+  border-radius: 10px;
+  padding: 12px;
+  font-size: 16px;
   font-weight: 600;
+  color: white;
+  cursor: pointer;
   transition: all 0.3s ease;
-  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  position: relative;
+  overflow: hidden;
 }
 
-.login-btn:hover {
-  background: linear-gradient(135deg, #0056b3 0%, #004085 100%);
+.login-page .btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.login-page .btn:hover::before {
+  left: 100%;
+}
+
+.login-page .btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
+  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
 }
 
-.register-link {
-  color: #007bff;
-  font-weight: 500;
-  text-decoration: none;
-  font-size: 0.7rem;
+.login-page .btn:active {
+  transform: translateY(0);
 }
 
-.register-link:hover {
-  text-decoration: underline;
+.login-page .btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
 }
 
-.alert {
-  border-radius: 6px;
-  font-size: 0.85rem;
-  padding: 8px 12px;
+/* Alert styling */
+.login-page .alert {
+  border-radius: 10px;
+  border: none;
+  padding: 12px 15px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  animation: shake 0.5s ease;
 }
 
-/* Responsive adjustments */
-@media (max-width: 767px) {
-  .login-container {
-    margin: 0;
-    border-radius: 0;
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-10px); }
+  75% { transform: translateX(10px); }
+}
+
+.login-page .alert-danger {
+  background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+  color: white;
+}
+
+/* Spinner */
+.login-page .spinner-border {
+  width: 18px;
+  height: 18px;
+  border-width: 2px;
+}
+
+/* Additional decorative elements */
+.login-page .col-md-6::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, #667eea, #764ba2, #667eea);
+  border-radius: 20px;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.login-page .col-md-6:hover::before {
+  opacity: 0.3;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .login-page {
+    padding: 10px;
   }
   
-  .login-form {
-    padding: 2px;
-    border-radius: 6px;
+  .login-page .col-md-6 {
+    padding: 30px 20px;
+    margin: 0 10px;
   }
   
-  .image-overlay h2 {
-    font-size: 1.3rem;
+  .login-page h3 {
+    font-size: 24px;
   }
   
-  .image-overlay p {
-    font-size: 0.85rem;
+  .login-page .form-control {
+    font-size: 16px; /* Prevents zoom on iOS */
   }
 }
 
-/* Animation for form elements */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+@media (max-width: 480px) {
+  .login-page .col-md-6 {
+    padding: 25px 15px;
+    margin: 0 5px;
+  }
+  
+  .login-page h3 {
+    font-size: 22px;
+    margin-bottom: 25px;
+  }
+  
+  .login-page .form-control {
+    padding: 10px 12px;
+  }
+  
+  .password-input-container .form-control {
+    padding-right: 45px;
+  }
+  
+  .password-input-container button {
+    right: 10px;
+    width: 30px;
+    height: 30px;
+  }
+  
+  .password-input-container button svg {
+    font-size: 16px;
+  }
+  
+  .login-page .btn {
+    padding: 10px;
+    font-size: 14px;
+  }
 }
 
-.login-form .form-group,
-.login-form button {
-  animation: fadeIn 0.5s ease forwards;
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .login-page .col-md-6 {
+    background: rgba(30, 30, 30, 0.95);
+    color: #fff;
+  }
+  
+  .login-page h3 {
+    color: #fff;
+  }
+  
+  .login-page .form-control {
+    background: rgba(50, 50, 50, 0.8);
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+  
+  .login-page .form-control::placeholder {
+    color: #aaa;
+  }
+  
+  .login-page .form-control:focus {
+    background: rgba(40, 40, 40, 0.9);
+    border-color: #667eea;
+  }
+  
+  .password-input-container button {
+    color: #aaa;
+  }
+  
+  .password-input-container button:hover {
+    background: rgba(102, 126, 234, 0.2);
+    color: #667eea;
+  }
 }
 
-.login-form .form-group:nth-child(1) { animation-delay: 0.1s; }
-.login-form .form-group:nth-child(2) { animation-delay: 0.2s; }
-.login-form .form-group:nth-child(3) { animation-delay: 0.3s; }
-.login-form button { animation-delay: 0.4s; }
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .login-page {
+    background: #000;
+  }
+  
+  .login-page .col-md-6 {
+    background: white;
+    border: 3px solid #000;
+  }
+  
+  .login-page .form-control {
+    border: 2px solid #000;
+  }
+  
+  .login-page .btn {
+    background: #000;
+    color: white;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .login-page::before,
+  .login-page .col-md-6,
+  .login-page .btn,
+  .login-page .alert {
+    animation: none;
+    transition: none;
+  }
+}
+
+/* Focus visible for accessibility */
+.login-page .form-control:focus-visible,
+.login-page .btn:focus-visible,
+.password-input-container button:focus-visible {
+  outline: 3px solid #667eea;
+  outline-offset: 2px;
+}

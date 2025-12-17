@@ -18,6 +18,7 @@ import {
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useAuth } from "../context/AuthContext";
 
 
 
@@ -65,8 +66,12 @@ function DashBoardHeader({ toggleSidebar, searchTerm, setSearchTerm }) {
     setUnreadCount((prev) => prev - 1);
   };
   // Get user photo URL
+  const { logout } = useAuth();
  
-
+const handleLogout = () => {
+    logout();
+    navigate("/Login", { replace: true });
+  };
   return (
     <header className="dashboard-header">
       <Container fluid>
@@ -134,7 +139,7 @@ function DashBoardHeader({ toggleSidebar, searchTerm, setSearchTerm }) {
                 <Dropdown.Menu>
                   
                   <Dropdown.Item >
-                    <FaSignOutAlt className="me-2" /> Logout
+                    <FaSignOutAlt className="me-2"onClick={handleLogout} /> Logout
                   </Dropdown.Item>
                 </Dropdown.Menu>
               </Dropdown>

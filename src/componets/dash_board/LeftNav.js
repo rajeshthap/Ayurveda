@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Nav, Offcanvas, Collapse } from "react-bootstrap";
 import {
   FaTachometerAlt,

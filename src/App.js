@@ -38,6 +38,8 @@ import Researchers from './componets/pages/Researchers';
 import Blogs from './componets/pages/Blogs';
 import ContactUs from './componets/pages/ContactUs';
 import Login from './componets/all_login/Login';
+import AddAboutUs from './componets/dash_board/about_us/AddAboutUs';
+import ManageAboutUs from './componets/dash_board/about_us/ManageAboutUs';
 
 function App() {
   
@@ -45,11 +47,15 @@ function App() {
 
   const hiddenPaths = new Set([
     "/Dashboard",
+    "/AddAboutUs",
+     "ManageAboutUs"
 
      ]);
 
   const hiddenFooter1 = new Set([
     "/Dashboard",
+    "/AddAboutUs",
+    "/ManageAboutUs"
   ]);
 
     const shouldHideNavbar = hiddenPaths.has(location.pathname);
@@ -86,6 +92,8 @@ function App() {
 <Route path="/Researchers" element={<Researchers/>} />
 <Route path="/Blogs" element={<Blogs/>} />
 <Route path="/ContactUs" element={<ContactUs/>} />
+<Route path="/AddAboutUs" element={<AddAboutUs />} />
+<Route path="/ManageAboutUs" element={<ManageAboutUs />} />
 <Route path="/Login" element={<Login />} />
 
 {/* <Route path="*" element={<NotFound />} />  */}

@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { Container } from "react-bootstrap";
 
-import "../../assets/css/dashboard.css";
-import DashBoardHeader from "./DashBoardHeader";
-import LeftNav  from "./LeftNav";
-import { useAuth } from "../context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import "../../../assets/css/dashboard.css";
 
-const Dashboard = () => {
+
+
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
+import LeftNav from "../LeftNav";
+import DashBoardHeader from "../DashBoardHeader";
+
+const ManageAboutUs = () => {
   const { logout } = useAuth();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -55,4 +58,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default ManageAboutUs;
