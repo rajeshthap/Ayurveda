@@ -12,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useAuth } from "../context/AuthContext";
 import "../../assets/css/login.css";
+import loginimg from '../../assets/images/login-img.png';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -71,42 +72,82 @@ export default function Login() {
   };
 
   return (
-    <Container className="login-page">
-      <Row className="justify-content-center">
-        <Col md={6}>
-          <h3 className="text-center mb-3">Login</h3>
+    <div className="login-box">
 
-          {error && <Alert variant="danger">{error}</Alert>}
+      <Container className="dashboard-body">
+        <div className="ay-box-container">
+          <div className="br-registration-heading">
+            <Form onSubmit={handleSubmit}>
+              <Row className="mt-3">
+                <Col lg={6} md={6} sm={12} className="d-flex justify-content-center align-items-center login-img">
+                  <img src={loginimg} className="img-fluid" alt="Login" />
+                </Col>
+                <Col lg={6} md={6} sm={12} className="p-4">
+                  <div><h1 className="pb-4">Login</h1></div>
 
-          <Form onSubmit={handleSubmit}>
-            <Form.Control
-              className="mb-3"
-              name="email_or_phone"
-              placeholder="Email or Phone"
-              onChange={handleChange}
-            />
+                  {/* Email / Mobile */}
+                  <Form.Group className="mb-3">
+                    <Form.Label className="br-label">
+                      Email or Mobile Number <span className="br-span-star">*</span>
+                    </Form.Label>
+                    <Form.Control
+                      className="mb-3"
+                      name="email_or_phone"
+                      placeholder="Email or Phone"
+                      onChange={handleChange}
+                    />
+                  </Form.Group>
 
-            <div className="password-input-container mb-3">
-              <Form.Control
-                type={showPassword ? "text" : "password"}
-                name="password"
-                placeholder="Password"
-                onChange={handleChange}
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                {showPassword ? <FaEyeSlash /> : <FaEye />}
-              </button>
-            </div>
+                  {/* Password */}
+                  <Form.Group className="mb-3">
+                    <Form.Label className="br-label">
+                      Password <span className="br-span-star">*</span>
+                    </Form.Label>
+                    <div className="password-wrapper" style={{ position: "relative" }}>
+                      <Form.Control
+                        type={showPassword ? "text" : "password"}
+                        name="password"
+                        placeholder="Password"
+                        onChange={handleChange}
+                      />
+                      <span
+                        onClick={() => !isLoading && setShowPassword(!showPassword)}
+                        style={{
+                          position: "absolute",
+                          right: "10px",
+                          top: "50%",
+                          transform: "translateY(-50%)",
+                          cursor: isLoading ? "not-allowed" : "pointer",
+                        }}
+                      >
+                        {showPassword ? <FaEyeSlash /> : <FaEye />}
+                      </span>
+                    </div>
+                  </Form.Group>
 
-            <Button disabled={isLoading} type="submit" className="w-100">
-              {isLoading ? <Spinner size="sm" /> : "Login"}
-            </Button>
-          </Form>
-        </Col>
-      </Row>
-    </Container>
+                  <div>
+                    <span
+                      className="forgot-btn mx-1"
+                      type="button"
+                      onClick={() => navigate("/ForgotPassword")}
+                      disabled={isLoading}
+                    >
+                      Forgot Password ?
+                    </span>
+                  </div>
+
+                  {/* Buttons */}
+                  <div className=" text-center mt-3">
+                    <Button disabled={isLoading} type="submit" className="w-100 trilok-submit-btn">
+                      {isLoading ? <Spinner size="sm" /> : "Login"}
+                    </Button>
+                  </div>
+                </Col>
+              </Row>
+            </Form>
+          </div>
+        </div>
+      </Container>
+    </div>
   );
 }
