@@ -1,82 +1,198 @@
-import React from 'react';
-
-// Import images at the top
-import AboutImg from '../../../assets/images/about-img.png';
+import React, { useState, useEffect } from 'react';
+import { Container, Row, Col, Card } from 'react-bootstrap';
 import BgShape2 from '../../../assets/images/bg-shape2.png';
 import BgLeaf2 from '../../../assets/images/bg-leaf2.png';
-import Inneraboutimg from '../../../assets/images/about-img-inner.png'
 import { Link } from 'react-router-dom';
-import { Row } from 'react-bootstrap';
-
-
+import { FaCheckCircle, FaLeaf, FaHeartbeat, FaUserMd } from 'react-icons/fa';
+import '../../../assets/css/about.css';
 function AboutUs() {
-  return (
+  const [aboutData, setAboutData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
+  // Fetch About Us data from API
+  useEffect(() => {
+    const fetchAboutUsData = async () => {
+      setIsLoading(true);
+      try {
+        const response = await fetch('https://mahadevaaya.com/trilokayurveda/trilokabackend/api/aboutus-item/', {
+          method: 'GET',
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch About Us data');
+        }
+        
+        const result = await response.json();
+        console.log("GET API Response:", result);
+        
+        if (result.success && result.data.length > 0) {
+          setAboutData(result.data[0]);
+        } else {
+          throw new Error('No About Us data found');
+        }
+      } catch (err) {
+        console.error('Error fetching About Us data:', err);
+        setError(err.message || "An error occurred while fetching data");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchAboutUsData();
+  }, []);
+
+  // Function to render modules with icons
+  const renderModules = () => {
+    if (!aboutData || !aboutData.module || aboutData.module.length === 0) {
+      return null;
+    }
+
+    // Define icons for modules
+    const moduleIcons = [
+      <FaLeaf className="module-icon" />,
+      <FaHeartbeat className="module-icon" />,
+      <FaUserMd className="module-icon" />,
+      <FaCheckCircle className="module-icon" />
+    ];
+
+    return (
+      <div className="modules-section mt-4">
+        <h4 className="modules-title">Our Core Values</h4>
+        <Row className="g-4">
+          {aboutData.module.map((module, index) => (
+            <Col md={6} key={index}>
+              <Card className="module-card h-100">
+                <Card.Body className="d-flex align-items-start">
+                  <div className="icon-wrapper me-3">
+                    {moduleIcons[index % moduleIcons.length]}
+                  </div>
+                  <div>
+                    <Card.Title as="h5" className="module-title-text">{module}</Card.Title>
+                  </div>
+                </Card.Body>
+              </Card>
+            </Col>
+          ))}
+        </Row>
+      </div>
+    );
+  };
+
+  return (
     <div className="ayur-bgcover ayur-about-sec">
       <div className='about-bg'>
         <div className='ayur-bread-content'>
           <h2>About Us</h2>
-          <div class="ayur-bread-list">
+          <div className="ayur-bread-list">
             <span>
-              <a href="index.html">Home </a>
+              <Link to="/">Home </Link>
             </span>
-            <span class="ayur-active-page">/ About Us</span>
+            <span className="ayur-active-page">/ About Us</span>
           </div>
         </div>
       </div>
 
-
-
-      <div className="row ">
+      <div className="row">
         <div className="ayur-bgcover ayur-about-sec">
-          <div className="container fluid about-us">
-            <div className="row">
-              <div className="col-lg-6 col-md-12 col-sm-12">
-                <div className="ayur-about-img">
-                  <img
-                    src={Inneraboutimg}
-                    alt="img"
-                    data-tilt=""
-                    data-tilt-max="10"
-                    data-tilt-speed="1000"
-                    data-tilt-perspective="1000"
-                    style={{
-                      willChange: 'transform',
-                      transform:
-                        'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)',
-                    }}
-                  />
-
+          <Container fluid className="about-us">
+            {isLoading ? (
+              <div className="text-center py-5">
+                <div className="spinner-border text-primary" role="status">
+                  <span className="visually-hidden">Loading...</span>
                 </div>
+                <p className="mt-2">Loading About Us content...</p>
               </div>
-              <div className="col-lg-6 col-md-12 col-sm-12">
-                <div className="ayur-heading-wrap ayur-about-head">
-                  <h3>Trilok Ayurveda</h3>
-                  <h4>"Wellness Center and Speciality Clinic for Chronic Disorders"</h4>
-                  <div>
-
-                    <h5 className='pt-3'>Internal Medicine:</h5>
-                    <p>Two decades of rich clinical experience and expertise in treating, Degenerative, Auto-immune, Metabolic and other Chronic Non-Communicable Disorders (CNCD’s) through herbs based internal medicines. The key to holistic treatment is the portfolio of self manufactured 125 (and growing) herbal formulations. The purpose is to provide individualized precision medicine and to maintain the quality.</p>
-                    <h5>Wellness Program:</h5>
-                    <p>From “Illness to Wellness”, “Nirvana” is the core program of Trilok Ayurveda Wellness Center, nestled in the quaint environs of Himalayas settled at the banks of divine Ganga, dedicated to improving total health in terms of mind, body and soul detoxification and rejuvenation. It encompasses Yoga, Pranayam, Meditation, Panchkarma, Ayurvedic Dietetics and life-style related guidelines, Nadi pariksha (pulse assessment) and Ayurvedic Consultations.</p>
-
+            ) : error ? (
+              <div className="alert alert-danger text-center">
+                Error loading content: {error}
+              </div>
+            ) : aboutData ? (
+              <Row className="align-items-center">
+                <Col lg={5} md={12} sm={12}>
+                  <div className="ayur-about-img">
+                    <div className="image-container">
+                      <img
+                        src={`https://mahadevaaya.com/trilokayurveda/trilokabackend${aboutData.image}`}
+                        alt={aboutData.title}
+                        className="img-fluid rounded shadow-lg"
+                        data-tilt=""
+                        data-tilt-max="10"
+                        data-tilt-speed="1000"
+                        data-tilt-perspective="1000"
+                        style={{
+                          willChange: 'transform',
+                          transform:
+                            'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)',
+                        }}
+                      />
+                      <div className="image-overlay"></div>
+                    </div>
                   </div>
-
-                  <Link to="/Thejourney" className="ayur-btn">
-                    Know More
-                  </Link>
-                </div>
+                </Col>
+                <Col lg={7} md={12} sm={12}>
+                  <div className="ayur-heading-wrap ayur-about-head">
+                    <div className="section-header">
+                      <span className="sub-title">Welcome to Trilok Ayurveda</span>
+                      <h3 className="main-title">{aboutData.title}</h3>
+                      <div className="title-divider">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                      </div>
+                    </div>
+                    
+                    <div className="about-content">
+                      <div 
+                        className="about-description"
+                        dangerouslySetInnerHTML={{ 
+                          __html: aboutData.description.replace(/\n/g, '<br />') 
+                        }}
+                      />
+                      
+                      {renderModules()}
+                      
+                      <div className="about-meta mt-4">
+                        <div className="meta-item">
+                          <span className="meta-label">Established:</span>
+                          <span className="meta-value">
+                            {new Date(aboutData.created_at).toLocaleDateString('en-US', { 
+                              year: 'numeric', 
+                              month: 'long' 
+                            })}
+                          </span>
+                        </div>
+                        <div className="meta-item">
+                          <span className="meta-label">Last Updated:</span>
+                          <span className="meta-value">
+                            {new Date(aboutData.updated_at).toLocaleDateString('en-US', { 
+                              year: 'numeric', 
+                              month: 'long', 
+                              day: 'numeric' 
+                            })}
+                          </span>
+                        </div>
+                      </div>
+                      
+                      <Link to="/Thejourney" className="ayur-btn mt-4">
+                        Know More
+                      </Link>
+                    </div>
+                  </div>
+                </Col>
+              </Row>
+            ) : (
+              <div className="alert alert-warning text-center">
+                No content available
               </div>
-            </div>
-          </div>
+            )}
+          </Container>
           <div className="ayur-bgshape ayur-about-bgshape">
             <img src={BgShape2} alt="img" />
             <img src={BgLeaf2} alt="img" />
           </div>
         </div>
       </div>
-
-
     </div>
   );
 }

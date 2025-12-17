@@ -9,7 +9,7 @@ import DashBoardHeader from "../DashBoardHeader";
 import { FaPlus, FaTrash } from "react-icons/fa";
 
 const ManageAboutUs = () => {
-  const { logout, token, refreshAccessToken } = useAuth(); // Get token and refreshAccessToken from auth context
+  const { logout, token, refreshAccessToken } = useAuth();
   const authFetch = useAuthFetch();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -85,6 +85,8 @@ const ManageAboutUs = () => {
       }
       
       const result = await response.json();
+      console.log("GET API Response:", result); // Log the response
+      
       if (result.success && result.data.length > 0) {
         const aboutData = result.data[0]; // Get the first item
         
@@ -190,8 +192,10 @@ const ManageAboutUs = () => {
   };
 
   // Enable editing mode
-  const enableEditing = () => {
+  const enableEditing = (e) => {
+    e.preventDefault(); // Prevent form submission
     setIsEditing(true);
+    setShowAlert(false); // Hide any existing alerts when entering edit mode
   };
 
   // Handle form submission (PUT request)
@@ -209,73 +213,104 @@ const ManageAboutUs = () => {
     setIsSubmitting(true);
     setShowAlert(false);
     
-    // Create a FormData object to send the file
-    const dataToSend = new FormData();
-    dataToSend.append('id', formData.id); // Include the ID for the update
-    dataToSend.append('title', formData.title);
-    dataToSend.append('description', formData.description);
-    
-    // Add image if a new one was selected
-    if (formData.image) {
-      dataToSend.append('image', formData.image, formData.image.name);
-    }
-    
-    // Add modules as JSON string
-    dataToSend.append('module', JSON.stringify(formData.modules));
-    
     try {
-      // Using the provided API endpoint for about us with Bearer token
-      let response = await fetch('https://mahadevaaya.com/trilokayurveda/trilokabackend/api/aboutus-item/', {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-        body: dataToSend,
-        credentials: 'include', // Include credentials for CORS
-      });
+      // Prepare the data for submission
+      const payload = {
+        id: formData.id,
+        title: formData.title,
+        description: formData.description,
+        module: formData.modules
+      };
       
-      // If token expired, refresh and retry
-      if (response.status === 401) {
-        const newToken = await refreshAccessToken();
-        if (!newToken) {
-          throw new Error("Session expired");
+      console.log("Submitting data:", payload); // Log the data being submitted
+      
+      // If we have a new image, we need to handle it differently
+      if (formData.image) {
+        // For file uploads, we need FormData
+        const dataToSend = new FormData();
+        dataToSend.append('id', formData.id);
+        dataToSend.append('title', formData.title);
+        dataToSend.append('description', formData.description);
+        dataToSend.append('image', formData.image, formData.image.name);
+        dataToSend.append('module', JSON.stringify(formData.modules));
+        
+        console.log("FormData content:");
+        for (let pair of dataToSend.entries()) {
+          console.log(pair[0] + ': ' + pair[1]);
         }
         
-        // Retry with new token
-        response = await fetch('https://mahadevaaya.com/trilokayurveda/trilokabackend/api/aboutus-item/', {
+        // Using authFetch for the PUT request with FormData
+        // We need to override the Content-Type header for FormData
+        const response = await authFetch('https://mahadevaaya.com/trilokayurveda/trilokabackend/api/aboutus-item/', {
           method: 'PUT',
-          headers: {
-            'Authorization': `Bearer ${newToken}`,
-          },
           body: dataToSend,
-          credentials: 'include',
+          headers: {
+            // Remove Content-Type to let browser set it automatically for FormData
+            'Content-Type': undefined
+          }
         });
-      }
-      
-      // Handle bad API responses
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ message: 'Server error' }));
-        throw new Error(errorData.message || 'Failed to update about us content');
-      }
-      
-      // SUCCESS PATH
-      const result = await response.json();
-      if (result.success) {
-        setMessage("About Us content updated successfully!");
-        setVariant("success");
-        setShowAlert(true);
-        setIsEditing(false);
         
-        // Update existing image if a new one was uploaded
-        if (formData.image) {
-          setExistingImage(result.data[0].image);
-          setImagePreview(null);
+        console.log("PUT Response status:", response.status);
+        
+        // Handle bad API responses
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.error("Server error response:", errorData);
+          throw new Error(errorData.message || 'Failed to update about us content');
         }
         
-        // Hide success alert after 3 seconds
-        setTimeout(() => setShowAlert(false), 3000);
+        // SUCCESS PATH
+        const result = await response.json();
+        console.log("PUT Success response:", result);
+        
+        if (result.success) {
+          setMessage("About Us content updated successfully!");
+          setVariant("success");
+          setShowAlert(true);
+          setIsEditing(false);
+          
+          // Update existing image if a new one was uploaded
+          if (formData.image) {
+            setExistingImage(result.data[0].image);
+            setImagePreview(null);
+          }
+          
+          // Hide success alert after 3 seconds
+          setTimeout(() => setShowAlert(false), 3000);
+        } else {
+          throw new Error(result.message || 'Failed to update about us content');
+        }
       } else {
-        throw new Error(result.message || 'Failed to update about us content');
+        // For updates without a new image, use JSON
+        const response = await authFetch('https://mahadevaaya.com/trilokayurveda/trilokabackend/api/aboutus-item/', {
+          method: 'PUT',
+          body: JSON.stringify(payload)
+        });
+        
+        console.log("PUT Response status:", response.status);
+        
+        // Handle bad API responses
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.error("Server error response:", errorData);
+          throw new Error(errorData.message || 'Failed to update about us content');
+        }
+        
+        // SUCCESS PATH
+        const result = await response.json();
+        console.log("PUT Success response:", result);
+        
+        if (result.success) {
+          setMessage("About Us content updated successfully!");
+          setVariant("success");
+          setShowAlert(true);
+          setIsEditing(false);
+          
+          // Hide success alert after 3 seconds
+          setTimeout(() => setShowAlert(false), 3000);
+        } else {
+          throw new Error(result.message || 'Failed to update about us content');
+        }
       }
       
     } catch (error) {
@@ -334,129 +369,134 @@ const ManageAboutUs = () => {
               <p className="mt-2">Loading About Us content...</p>
             </div>
           ) : (
-            <Form onSubmit={handleSubmit}>
-              <Form.Group className="mb-3">
-                <Form.Label>Title</Form.Label>
-                <Form.Control
-                  type="text"
-                  placeholder="Enter title"
-                  name="title"
-                  value={formData.title}
-                  onChange={handleChange}
-                  required
-                  disabled={!isEditing}
-                />
-              </Form.Group>
-              
-              <Form.Group className="mb-3">
-                <Form.Label>Description (must be more than 10 words)</Form.Label>
-                <Form.Control
-                  as="textarea"
-                  rows={4}
-                  placeholder="Enter description"
-                  name="description"
-                  value={formData.description}
-                  onChange={handleChange}
-                  required
-                  isInvalid={!!descriptionError}
-                  disabled={!isEditing}
-                />
-                <Form.Control.Feedback type="invalid">
-                  {descriptionError}
-                </Form.Control.Feedback>
-              </Form.Group>
-              
-              <Form.Group className="mb-3">
-                <Form.Label>Image</Form.Label>
-                {isEditing ? (
-                  <>
-                    <Form.Control
-                      type="file"
-                      name="image"
-                      onChange={handleChange}
-                      accept="image/*"
-                    />
-                    {imagePreview ? (
+            <>
+              <Form onSubmit={handleSubmit}>
+                <Form.Group className="mb-3">
+                  <Form.Label>Title</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Enter title"
+                    name="title"
+                    value={formData.title}
+                    onChange={handleChange}
+                    required
+                    disabled={!isEditing}
+                  />
+                </Form.Group>
+                
+                <Form.Group className="mb-3">
+                  <Form.Label>Description (must be more than 10 words)</Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    rows={4}
+                    placeholder="Enter description"
+                    name="description"
+                    value={formData.description}
+                    onChange={handleChange}
+                    required
+                    isInvalid={!!descriptionError}
+                    disabled={!isEditing}
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    {descriptionError}
+                  </Form.Control.Feedback>
+                </Form.Group>
+                
+                <Form.Group className="mb-3">
+                  <Form.Label>Image</Form.Label>
+                  {isEditing ? (
+                    <>
+                      <Form.Control
+                        type="file"
+                        name="image"
+                        onChange={handleChange}
+                        accept="image/*"
+                      />
+                      {imagePreview ? (
+                        <div className="mt-3">
+                          <p>New Image Preview:</p>
+                          <img src={imagePreview} alt="Image Preview" style={{ maxWidth: '200px', maxHeight: '200px' }} />
+                        </div>
+                      ) : existingImage && (
+                        <div className="mt-3">
+                          <p>Current Image:</p>
+                          <img
+                            src={`https://mahadevaaya.com/trilokayurveda/trilokabackend${existingImage}`}
+                            alt="Current About Us"
+                            style={{ maxWidth: '200px', maxHeight: '200px' }}
+                          />
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    existingImage && (
                       <div className="mt-3">
-                        <p>New Image Preview:</p>
-                        <img src={imagePreview} alt="Image Preview" style={{ maxWidth: '200px', maxHeight: '200px' }} />
-                      </div>
-                    ) : existingImage && (
-                      <div className="mt-3">
-                        <p>Current Image:</p>
                         <img
                           src={`https://mahadevaaya.com/trilokayurveda/trilokabackend${existingImage}`}
                           alt="Current About Us"
                           style={{ maxWidth: '200px', maxHeight: '200px' }}
                         />
                       </div>
-                    )}
-                  </>
-                ) : (
-                  existingImage && (
-                    <div className="mt-3">
-                      <img
-                        src={`https://mahadevaaya.com/trilokayurveda/trilokabackend${existingImage}`}
-                        alt="Current About Us"
-                        style={{ maxWidth: '200px', maxHeight: '200px' }}
-                      />
-                    </div>
-                  )
-                )}
-              </Form.Group>
-              
-              {/* Modules Section */}
-              <Form.Group className="mb-3">
-                <Form.Label>Modules</Form.Label>
-                <div className="modules-container">
-                  {formData.modules.map((module, index) => (
-                    <div key={index} className="module-item mb-3 p-3 border rounded">
-                      <div className="d-flex justify-content-between align-items-center mb-2">
-                        <h5>Module {index + 1}</h5>
-                        {isEditing && formData.modules.length > 1 && (
-                          <Button
-                            variant="outline-danger"
-                            size="sm"
-                            onClick={() => removeModule(index)}
-                          >
-                            <FaTrash /> Remove
-                          </Button>
-                        )}
-                      </div>
-                      
-                      <Form.Group className="mb-2">
-                        <Form.Label>Module Content</Form.Label>
-                        <Form.Control
-                          type="text"
-                          placeholder={`Enter module ${index + 1} content`}
-                          value={module}
-                          onChange={(e) => handleModuleChange(index, e.target.value)}
-                          required
-                          disabled={!isEditing}
-                        />
-                      </Form.Group>
-                    </div>
-                  ))}
-                  
-                  {isEditing && (
-                    <Button
-                      variant="outline-primary"
-                      onClick={addModule}
-                      className="mt-2"
-                    >
-                      <FaPlus /> Add Another Module
-                    </Button>
+                    )
                   )}
-                </div>
-              </Form.Group>
+                </Form.Group>
+                
+                {/* Modules Section */}
+                <Form.Group className="mb-3">
+                  <Form.Label>Modules</Form.Label>
+                  <div className="modules-container">
+                    {formData.modules.map((module, index) => (
+                      <div key={index} className="module-item mb-3 p-3 border rounded">
+                        <div className="d-flex justify-content-between align-items-center mb-2">
+                          <h5>Module {index + 1}</h5>
+                          {isEditing && formData.modules.length > 1 && (
+                            <Button
+                              variant="outline-danger"
+                              size="sm"
+                              onClick={() => removeModule(index)}
+                            >
+                              <FaTrash /> Remove
+                            </Button>
+                          )}
+                        </div>
+                        
+                        <Form.Group className="mb-2">
+                          <Form.Label>Module Content</Form.Label>
+                          <Form.Control
+                            type="text"
+                            placeholder={`Enter module ${index + 1} content`}
+                            value={module}
+                            onChange={(e) => handleModuleChange(index, e.target.value)}
+                            required
+                            disabled={!isEditing}
+                          />
+                        </Form.Group>
+                      </div>
+                    ))}
+                    
+                    {isEditing && (
+                      <Button
+                        variant="outline-primary"
+                        onClick={addModule}
+                        className="mt-2"
+                      >
+                        <FaPlus /> Add Another Module
+                      </Button>
+                    )}
+                  </div>
+                </Form.Group>
+                
+                {/* Buttons are now outside the form */}
+              </Form>
               
-              <div className="d-flex gap-2">
+              <div className="d-flex gap-2 mt-3">
                 {isEditing ? (
                   <>
                     <Button
                       variant="primary"
                       type="submit"
                       disabled={isSubmitting}
+                      onClick={handleSubmit}
                     >
                       {isSubmitting ? 'Saving...' : 'Save Changes'}
                     </Button>
@@ -478,7 +518,7 @@ const ManageAboutUs = () => {
                   </Button>
                 )}
               </div>
-            </Form>
+            </>
           )}
         </Container>
       </div>
