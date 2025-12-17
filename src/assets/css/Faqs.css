@@ -17,17 +17,21 @@
 }
 
 .faq-question.active {
-  color: #007bff; /* Blue color like in screenshots */
+  color: #007bff;
+  /* Blue color like in screenshots */
 }
 
 .faq-question h4 {
   margin: 0;
   font-size: 18px;
+  color: #28a745 !important;
+  font-weight: 400 !important;
 }
 
 .faq-icon {
   font-size: 20px;
   font-weight: bold;
+  color: #28a745 !important;
 }
 
 .faq-answer {
