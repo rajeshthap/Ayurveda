@@ -8,7 +8,7 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 60px 20px;
-  background: linear-gradient(135deg, #f5f7fa 0%, #e8f5e9 100%);
+
   border-radius: 12px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
 }
@@ -54,7 +54,8 @@
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
 }
 
-.trilok-contact-info, .trilok-contact-form {
+.trilok-contact-info,
+.trilok-contact-form {
   flex: 1;
   padding: 40px;
 }
@@ -88,7 +89,8 @@
   border-radius: 50%;
 }
 
-.trilok-contact-info h3, .trilok-contact-form h3 {
+.trilok-contact-info h3,
+.trilok-contact-form h3 {
   font-size: 1.8rem;
   margin-bottom: 30px;
   position: relative;
@@ -213,11 +215,11 @@
   .trilok-contact-content {
     flex-direction: column;
   }
-  
+
   .trilok-contact-info {
     padding: 30px;
   }
-  
+
   .trilok-contact-form {
     padding: 30px;
   }
@@ -227,23 +229,25 @@
   .trilok-contact-header h1 {
     font-size: 2.2rem;
   }
-  
+
   .trilok-contact-header h2 {
     font-size: 1.2rem;
   }
-  
-  .trilok-contact-info, .trilok-contact-form {
+
+  .trilok-contact-info,
+  .trilok-contact-form {
     padding: 20px;
   }
-  
-  .trilok-contact-info h3, .trilok-contact-form h3 {
+
+  .trilok-contact-info h3,
+  .trilok-contact-form h3 {
     font-size: 1.5rem;
   }
-  
+
   .trilok-info-item {
     margin-bottom: 20px;
   }
-  
+
   .trilok-info-icon {
     width: 40px;
     height: 40px;
