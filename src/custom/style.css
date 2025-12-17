@@ -88,11 +88,13 @@ a {
   z-index: 2;
 }
 
-.login-btn{
+.login-btn {
   font-size: 12px;
   background-color: var(--gov-bg-green) !important;
   border: none !important;
+  margin-left: 11px;
 }
+
 @media only screen and (max-width: 568px) {
   .br-login {
     margin: var(--gov-space-200) var(--gov-space-0) var(--gov-space-0) var(--gov-space-0) !important;
@@ -104,9 +106,11 @@ a {
   .ayur-achieve-box {
     padding: 0px !important;
   }
-.ayur-navmenu-wrapper{
-text-align: left !important;
-}
+
+  .ayur-navmenu-wrapper {
+    text-align: left !important;
+  }
+
   .ayur-nav-menu {
     top: 0px !important;
 
