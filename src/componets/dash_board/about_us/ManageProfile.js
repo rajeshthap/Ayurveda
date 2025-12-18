@@ -90,7 +90,7 @@ const ManageProfile = () => {
       const result = await response.json();
       console.log("GET All Profiles API Response:", result);
 
-      if (result.success && result.data.length > 0) {
+      if (result.success && result.data && result.data.length > 0) {
         setProfiles(result.data);
       } else {
         throw new Error("No profiles found");
@@ -109,6 +109,7 @@ const ManageProfile = () => {
   const fetchProfileData = async (profileId) => {
     setIsLoading(true);
     try {
+      console.log("Fetching profile with ID:", profileId);
       const response = await fetch(
         `https://mahadevaaya.com/trilokayurveda/trilokabackend/api/profile-items/?id=${profileId}`,
         {
@@ -117,18 +118,31 @@ const ManageProfile = () => {
       );
 
       if (!response.ok) {
-        throw new Error("Failed to fetch Profile data");
+        throw new Error(`Failed to fetch Profile data. Status: ${response.status}`);
       }
 
       const result = await response.json();
       console.log("GET Profile API Response:", result);
 
-      if (result.success && result.data.length > 0) {
-        // Find the profile with matching ID
-        const profileData = result.data.find(profile => profile.id.toString() === profileId.toString());
+      if (result.success) {
+        let profileData;
         
-        if (!profileData) {
-          throw new Error(`Profile with ID ${profileId} not found`);
+        // Check if data is an array (like in the get all response) or a single object
+        if (Array.isArray(result.data)) {
+          // If it's an array, find the profile with matching ID
+          profileData = result.data.find(profile => profile.id.toString() === profileId.toString());
+          if (!profileData) {
+            throw new Error(`Profile with ID ${profileId} not found in response array`);
+          }
+        } else if (result.data && result.data.id) {
+          // If data is a single object, check if it's the one we want
+          if (result.data.id.toString() === profileId.toString()) {
+            profileData = result.data;
+          } else {
+            throw new Error(`Returned profile ID ${result.data.id} does not match requested ID ${profileId}`);
+          }
+        } else {
+          throw new Error("Invalid profile data structure in response");
         }
 
         // Check if modules is an array of objects
@@ -160,11 +174,12 @@ const ManageProfile = () => {
         setExistingImage(profileData.image);
         setSelectedProfileId(profileId);
       } else {
-        throw new Error("No Profile data found");
+        console.error("API Response issue:", result);
+        throw new Error(result.message || "No Profile data found in response");
       }
     } catch (error) {
       console.error("Error fetching Profile data:", error);
-      setMessage(error.message || "An error occurred while fetching data");
+      setMessage(error.message || "An error occurred while fetching profile data");
       setVariant("danger");
       setShowAlert(true);
     } finally {
@@ -174,6 +189,7 @@ const ManageProfile = () => {
 
   // Handle profile card click
   const handleProfileClick = (profileId) => {
+    console.log("Profile card clicked with ID:", profileId);
     fetchProfileData(profileId);
   };
 
@@ -278,7 +294,8 @@ const ManageProfile = () => {
         module: formData.modules,
       };
 
-      console.log("Submitting data:", payload);
+      console.log("Submitting data for profile ID:", formData.id);
+      console.log("Payload:", payload);
 
       // If we have a new image, we need to handle it differently
       if (formData.image) {
@@ -298,6 +315,8 @@ const ManageProfile = () => {
         }
 
         const url = `https://mahadevaaya.com/trilokayurveda/trilokabackend/api/profile-items/?id=${formData.id}`;
+        console.log("PUT URL:", url);
+        
         let response = await fetch(url, {
           method: "PUT",
           body: dataToSend,
@@ -347,18 +366,28 @@ const ManageProfile = () => {
 
           // Update existing image if a new one was uploaded
           if (formData.image) {
-            // Find the updated profile in the response
-            const updatedProfile = result.data.find(profile => profile.id === formData.id);
-            if (updatedProfile && updatedProfile.image) {
-              setExistingImage(updatedProfile.image);
+            // Check if response data is an array or object
+            if (Array.isArray(result.data)) {
+              const updatedProfile = result.data.find(profile => profile.id === formData.id);
+              if (updatedProfile && updatedProfile.image) {
+                setExistingImage(updatedProfile.image);
+              }
+            } else if (result.data && result.data.image) {
+              setExistingImage(result.data.image);
             }
             setImagePreview(null);
             setFormData((prev) => ({ ...prev, image: null }));
           }
 
           // Update the profile in the list
-          if (result.data && result.data.length > 0) {
-            const updatedProfile = result.data.find(profile => profile.id === formData.id);
+          if (result.data) {
+            let updatedProfile;
+            if (Array.isArray(result.data)) {
+              updatedProfile = result.data.find(profile => profile.id === formData.id);
+            } else {
+              updatedProfile = result.data;
+            }
+            
             if (updatedProfile) {
               setProfiles(prevProfiles => 
                 prevProfiles.map(profile => 
@@ -377,6 +406,8 @@ const ManageProfile = () => {
       } else {
         // For updates without a new image, use JSON
         const url = `https://mahadevaaya.com/trilokayurveda/trilokabackend/api/profile-items/?id=${formData.id}`;
+        console.log("PUT URL (JSON):", url);
+        
         const response = await authFetch(url, {
           method: "PUT",
           body: JSON.stringify(payload),
@@ -402,8 +433,14 @@ const ManageProfile = () => {
           setIsEditing(false);
           
           // Update the profile in the list
-          if (result.data && result.data.length > 0) {
-            const updatedProfile = result.data.find(profile => profile.id === formData.id);
+          if (result.data) {
+            let updatedProfile;
+            if (Array.isArray(result.data)) {
+              updatedProfile = result.data.find(profile => profile.id === formData.id);
+            } else {
+              updatedProfile = result.data;
+            }
+            
             if (updatedProfile) {
               setProfiles(prevProfiles => 
                 prevProfiles.map(profile => 
@@ -528,7 +565,7 @@ const ManageProfile = () => {
                                       </div>
                                     </div>
                                     <div className="d-flex justify-content-between align-items-center">
-                                      <Badge bg="primary">ID: {profile.id}</Badge>
+                                     
                                       <Button variant="outline-primary" size="sm">
                                         <FaEdit /> Edit
                                       </Button>
@@ -546,7 +583,7 @@ const ManageProfile = () => {
                   // Profile Edit View
                   <>
                     <div className="d-flex justify-content-between align-items-center mb-4">
-                      <h2 className="mb-0">Editing Profile ID: {selectedProfileId}</h2>
+                      
                       <Button variant="outline-secondary" onClick={backToProfileList}>
                         Back to Profiles
                       </Button>
