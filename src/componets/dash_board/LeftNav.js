@@ -69,7 +69,11 @@ const menuItems = [
       label: "About Us",
  
       submenu: [
-        
+         {
+          label: "Add Profile",
+          path: "/AddProfile",
+          icon: <FaImage />,
+        },
         {
           label: "Add About Us",
           path: "/AddAboutUs",
