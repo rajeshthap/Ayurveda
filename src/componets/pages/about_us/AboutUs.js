@@ -111,7 +111,7 @@ function AboutUs() {
                             <img
                               src={`https://mahadevaaya.com/trilokayurveda/trilokabackend${aboutData.image}`}
                               alt={aboutData.title}
-                              className="img-fluid rounded shadow-lg"
+                              className="img-fluid rounded "
                             />
                           </div>
                         </Col>

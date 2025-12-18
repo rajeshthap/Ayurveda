@@ -170,9 +170,9 @@ const ManageJourney = () => {
         const wordCount = value.trim().split(/\s+/).length;
         if (value.trim() === "") {
           setDescriptionError("Description is required.");
-        } else if (wordCount <= 10) {
+        } else if (wordCount <= 5) {
           setDescriptionError(
-            `Description must be more than 10 words. You have entered ${wordCount} words.`
+            `Description must be more than 05 words. You have entered ${wordCount} words.`
           );
         } else {
           setDescriptionError(""); // Clear error if valid
@@ -462,7 +462,7 @@ const ManageJourney = () => {
 
                   <Form.Group className="mb-3">
                     <Form.Label>
-                      Description (must be more than 10 words)
+                      Description (must be more than 05 words)
                     </Form.Label>
                     <Form.Control
                       as="textarea"
