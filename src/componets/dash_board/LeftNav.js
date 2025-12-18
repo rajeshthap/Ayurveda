@@ -96,7 +96,7 @@ const menuItems = [
       submenu: [
         {
           label: "Add Our Focus",
-          path: "/AddOurFocus",
+          path: "/AddAutoImmune",
           icon: <FaImage />,
         },
          {
