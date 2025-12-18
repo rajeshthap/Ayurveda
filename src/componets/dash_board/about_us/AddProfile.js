@@ -298,21 +298,8 @@ const AddProfile = () => {
             
             <Form onSubmit={handleSubmit}>
               <Row>
-                 <Col md={6}>
-                  <Form.Group className="mb-3">
-                    <Form.Label>Title (Mr./Ms./Dr.)</Form.Label>
-                    <Form.Control
-                      type="text"
-                      placeholder="Enter title"
-                      name="title"
-                      value={formData.title}
-                      onChange={handleChange}
-                      required
-                    />
-                  </Form.Group>
-                </Col>
+               
 
-                
                 <Col md={6}>
                   <Form.Group className="mb-3">
                     <Form.Label>Full Name</Form.Label>
@@ -326,6 +313,21 @@ const AddProfile = () => {
                     />
                   </Form.Group>
                 </Col>
+
+                  <Col md={6}>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Title </Form.Label>
+                    <Form.Control
+                      type="text"
+                      placeholder="Enter title"
+                      name="title"
+                      value={formData.title}
+                      onChange={handleChange}
+                      required
+                    />
+                  </Form.Group>
+                </Col>
+
                 
                
               </Row>
