@@ -3,8 +3,7 @@ import { Container, Row, Col, Card } from 'react-bootstrap';
 import BgShape2 from '../../../assets/images/bg-shape2.png';
 import BgLeaf2 from '../../../assets/images/bg-leaf2.png';
 import { Link } from 'react-router-dom';
-import { FaCheckCircle, FaLeaf, FaHeartbeat, FaUserMd } from 'react-icons/fa';
-import '../../../assets/css/about.css';
+
 
 function AboutUs() {
   const [aboutData, setAboutData] = useState(null);
@@ -43,51 +42,31 @@ function AboutUs() {
     fetchAboutUsData();
   }, []);
 
-  // Function to render modules with icons
+  // Function to render modules in a single column
   const renderModules = () => {
     if (!aboutData || !aboutData.module || aboutData.module.length === 0) {
       return null;
     }
 
-    // Define icons for modules
-    const moduleIcons = [
-      <FaLeaf className="module-icon" />,
-      <FaHeartbeat className="module-icon" />,
-      <FaUserMd className="module-icon" />,
-      <FaCheckCircle className="module-icon" />
-    ];
-
     return (
-      <div className="modules-section mt-4">
-        <h4 className="modules-title">Our Core Values</h4>
-        <Row className="g-4">
-          {aboutData.module.map((module, index) => {
-            // Check if module is an object with content and description properties
-            const isModuleObject = typeof module === 'object' && module !== null;
-            const moduleContent = isModuleObject ? module.content : module;
-            const moduleDescription = isModuleObject ? module.description : '';
-            
-            return (
-              <Col md={6} key={index}>
-                <Card className="module-card h-100">
-                  <Card.Body className="d-flex align-items-start">
-                    <div className="icon-wrapper me-3">
-                      {moduleIcons[index % moduleIcons.length]}
-                    </div>
-                    <div>
-                      <Card.Title as="h5" className="module-title-text">{moduleContent}</Card.Title>
-                      {moduleDescription && (
-                        <Card.Text className="module-description-text">
-                          {moduleDescription}
-                        </Card.Text>
-                      )}
-                    </div>
-                  </Card.Body>
-                </Card>
-              </Col>
-            );
-          })}
-        </Row>
+      <div className="modules-container mt-4">
+        {aboutData.module.map((module, index) => {
+          // Check if module is an object with content and description properties
+          const isModuleObject = typeof module === 'object' && module !== null;
+          const moduleContent = isModuleObject ? module.content : module;
+          const moduleDescription = isModuleObject ? module.description : '';
+          
+          return (
+            <div key={index} className="module-item mb-4 p-3 bg-light rounded">
+              <h5 className="module-title-text">{moduleContent}</h5>
+              {moduleDescription && (
+                <p className="module-description-text mt-2">
+                  {moduleDescription}
+                </p>
+              )}
+            </div>
+          );
+        })}
       </div>
     );
   };
@@ -96,10 +75,10 @@ function AboutUs() {
     <div className="ayur-bgcover ayur-about-sec">
       <div className='about-bg'>
         <div className='ayur-bread-content'>
-          <h2>About Us</h2>
+          <h2 style={{ fontWeight: 'bold' }}>About Us</h2>
           <div className="ayur-bread-list">
             <span>
-              <Link to="/">Home </Link>
+              <a href="index.html">Home </a>
             </span>
             <span className="ayur-active-page">/ About Us</span>
           </div>
@@ -108,98 +87,63 @@ function AboutUs() {
 
       <div className="row">
         <div className="ayur-bgcover ayur-about-sec">
-          <Container fluid className="about-us">
-            {isLoading ? (
-              <div className="text-center py-5">
-                <div className="spinner-border text-primary" role="status">
-                  <span className="visually-hidden">Loading...</span>
+          <div className="container fluid about-us">
+            <div className="row">
+              <div className="col-lg-12 col-md-12 col-sm-12">
+                <div className="ayur-heading-wrap ayur-about-head">
+                  {isLoading ? (
+                    <div className="text-center py-5">
+                      <div className="spinner-border text-primary" role="status">
+                        <span className="visually-hidden">Loading...</span>
+                      </div>
+                      <p className="mt-2">Loading About Us content...</p>
+                    </div>
+                  ) : error ? (
+                    <div className="alert alert-danger text-center">
+                      Error loading content: {error}
+                    </div>
+                  ) : aboutData ? (
+                    <>
+                      {/* Two-column layout for image and content */}
+                      <Row className="mt-4">
+                        <Col lg={4} md={12} sm={12}>
+                          <div className="about-image-container">
+                            <img
+                              src={`https://mahadevaaya.com/trilokayurveda/trilokabackend${aboutData.image}`}
+                              alt={aboutData.title}
+                              className="img-fluid rounded shadow-lg"
+                            />
+                          </div>
+                        </Col>
+                        <Col lg={8} md={12} sm={12} className="d-flex flex-column">
+                          <div className="about-content text-start">
+                            <h4 style={{ fontWeight: 'bold', fontSize: '2rem' }}>{aboutData.title}</h4>
+                            <div 
+                              className="about-description"
+                              style={{ fontSize: '1.2rem' }}
+                              dangerouslySetInnerHTML={{ 
+                                __html: aboutData.description.replace(/\n/g, '<br />') 
+                              }}
+                            />
+                            
+                            {/* Modules section moved here */}
+                            <div className="modules-section">
+                             
+                              {renderModules()}
+                            </div>
+                          </div>
+                        </Col>
+                      </Row>
+                    </>
+                  ) : (
+                    <div className="alert alert-warning text-center">
+                      No content available
+                    </div>
+                  )}
                 </div>
-                <p className="mt-2">Loading About Us content...</p>
               </div>
-            ) : error ? (
-              <div className="alert alert-danger text-center">
-                Error loading content: {error}
-              </div>
-            ) : aboutData ? (
-              <Row className="align-items-center">
-                <Col lg={5} md={12} sm={12}>
-                  <div className="ayur-about-img">
-                    <div className="image-container">
-                      <img
-                        src={`https://mahadevaaya.com/trilokayurveda/trilokabackend${aboutData.image}`}
-                        alt={aboutData.title}
-                        className="img-fluid rounded shadow-lg"
-                        data-tilt=""
-                        data-tilt-max="10"
-                        data-tilt-speed="1000"
-                        data-tilt-perspective="1000"
-                        style={{
-                          willChange: 'transform',
-                          transform:
-                            'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)',
-                        }}
-                      />
-                      <div className="image-overlay"></div>
-                    </div>
-                  </div>
-                </Col>
-                <Col lg={7} md={12} sm={12}>
-                  <div className="ayur-heading-wrap ayur-about-head">
-                    <div className="section-header">
-                      <span className="sub-title">Welcome to Trilok Ayurveda</span>
-                      <h3 className="main-title">{aboutData.title}</h3>
-                      <div className="title-divider">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                      </div>
-                    </div>
-                    
-                    <div className="about-content">
-                      <div 
-                        className="about-description"
-                        dangerouslySetInnerHTML={{ 
-                          __html: aboutData.description.replace(/\n/g, '<br />') 
-                        }}
-                      />
-                      
-                      {renderModules()}
-                      
-                      <div className="about-meta mt-4">
-                        <div className="meta-item">
-                          <span className="meta-label">Established:</span>
-                          <span className="meta-value">
-                            {new Date(aboutData.created_at).toLocaleDateString('en-US', { 
-                              year: 'numeric', 
-                              month: 'long' 
-                            })}
-                          </span>
-                        </div>
-                        <div className="meta-item">
-                          <span className="meta-label">Last Updated:</span>
-                          <span className="meta-value">
-                            {new Date(aboutData.updated_at).toLocaleDateString('en-US', { 
-                              year: 'numeric', 
-                              month: 'long', 
-                              day: 'numeric' 
-                            })}
-                          </span>
-                        </div>
-                      </div>
-                      
-                      <Link to="/Thejourney" className="ayur-btn mt-4">
-                        Know More
-                      </Link>
-                    </div>
-                  </div>
-                </Col>
-              </Row>
-            ) : (
-              <div className="alert alert-warning text-center">
-                No content available
-              </div>
-            )}
-          </Container>
+            </div>
+          </div>
           <div className="ayur-bgshape ayur-about-bgshape">
             <img src={BgShape2} alt="img" />
             <img src={BgLeaf2} alt="img" />
