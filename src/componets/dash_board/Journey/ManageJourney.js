@@ -9,35 +9,35 @@ import DashBoardHeader from "../DashBoardHeader";
 import { FaPlus, FaTrash } from "react-icons/fa";
 
 const ManageJourney = () => {
-  const { logout, token, refreshAccessToken } = useAuth();
+  const { auth, logout, refreshAccessToken } = useAuth();
   const authFetch = useAuthFetch();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
   const [isTablet, setIsTablet] = useState(false);
-  
+
   // Form state for Journey
   const [formData, setFormData] = useState({
     id: null,
     title: "",
     description: "",
     image: null,
-    modules: [""] // Initialize with one empty module
+    modules: [{ content: "", description: "" }], // Initialize with one empty module object
   });
-  
+
   // State for image preview
   const [imagePreview, setImagePreview] = useState(null);
   const [existingImage, setExistingImage] = useState(null);
-  
+
   // State for description validation error
   const [descriptionError, setDescriptionError] = useState("");
-  
+
   // Submission state
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState("");
   const [variant, setVariant] = useState("success"); // 'success' or 'danger'
   const [showAlert, setShowAlert] = useState(false);
-  
+
   // Loading state
   const [isLoading, setIsLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
@@ -76,35 +76,61 @@ const ManageJourney = () => {
     setIsLoading(true);
     try {
       // Simple GET request without credentials
-      const response = await fetch('https://mahadevaaya.com/trilokayurveda/trilokabackend/api/journey-item/', {
-        method: 'GET',
-      });
-      
+      const response = await fetch(
+        "https://mahadevaaya.com/trilokayurveda/trilokabackend/api/journey-item/",
+        {
+          method: "GET",
+        }
+      );
+
       if (!response.ok) {
-        throw new Error('Failed to fetch Journey data');
+        throw new Error("Failed to fetch Journey data");
       }
-      
+
       const result = await response.json();
       console.log("GET API Response:", result); // Log the response
-      
+
       if (result.success && result.data.length > 0) {
         const journeyData = result.data[0]; // Get the first item
-        
+
+        // Normalize modules to objects with content and description
+        let modulesData = [];
+        if (journeyData.module && Array.isArray(journeyData.module)) {
+          if (
+            journeyData.module.length > 0 &&
+            typeof journeyData.module[0] === "object"
+          ) {
+            modulesData = [...journeyData.module];
+          } else if (
+            journeyData.module.length > 0 &&
+            typeof journeyData.module[0] === "string"
+          ) {
+            modulesData = journeyData.module.map((item) => ({
+              content: item,
+              description: "",
+            }));
+          } else {
+            modulesData = [{ content: "", description: "" }];
+          }
+        } else {
+          modulesData = [{ content: "", description: "" }];
+        }
+
         setFormData({
           id: journeyData.id,
           title: journeyData.title,
           description: journeyData.description,
           image: null, // We don't have the actual file, just the URL
-          modules: journeyData.module.length > 0 ? [...journeyData.module] : [""]
+          modules: modulesData,
         });
-        
+
         // Set existing image URL for preview - use the full URL
         setExistingImage(journeyData.image);
       } else {
-        throw new Error('No Journey data found');
+        throw new Error("No Journey data found");
       }
     } catch (error) {
-      console.error('Error fetching Journey data:', error);
+      console.error("Error fetching Journey data:", error);
       setMessage(error.message || "An error occurred while fetching data");
       setVariant("danger");
       setShowAlert(true);
@@ -116,15 +142,15 @@ const ManageJourney = () => {
   // Handle form input changes
   const handleChange = (e) => {
     const { name, value, files } = e.target;
-    
-    if (name === 'image') {
+
+    if (name === "image") {
       // Handle file input for image
       const file = files[0];
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        image: file
+        image: file,
       }));
-      
+
       // Create a preview URL for selected image
       if (file) {
         const previewUrl = URL.createObjectURL(file);
@@ -134,18 +160,20 @@ const ManageJourney = () => {
       }
     } else {
       // Handle text inputs
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        [name]: value
+        [name]: value,
       }));
-      
+
       // Validate description length
-      if (name === 'description') {
+      if (name === "description") {
         const wordCount = value.trim().split(/\s+/).length;
-        if (value.trim() === '') {
+        if (value.trim() === "") {
           setDescriptionError("Description is required.");
         } else if (wordCount <= 10) {
-          setDescriptionError(`Description must be more than 10 words. You have entered ${wordCount} words.`);
+          setDescriptionError(
+            `Description must be more than 10 words. You have entered ${wordCount} words.`
+          );
         } else {
           setDescriptionError(""); // Clear error if valid
         }
@@ -153,32 +181,38 @@ const ManageJourney = () => {
     }
   };
 
-  // Handle module changes
-  const handleModuleChange = (index, value) => {
-    setFormData(prev => {
+  // Handle module changes (module object with content & description)
+  const handleModuleChange = (index, field, value) => {
+    setFormData((prev) => {
       const newModules = [...prev.modules];
-      newModules[index] = value;
-      
+      if (!newModules[index] || typeof newModules[index] !== "object") {
+        newModules[index] = { content: "", description: "" };
+      }
+      newModules[index] = {
+        ...newModules[index],
+        [field]: value,
+      };
+
       return {
         ...prev,
-        modules: newModules
+        modules: newModules,
       };
     });
   };
 
   // Add a new module
   const addModule = () => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      modules: [...prev.modules, ""]
+      modules: [...prev.modules, { content: "", description: "" }],
     }));
   };
 
   // Remove a module
   const removeModule = (index) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      modules: prev.modules.filter((_, i) => i !== index)
+      modules: prev.modules.filter((_, i) => i !== index),
     }));
   };
 
@@ -201,7 +235,7 @@ const ManageJourney = () => {
   // Handle form submission (PUT request)
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     // Check for validation errors before submitting
     if (descriptionError) {
       setMessage("Please fix the validation errors before submitting.");
@@ -209,128 +243,165 @@ const ManageJourney = () => {
       setShowAlert(true);
       return;
     }
-    
+
     setIsSubmitting(true);
     setShowAlert(false);
-    
+
     try {
       // Prepare the data for submission
       const payload = {
         id: formData.id,
         title: formData.title,
         description: formData.description,
-        module: formData.modules
+        module: formData.modules,
       };
-      
+
       console.log("Submitting data:", payload); // Log the data being submitted
-      
+
       // If we have a new image, we need to handle it differently
       if (formData.image) {
         // For file uploads, we need FormData
         const dataToSend = new FormData();
-        dataToSend.append('id', formData.id);
-        dataToSend.append('title', formData.title);
-        dataToSend.append('description', formData.description);
-        dataToSend.append('image', formData.image, formData.image.name);
-        dataToSend.append('module', JSON.stringify(formData.modules));
-        
+        dataToSend.append("id", formData.id);
+        dataToSend.append("title", formData.title);
+        dataToSend.append("description", formData.description);
+        dataToSend.append("image", formData.image, formData.image.name);
+        dataToSend.append("module", JSON.stringify(formData.modules));
+
         console.log("FormData content:");
         for (let pair of dataToSend.entries()) {
-          console.log(pair[0] + ': ' + pair[1]);
+          console.log(pair[0] + ": " + pair[1]);
         }
-        
-        // Using authFetch for the PUT request with FormData
-        // We need to override the Content-Type header for FormData
-        const response = await authFetch('https://mahadevaaya.com/trilokayurveda/trilokabackend/api/journey-item/', {
-          method: 'PUT',
+
+        // Use fetch directly for FormData so the browser sets Content-Type automatically.
+        // Also handle 401 by refreshing the access token and retrying once.
+        const url =
+          "https://mahadevaaya.com/trilokayurveda/trilokabackend/api/journey-item/";
+        let response = await fetch(url, {
+          method: "PUT",
           body: dataToSend,
           headers: {
-            // Remove Content-Type to let browser set it automatically for FormData
-            'Content-Type': undefined
-          }
+            Authorization: `Bearer ${auth?.access}`,
+          },
         });
-        
+
+        // If unauthorized, try refreshing token and retry once
+        if (response.status === 401) {
+          const newAccess = await refreshAccessToken();
+          if (!newAccess) throw new Error("Session expired");
+          response = await fetch(url, {
+            method: "PUT",
+            body: dataToSend,
+            headers: {
+              Authorization: `Bearer ${newAccess}`,
+            },
+          });
+        }
+
         console.log("PUT Response status:", response.status);
-        
+
         // Handle bad API responses
         if (!response.ok) {
-          const errorData = await response.json();
-          console.error("Server error response:", errorData);
-          throw new Error(errorData.message || 'Failed to update journey content');
+          const errorText = await response.text();
+          let errorData = null;
+          try {
+            errorData = JSON.parse(errorText);
+          } catch (e) {
+            /* not JSON */
+          }
+          console.error("Server error response:", errorData || errorText);
+          throw new Error(
+            (errorData && errorData.message) ||
+              "Failed to update journey content"
+          );
         }
-        
+
         // SUCCESS PATH
         const result = await response.json();
         console.log("PUT Success response:", result);
-        
+
         if (result.success) {
           setMessage("Journey content updated successfully!");
           setVariant("success");
           setShowAlert(true);
           setIsEditing(false);
-          
+
           // Update existing image if a new one was uploaded
           if (formData.image) {
-            setExistingImage(result.data[0].image);
+            const updatedImage =
+              result && result.data
+                ? Array.isArray(result.data)
+                  ? result.data[0] && result.data[0].image
+                  : result.data.image
+                : null;
+            if (updatedImage) setExistingImage(updatedImage);
             setImagePreview(null);
+            setFormData((prev) => ({ ...prev, image: null }));
           }
-          
+
           // Hide success alert after 3 seconds
           setTimeout(() => setShowAlert(false), 3000);
         } else {
-          throw new Error(result.message || 'Failed to update journey content');
+          throw new Error(result.message || "Failed to update journey content");
         }
       } else {
         // For updates without a new image, use JSON
-        const response = await authFetch('https://mahadevaaya.com/trilokayurveda/trilokabackend/api/journey-item/', {
-          method: 'PUT',
-          body: JSON.stringify(payload)
-        });
-        
+        const response = await authFetch(
+          "https://mahadevaaya.com/trilokayurveda/trilokabackend/api/journey-item/",
+          {
+            method: "PUT",
+            body: JSON.stringify(payload),
+          }
+        );
+
         console.log("PUT Response status:", response.status);
-        
+
         // Handle bad API responses
         if (!response.ok) {
           const errorData = await response.json();
           console.error("Server error response:", errorData);
-          throw new Error(errorData.message || 'Failed to update journey content');
+          throw new Error(
+            errorData.message || "Failed to update journey content"
+          );
         }
-        
+
         // SUCCESS PATH
         const result = await response.json();
         console.log("PUT Success response:", result);
-        
+
         if (result.success) {
           setMessage("Journey content updated successfully!");
           setVariant("success");
           setShowAlert(true);
           setIsEditing(false);
-          
+
           // Hide success alert after 3 seconds
           setTimeout(() => setShowAlert(false), 3000);
         } else {
-          throw new Error(result.message || 'Failed to update journey content');
+          throw new Error(result.message || "Failed to update journey content");
         }
       }
-      
     } catch (error) {
       // FAILURE PATH
-      console.error('Error updating journey content:', error);
+      console.error("Error updating journey content:", error);
       let errorMessage = "An unexpected error occurred. Please try again.";
-      
-      if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
-        errorMessage = "Network error: Could not connect to the server. Please check the API endpoint.";
+
+      if (
+        error instanceof TypeError &&
+        error.message.includes("Failed to fetch")
+      ) {
+        errorMessage =
+          "Network error: Could not connect to the server. Please check the API endpoint.";
       } else if (error.message) {
         errorMessage = error.message;
       }
-      
+
       setMessage(errorMessage);
       setVariant("danger");
       setShowAlert(true);
-      
+
       // Hide error alert after 5 seconds
       setTimeout(() => setShowAlert(false), 5000);
-      
     } finally {
       setIsSubmitting(false);
     }
@@ -338,191 +409,236 @@ const ManageJourney = () => {
 
   return (
     <>
-    <div className="dashboard-container">
-      {/* Left Sidebar */}
-      <LeftNav
-        sidebarOpen={sidebarOpen}
-        setSidebarOpen={setSidebarOpen}
-        isMobile={isMobile}
-        isTablet={isTablet}
-      />
+      <div className="dashboard-container">
+        {/* Left Sidebar */}
+        <LeftNav
+          sidebarOpen={sidebarOpen}
+          setSidebarOpen={setSidebarOpen}
+          isMobile={isMobile}
+          isTablet={isTablet}
+        />
 
-      {/* Main Content */}
-      <div className="main-content">
-        <DashBoardHeader toggleSidebar={toggleSidebar} />
+        {/* Main Content */}
+        <div className="main-content">
+          <DashBoardHeader toggleSidebar={toggleSidebar} />
 
-        <Container fluid className="dashboard-body dashboard-main-container">
-          <h1 className="page-title">Manage Journey Content</h1>
-          
-          {/* Alert for success/error messages */}
-          {showAlert && (
-            <Alert variant={variant} className="mb-4" onClose={() => setShowAlert(false)} dismissible>
-              {message}
-            </Alert>
-          )}
-          
-          {isLoading ? (
-            <div className="text-center py-5">
-              <div className="spinner-border text-primary" role="status">
-                <span className="visually-hidden">Loading...</span>
+          <Container fluid className="dashboard-body dashboard-main-container">
+            <h1 className="page-title">Manage Journey Content</h1>
+
+            {/* Alert for success/error messages */}
+            {showAlert && (
+              <Alert
+                variant={variant}
+                className="mb-4"
+                onClose={() => setShowAlert(false)}
+                dismissible
+              >
+                {message}
+              </Alert>
+            )}
+
+            {isLoading ? (
+              <div className="text-center py-5">
+                <div className="spinner-border text-primary" role="status">
+                  <span className="visually-hidden">Loading...</span>
+                </div>
+                <p className="mt-2">Loading Journey content...</p>
               </div>
-              <p className="mt-2">Loading Journey content...</p>
-            </div>
-          ) : (
-            <>
-              <Form onSubmit={handleSubmit}>
-                <Form.Group className="mb-3">
-                  <Form.Label>Title</Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder="Enter title"
-                    name="title"
-                    value={formData.title}
-                    onChange={handleChange}
-                    required
-                    disabled={!isEditing}
-                  />
-                </Form.Group>
-                
-                <Form.Group className="mb-3">
-                  <Form.Label>Description (must be more than 10 words)</Form.Label>
-                  <Form.Control
-                    as="textarea"
-                    rows={4}
-                    placeholder="Enter description"
-                    name="description"
-                    value={formData.description}
-                    onChange={handleChange}
-                    required
-                    isInvalid={!!descriptionError}
-                    disabled={!isEditing}
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {descriptionError}
-                  </Form.Control.Feedback>
-                </Form.Group>
-                
-                <Form.Group className="mb-3">
-                  <Form.Label>Image</Form.Label>
-                  {isEditing ? (
-                    <>
-                      <Form.Control
-                        type="file"
-                        name="image"
-                        onChange={handleChange}
-                        accept="image/*"
-                      />
-                      {imagePreview ? (
+            ) : (
+              <>
+                <Form onSubmit={handleSubmit}>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Title</Form.Label>
+                    <Form.Control
+                      type="text"
+                      placeholder="Enter title"
+                      name="title"
+                      value={formData.title}
+                      onChange={handleChange}
+                      required
+                      disabled={!isEditing}
+                    />
+                  </Form.Group>
+
+                  <Form.Group className="mb-3">
+                    <Form.Label>
+                      Description (must be more than 10 words)
+                    </Form.Label>
+                    <Form.Control
+                      as="textarea"
+                      rows={4}
+                      placeholder="Enter description"
+                      name="description"
+                      value={formData.description}
+                      onChange={handleChange}
+                      required
+                      isInvalid={!!descriptionError}
+                      disabled={!isEditing}
+                    />
+                    <Form.Control.Feedback type="invalid">
+                      {descriptionError}
+                    </Form.Control.Feedback>
+                  </Form.Group>
+
+                  <Form.Group className="mb-3">
+                    <Form.Label>Image</Form.Label>
+                    {isEditing ? (
+                      <>
+                        <Form.Control
+                          type="file"
+                          name="image"
+                          onChange={handleChange}
+                          accept="image/*"
+                        />
+                        {imagePreview ? (
+                          <div className="mt-3">
+                            <p>New Image Preview:</p>
+                            <img
+                              src={imagePreview}
+                              alt="Image Preview"
+                              style={{ maxWidth: "200px", maxHeight: "200px" }}
+                            />
+                          </div>
+                        ) : (
+                          existingImage && (
+                            <div className="mt-3">
+                              <p>Current Image:</p>
+                              <img
+                                src={`https://mahadevaaya.com/trilokayurveda/trilokabackend${existingImage}`}
+                                alt="Current Journey"
+                                style={{
+                                  maxWidth: "200px",
+                                  maxHeight: "200px",
+                                }}
+                              />
+                            </div>
+                          )
+                        )}
+                      </>
+                    ) : (
+                      existingImage && (
                         <div className="mt-3">
-                          <p>New Image Preview:</p>
-                          <img src={imagePreview} alt="Image Preview" style={{ maxWidth: '200px', maxHeight: '200px' }} />
-                        </div>
-                      ) : existingImage && (
-                        <div className="mt-3">
-                          <p>Current Image:</p>
                           <img
                             src={`https://mahadevaaya.com/trilokayurveda/trilokabackend${existingImage}`}
                             alt="Current Journey"
-                            style={{ maxWidth: '200px', maxHeight: '200px' }}
+                            style={{ maxWidth: "200px", maxHeight: "200px" }}
                           />
                         </div>
+                      )
+                    )}
+                  </Form.Group>
+
+                  {/* Modules Section */}
+                  <Form.Group className="mb-3">
+                    <Form.Label>Modules</Form.Label>
+                    <div className="modules-container">
+                      {formData.modules.map((module, index) => (
+                        <div
+                          key={index}
+                          className="module-item mb-3 p-3 border rounded"
+                        >
+                          <div className="d-flex justify-content-between align-items-center mb-2">
+                            <h5>Module {index + 1}</h5>
+                            {isEditing && formData.modules.length > 1 && (
+                              <Button
+                                variant="outline-danger"
+                                size="sm"
+                                onClick={() => removeModule(index)}
+                              >
+                                <FaTrash /> Remove
+                              </Button>
+                            )}
+                          </div>
+                          <Form.Group className="mb-2">
+                            <Form.Label>Module Content</Form.Label>
+                            <Form.Control
+                              type="text"
+                              placeholder={`Enter module ${index + 1} title`}
+                              value={(module && module.content) || ""}
+                              onChange={(e) =>
+                                handleModuleChange(
+                                  index,
+                                  "content",
+                                  e.target.value
+                                )
+                              }
+                              required
+                              disabled={!isEditing}
+                            />
+                          </Form.Group>
+
+                          <Form.Group className="mb-2">
+                            <Form.Label>Module Description</Form.Label>
+                            <Form.Control
+                              as="textarea"
+                              rows={3}
+                              placeholder={`Enter module ${
+                                index + 1
+                              } description`}
+                              value={(module && module.description) || ""}
+                              onChange={(e) =>
+                                handleModuleChange(
+                                  index,
+                                  "description",
+                                  e.target.value
+                                )
+                              }
+                              required
+                              disabled={!isEditing}
+                            />
+                          </Form.Group>
+                        </div>
+                      ))}
+
+                      {isEditing && (
+                        <Button
+                          variant="outline-primary"
+                          onClick={addModule}
+                          className="mt-2"
+                        >
+                          <FaPlus /> Add Another Module
+                        </Button>
                       )}
+                    </div>
+                  </Form.Group>
+
+                  {/* Buttons are now outside the form */}
+                </Form>
+
+                <div className="d-flex gap-2 mt-3">
+                  {isEditing ? (
+                    <>
+                      <Button
+                        variant="primary"
+                        type="submit"
+                        disabled={isSubmitting}
+                        onClick={handleSubmit}
+                      >
+                        {isSubmitting ? "Saving..." : "Save Changes"}
+                      </Button>
+                      <Button
+                        variant="secondary"
+                        onClick={resetForm}
+                        type="button"
+                      >
+                        Cancel
+                      </Button>
                     </>
                   ) : (
-                    existingImage && (
-                      <div className="mt-3">
-                        <img
-                          src={`https://mahadevaaya.com/trilokayurveda/trilokabackend${existingImage}`}
-                          alt="Current Journey"
-                          style={{ maxWidth: '200px', maxHeight: '200px' }}
-                        />
-                      </div>
-                    )
-                  )}
-                </Form.Group>
-                
-                {/* Modules Section */}
-                <Form.Group className="mb-3">
-                  <Form.Label>Modules</Form.Label>
-                  <div className="modules-container">
-                    {formData.modules.map((module, index) => (
-                      <div key={index} className="module-item mb-3 p-3 border rounded">
-                        <div className="d-flex justify-content-between align-items-center mb-2">
-                          <h5>Module {index + 1}</h5>
-                          {isEditing && formData.modules.length > 1 && (
-                            <Button
-                              variant="outline-danger"
-                              size="sm"
-                              onClick={() => removeModule(index)}
-                            >
-                              <FaTrash /> Remove
-                            </Button>
-                          )}
-                        </div>
-                        
-                        <Form.Group className="mb-2">
-                          <Form.Label>Module Content</Form.Label>
-                          <Form.Control
-                            type="text"
-                            placeholder={`Enter module ${index + 1} content`}
-                            value={module}
-                            onChange={(e) => handleModuleChange(index, e.target.value)}
-                            required
-                            disabled={!isEditing}
-                          />
-                        </Form.Group>
-                      </div>
-                    ))}
-                    
-                    {isEditing && (
-                      <Button
-                        variant="outline-primary"
-                        onClick={addModule}
-                        className="mt-2"
-                      >
-                        <FaPlus /> Add Another Module
-                      </Button>
-                    )}
-                  </div>
-                </Form.Group>
-                
-                {/* Buttons are now outside the form */}
-              </Form>
-              
-              <div className="d-flex gap-2 mt-3">
-                {isEditing ? (
-                  <>
                     <Button
                       variant="primary"
-                      type="submit"
-                      disabled={isSubmitting}
-                      onClick={handleSubmit}
-                    >
-                      {isSubmitting ? 'Saving...' : 'Save Changes'}
-                    </Button>
-                    <Button
-                      variant="secondary"
-                      onClick={resetForm}
+                      onClick={enableEditing}
                       type="button"
                     >
-                      Cancel
+                      Edit Journey
                     </Button>
-                  </>
-                ) : (
-                  <Button
-                    variant="primary"
-                    onClick={enableEditing}
-                    type="button"
-                  >
-                    Edit Journey
-                  </Button>
-                )}
-              </div>
-            </>
-          )}
-        </Container>
+                  )}
+                </div>
+              </>
+            )}
+          </Container>
+        </div>
       </div>
-    </div>
     </>
   );
 };

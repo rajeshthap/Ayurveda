@@ -42,6 +42,7 @@ import AddAboutUs from './componets/dash_board/about_us/AddAboutUs';
 import ManageAboutUs from './componets/dash_board/about_us/ManageAboutUs';
 import AddJourney from './componets/dash_board/Journey/AddJourney';
 import ManageJourney from './componets/dash_board/Journey/ManageJourney';
+import AddProfbhavnasingh from './componets/dash_board/about_us/AddProfbhavnasingh';
 
 function App() {
   
@@ -53,6 +54,7 @@ function App() {
      "/ManageAboutUs",
       "/AddJourney",
       "/ManageJourney",
+      "/AddProfbhavnasingh"
 
      ]);
 
@@ -62,6 +64,7 @@ function App() {
     "/ManageAboutUs",
     "/AddJourney",
     "/ManageJourney",
+    "/AddProfbhavnasingh"
 
   ]);
 
@@ -104,6 +107,7 @@ function App() {
 <Route path="/AddJourney" element={<AddJourney/>} />
 <Route path="/ManageJourney" element={<ManageJourney />} />
 <Route path="/Login" element={<Login />} />
+<Route path="/AddProfbhavnasingh" element={<AddProfbhavnasingh />} />
 
 {/* <Route path="*" element={<NotFound />} />  */}
 </Routes>

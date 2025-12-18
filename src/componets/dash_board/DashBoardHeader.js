@@ -89,7 +89,6 @@ const handleLogout = () => {
           <Col>
           
           </Col>
-
           <Col xs="auto">
             <div className="header-actions">
               <Dropdown align="end">
@@ -135,9 +134,7 @@ const handleLogout = () => {
                   /> */}
                   <span className="user-name d-none d-md-inline">Admin</span>
                 </Dropdown.Toggle>
-
                 <Dropdown.Menu>
-                  
                   <Dropdown.Item onClick={handleLogout}>
                     <FaSignOutAlt className="me-2" /> Logout
                   </Dropdown.Item>

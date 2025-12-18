@@ -4,14 +4,9 @@ import React from "react";
 
 import BgShape2 from "../../../assets/images/bg-shape2.png";
 import BgLeaf2 from "../../../assets/images/bg-leaf2.png";
-import { FaAward } from "react-icons/fa";
 import { Link } from "react-router-dom";
-
 import team3 from '../../../assets/images/team-3.png'
-
 import { Row } from "react-bootstrap";
-
-
 
 function Profbhavnasingh() {
   return (

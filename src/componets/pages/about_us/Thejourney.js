@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Card } from 'react-bootstrap';
-import BgShape2 from '../../../assets/images/bg-shape2.png';
-import BgLeaf2 from '../../../assets/images/bg-leaf2.png';
-import TheJourneyimg from '../../../assets/images/The-Journey.png';
-import { Link } from 'react-router-dom';
-import { FaCheckCircle, FaLeaf, FaHeartbeat, FaUserMd } from 'react-icons/fa';
-import '../../../assets/css/about.css';
+import React, { useState, useEffect } from "react";
+import { Container, Row, Col, Card } from "react-bootstrap";
+import BgShape2 from "../../../assets/images/bg-shape2.png";
+import BgLeaf2 from "../../../assets/images/bg-leaf2.png";
+import TheJourneyimg from "../../../assets/images/The-Journey.png";
+import { Link } from "react-router-dom";
+import { FaCheckCircle, FaLeaf, FaHeartbeat, FaUserMd } from "react-icons/fa";
+import "../../../assets/css/about.css";
 
 function Thejourney() {
   const [journeyData, setJourneyData] = useState(null);
@@ -17,24 +17,27 @@ function Thejourney() {
     const fetchJourneyData = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch('https://mahadevaaya.com/trilokayurveda/trilokabackend/api/journey-item/', {
-          method: 'GET',
-        });
-        
+        const response = await fetch(
+          "https://mahadevaaya.com/trilokayurveda/trilokabackend/api/journey-item/",
+          {
+            method: "GET",
+          }
+        );
+
         if (!response.ok) {
-          throw new Error('Failed to fetch Journey data');
+          throw new Error("Failed to fetch Journey data");
         }
-        
+
         const result = await response.json();
         console.log("GET API Response:", result);
-        
+
         if (result.success && result.data.length > 0) {
           setJourneyData(result.data[0]);
         } else {
-          throw new Error('No Journey data found');
+          throw new Error("No Journey data found");
         }
       } catch (err) {
-        console.error('Error fetching Journey data:', err);
+        console.error("Error fetching Journey data:", err);
         setError(err.message || "An error occurred while fetching data");
       } finally {
         setIsLoading(false);
@@ -46,7 +49,11 @@ function Thejourney() {
 
   // Function to render modules with icons
   const renderModules = () => {
-    if (!journeyData || !journeyData.module || journeyData.module.length === 0) {
+    if (
+      !journeyData ||
+      !journeyData.module ||
+      journeyData.module.length === 0
+    ) {
       return null;
     }
 
@@ -55,7 +62,7 @@ function Thejourney() {
       <FaLeaf className="module-icon" />,
       <FaHeartbeat className="module-icon" />,
       <FaUserMd className="module-icon" />,
-      <FaCheckCircle className="module-icon" />
+      <FaCheckCircle className="module-icon" />,
     ];
 
     return (
@@ -70,7 +77,18 @@ function Thejourney() {
                     {moduleIcons[index % moduleIcons.length]}
                   </div>
                   <div>
-                    <Card.Title as="h5" className="module-title-text">{module}</Card.Title>
+                    <Card.Title as="h5" className="module-title-text">
+                      {typeof module === "object" && module !== null
+                        ? module.content
+                        : module}
+                    </Card.Title>
+                    {typeof module === "object" &&
+                      module !== null &&
+                      module.description && (
+                        <Card.Text className="module-desc-text">
+                          {module.description}
+                        </Card.Text>
+                      )}
                   </div>
                 </Card.Body>
               </Card>
@@ -83,8 +101,8 @@ function Thejourney() {
 
   return (
     <div className="ayur-bgcover ayur-about-sec">
-      <div className='The-Journey-bg'>
-        <div className='ayur-bread-content'>
+      <div className="The-Journey-bg">
+        <div className="ayur-bread-content">
           <h2>The Journey</h2>
           <div className="ayur-bread-list">
             <span>
@@ -115,9 +133,11 @@ function Thejourney() {
                   <div className="ayur-about-img">
                     <div className="image-container">
                       <img
-                        src={journeyData.image 
-                          ? `https://mahadevaaya.com/trilokayurveda/trilokabackend${journeyData.image}` 
-                          : TheJourneyimg}
+                        src={
+                          journeyData.image
+                            ? `https://mahadevaaya.com/trilokayurveda/trilokabackend${journeyData.image}`
+                            : TheJourneyimg
+                        }
                         alt={journeyData.title}
                         className="img-fluid rounded shadow-lg"
                         data-tilt=""
@@ -125,9 +145,9 @@ function Thejourney() {
                         data-tilt-speed="1000"
                         data-tilt-perspective="1000"
                         style={{
-                          willChange: 'transform',
+                          willChange: "transform",
                           transform:
-                            'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)',
+                            "perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)",
                         }}
                       />
                       <div className="image-overlay"></div>
@@ -145,39 +165,46 @@ function Thejourney() {
                         <span></span>
                       </div>
                     </div>
-                    
+
                     <div className="about-content">
-                      <div 
+                      <div
                         className="about-description"
-                        dangerouslySetInnerHTML={{ 
-                          __html: journeyData.description.replace(/\n/g, '<br />') 
+                        dangerouslySetInnerHTML={{
+                          __html: journeyData.description.replace(
+                            /\n/g,
+                            "<br />"
+                          ),
                         }}
                       />
-                      
+
                       {renderModules()}
-                      
+
                       <div className="about-meta mt-4">
                         <div className="meta-item">
                           <span className="meta-label">Established:</span>
                           <span className="meta-value">
-                            {new Date(journeyData.created_at).toLocaleDateString('en-US', { 
-                              year: 'numeric', 
-                              month: 'long' 
+                            {new Date(
+                              journeyData.created_at
+                            ).toLocaleDateString("en-US", {
+                              year: "numeric",
+                              month: "long",
                             })}
                           </span>
                         </div>
                         <div className="meta-item">
                           <span className="meta-label">Last Updated:</span>
                           <span className="meta-value">
-                            {new Date(journeyData.updated_at).toLocaleDateString('en-US', { 
-                              year: 'numeric', 
-                              month: 'long', 
-                              day: 'numeric' 
+                            {new Date(
+                              journeyData.updated_at
+                            ).toLocaleDateString("en-US", {
+                              year: "numeric",
+                              month: "long",
+                              day: "numeric",
                             })}
                           </span>
                         </div>
                       </div>
-                      
+
                       <Link to="#" className="ayur-btn mt-4">
                         Know More
                       </Link>
