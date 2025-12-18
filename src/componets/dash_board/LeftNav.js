@@ -6,7 +6,7 @@ import {
   FaChevronDown,
   FaChevronRight,
   FaImages,
-  FaInfoCircle,
+  
   FaUsers,
   FaBook,
   FaBuilding,
@@ -16,10 +16,20 @@ import {
   FaCube,
   FaProjectDiagram,
   FaServer,
+  FaUserCircle,
 } from "react-icons/fa";
 import axios from "axios";
 import "../../assets/css/dashboard.css";
 import { Link } from "react-router-dom";
+import {
+  FaInfoCircle,
+ 
+  FaEdit,
+  FaListUl,
+  FaBullseye,
+  FaPlusSquare,
+  FaTasks
+} from "react-icons/fa";
 
 // import BRLogo from "../../assets/images/brainrock_logo.png";
 
@@ -64,51 +74,44 @@ const menuItems = [
         },
       ],
     },
+   {
+  icon: <FaInfoCircle />,   // About Us main
+  label: "About Us",
+  submenu: [
     {
-      icon: <FaImages />,
-      label: "About Us",
- 
-      submenu: [
-         {
-          label: "Add Profile",
-          path: "/AddProfile",
-          icon: <FaImage />,
-        },
-        {
-          label: "Add About Us",
-          path: "/AddAboutUs",
-          icon: <FaImage />,
-        },
-         {
-          label: "Manage About Us",
-          path: "/ManageAboutUs",
-          icon: <FaImage />,
-        },
+      label: "Add Profile",
+      path: "/AddProfile",
+      icon: <FaUserCircle />, // profile
+    },
+    {
+      label: "Add About Us",
+      path: "/AddAboutUs",
+      icon: <FaEdit />, // add/edit content
+    },
+    {
+      label: "Manage About Us",
+      path: "/ManageAboutUs",
+      icon: <FaListUl />, // manage/list
+    },
+  ],
+},
+{
+  icon: <FaBullseye />, // Our Focus main
+  label: "Our Focus",
+  submenu: [
+    {
+      label: "Add Our Focus",
+      path: "/AddAutoImmune",
+      icon: <FaPlusSquare />, // add focus
+    },
+    {
+      label: "Manage Our Focus",
+      path: "/ManageOurFocus",
+      icon: <FaTasks />, // manage focus
+    },
+  ],
+},
 
-        
-        
-       
-      ],
-    },
-    {
-      icon: <FaImages />,
-      label: "Our Focus",
-      submenu: [
-        {
-          label: "Add Our Focus",
-          path: "/AddAutoImmune",
-          icon: <FaImage />,
-        },
-         {
-          label: "Manage Our Focus",
-          path: "/ManageOurFocus",
-          icon: <FaImage />,
-        },
-        
-        
-       
-      ],
-    },
   
   {
       icon: <FaImages />,

@@ -123,7 +123,7 @@
 }
 
 .submenu-container {
-    background: #3e9c64;
+    background: #097743;
     padding-left: 2rem;
     line-height: 16px;
 }
@@ -144,8 +144,8 @@
 }
 
 .submenu-item:hover {
-    color: white;
-    background: rgba(255, 255, 255, 0.05);
+    color: #fff;
+    background: rgb(25 146 89);
 }
 
 .sidebar-footer {
