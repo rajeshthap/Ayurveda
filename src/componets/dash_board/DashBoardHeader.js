@@ -138,8 +138,8 @@ const handleLogout = () => {
 
                 <Dropdown.Menu>
                   
-                  <Dropdown.Item >
-                    <FaSignOutAlt className="me-2"onClick={handleLogout} /> Logout
+                  <Dropdown.Item onClick={handleLogout}>
+                    <FaSignOutAlt className="me-2" /> Logout
                   </Dropdown.Item>
                 </Dropdown.Menu>
               </Dropdown>
