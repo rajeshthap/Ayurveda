@@ -45,6 +45,7 @@ import ManageJourney from './componets/dash_board/Journey/ManageJourney';
 import AddProfbhavnasingh from './componets/dash_board/about_us/AddProfbhavnasingh';
 import AddProfile from './componets/dash_board/about_us/AddProfile';
 import AddAutoImmune from './componets/dash_board/our_focus_dashboard/AddAutoImmune';
+import ManageProfile from './componets/dash_board/about_us/ManageProfile';
 
 
 function App() {
@@ -59,6 +60,7 @@ function App() {
       "/ManageJourney",
       "/AddProfbhavnasingh",
       "/AddProfile",
+      "/ManageProfile",
       "/AddAutoImmune"
 
      ]);
@@ -71,6 +73,7 @@ function App() {
     "/ManageJourney",
     "/AddProfbhavnasingh",
     "/AddProfile" ,
+    "/ManageProfile",
     "/AddAutoImmune"
 
   ]);
@@ -111,6 +114,7 @@ function App() {
 <Route path="/ContactUs" element={<ContactUs/>} />
 <Route path="/AddAboutUs" element={<AddAboutUs />} />
 <Route path="/AddProfile" element={<AddProfile />} />
+<Route path="/ManageProfile" element={<ManageProfile />} />
 <Route path="/ManageAboutUs" element={<ManageAboutUs />} />
 <Route path="/AddJourney" element={<AddJourney/>} />
 <Route path="/ManageJourney" element={<ManageJourney />} />

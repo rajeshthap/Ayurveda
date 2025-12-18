@@ -83,6 +83,11 @@ const menuItems = [
       path: "/AddProfile",
       icon: <FaUserCircle />, // profile
     },
+     {
+          label: "Manage Profile",
+          path: "/ManageProfile",
+          icon: <FaImage />,
+        },
     {
       label: "Add About Us",
       path: "/AddAboutUs",
