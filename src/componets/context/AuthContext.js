@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+// AuthContext.js
+import React, { createContext, useContext, useState } from "react";
 
 const AuthContext = createContext(null);
 
@@ -13,37 +14,31 @@ export const AuthProvider = ({ children }) => {
   });
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
-  // 🔁 Load tokens on page refresh
-  useEffect(() => {
-    const access = localStorage.getItem("access");
-    const refresh = localStorage.getItem("refresh");
-    const role = localStorage.getItem("role");
-    const unique_id = localStorage.getItem("unique_id");
-
-    if (access && refresh) {
-      setAuth({ access, refresh, role, unique_id });
-      setIsAuthenticated(true);
-    }
-
-    setIsLoading(false);
-  }, []);
-
-  //  LOGIN
+  // LOGIN
   const login = (data) => {
-    localStorage.setItem("access", data.access);
-    localStorage.setItem("refresh", data.refresh);
-    localStorage.setItem("role", data.role);
-    localStorage.setItem("unique_id", data.unique_id);
-
-    setAuth(data);
+    console.log("Login function called with data:", data); // Debug log
+    
+    // Handle different API response formats
+    const authData = {
+      access: data.access || data.token || data.accessToken,
+      refresh: data.refresh || data.refreshToken,
+      role: data.role || data.userRole,
+      unique_id: data.unique_id || data.user_id || data.id || data.userId || data.pk,
+    };
+    
+    console.log("Processed auth data:", authData); // Debug log
+    
+    setAuth(authData);
     setIsAuthenticated(true);
+    
+    // Store in localStorage for persistence
+    localStorage.setItem('auth', JSON.stringify(authData));
   };
 
-  // 🚪 LOGOUT
+  // LOGOUT
   const logout = () => {
-    localStorage.clear();
     setAuth({
       access: null,
       refresh: null,
@@ -51,27 +46,54 @@ export const AuthProvider = ({ children }) => {
       unique_id: null,
     });
     setIsAuthenticated(false);
+    
+    // Clear localStorage
+    localStorage.removeItem('auth');
   };
 
-  // 🔄 REFRESH ACCESS TOKEN
+  // Initialize auth state from localStorage on app load
+  React.useEffect(() => {
+    const storedAuth = localStorage.getItem('auth');
+    if (storedAuth) {
+      try {
+        const parsedAuth = JSON.parse(storedAuth);
+        setAuth(parsedAuth);
+        setIsAuthenticated(true);
+      } catch (error) {
+        console.error("Error parsing stored auth data:", error);
+        localStorage.removeItem('auth');
+      }
+    }
+  }, []);
+
+  // REFRESH ACCESS TOKEN (uses in-memory refresh token)
   const refreshAccessToken = async () => {
     try {
-      const refresh = localStorage.getItem("refresh");
+      if (!auth.refresh) {
+        logout();
+        return null;
+      }
 
       const response = await fetch(
         "https://mahadevaaya.com/trilokayurveda/trilokabackend/api/refresh-token/",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ refresh }),
+          body: JSON.stringify({ refresh: auth.refresh }),
         }
       );
 
       const data = await response.json();
 
-      if (response.ok) {
-        localStorage.setItem("access", data.access);
-        setAuth((prev) => ({ ...prev, access: data.access }));
+      if (response.ok && data.access) {
+        const updatedAuth = {
+          ...auth,
+          access: data.access,
+        };
+        
+        setAuth(updatedAuth);
+        localStorage.setItem('auth', JSON.stringify(updatedAuth));
+        
         return data.access;
       } else {
         logout();
@@ -92,6 +114,11 @@ export const AuthProvider = ({ children }) => {
         login,
         logout,
         refreshAccessToken,
+        // Expose auth properties directly for convenience
+        token: auth.access,
+        refreshToken: auth.refresh,
+        role: auth.role,
+        unique_id: auth.unique_id,
       }}
     >
       {children}

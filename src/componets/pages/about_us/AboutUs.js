@@ -5,6 +5,7 @@ import BgLeaf2 from '../../../assets/images/bg-leaf2.png';
 import { Link } from 'react-router-dom';
 import { FaCheckCircle, FaLeaf, FaHeartbeat, FaUserMd } from 'react-icons/fa';
 import '../../../assets/css/about.css';
+
 function AboutUs() {
   const [aboutData, setAboutData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -60,20 +61,32 @@ function AboutUs() {
       <div className="modules-section mt-4">
         <h4 className="modules-title">Our Core Values</h4>
         <Row className="g-4">
-          {aboutData.module.map((module, index) => (
-            <Col md={6} key={index}>
-              <Card className="module-card h-100">
-                <Card.Body className="d-flex align-items-start">
-                  <div className="icon-wrapper me-3">
-                    {moduleIcons[index % moduleIcons.length]}
-                  </div>
-                  <div>
-                    <Card.Title as="h5" className="module-title-text">{module}</Card.Title>
-                  </div>
-                </Card.Body>
-              </Card>
-            </Col>
-          ))}
+          {aboutData.module.map((module, index) => {
+            // Check if module is an object with content and description properties
+            const isModuleObject = typeof module === 'object' && module !== null;
+            const moduleContent = isModuleObject ? module.content : module;
+            const moduleDescription = isModuleObject ? module.description : '';
+            
+            return (
+              <Col md={6} key={index}>
+                <Card className="module-card h-100">
+                  <Card.Body className="d-flex align-items-start">
+                    <div className="icon-wrapper me-3">
+                      {moduleIcons[index % moduleIcons.length]}
+                    </div>
+                    <div>
+                      <Card.Title as="h5" className="module-title-text">{moduleContent}</Card.Title>
+                      {moduleDescription && (
+                        <Card.Text className="module-description-text">
+                          {moduleDescription}
+                        </Card.Text>
+                      )}
+                    </div>
+                  </Card.Body>
+                </Card>
+              </Col>
+            );
+          })}
         </Row>
       </div>
     );

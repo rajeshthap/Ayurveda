@@ -9,7 +9,10 @@ import DashBoardHeader from "../DashBoardHeader";
 import { FaPlus, FaTrash } from "react-icons/fa";
 
 const ManageAboutUs = () => {
-  const { logout, token, refreshAccessToken } = useAuth();
+const { auth, logout, refreshAccessToken } = useAuth();
+const admin_id = auth?.unique_id;
+
+  console.log("Admin ID:", admin_id);
   const authFetch = useAuthFetch();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -22,7 +25,7 @@ const ManageAboutUs = () => {
     title: "",
     description: "",
     image: null,
-    modules: [""] // Initialize with one empty module
+    modules: [{ content: "", description: "" }] // Initialize with one empty module object
   });
   
   // State for image preview
@@ -90,12 +93,27 @@ const ManageAboutUs = () => {
       if (result.success && result.data.length > 0) {
         const aboutData = result.data[0]; // Get the first item
         
+        // Check if modules is an array of objects or strings
+        let modulesData = [];
+        if (aboutData.module && Array.isArray(aboutData.module)) {
+          if (aboutData.module.length > 0 && typeof aboutData.module[0] === 'object') {
+            modulesData = [...aboutData.module];
+          } else if (aboutData.module.length > 0 && typeof aboutData.module[0] === 'string') {
+            // Convert strings to objects
+            modulesData = aboutData.module.map(item => ({ content: item, description: "" }));
+          } else {
+            modulesData = [{ content: "", description: "" }];
+          }
+        } else {
+          modulesData = [{ content: "", description: "" }];
+        }
+        
         setFormData({
           id: aboutData.id,
           title: aboutData.title,
           description: aboutData.description,
           image: null, // We don't have the actual file, just the URL
-          modules: aboutData.module.length > 0 ? [...aboutData.module] : [""]
+          modules: modulesData
         });
         
         // Set existing image URL for preview - use the full URL
@@ -154,10 +172,18 @@ const ManageAboutUs = () => {
   };
 
   // Handle module changes
-  const handleModuleChange = (index, value) => {
+  const handleModuleChange = (index, field, value) => {
     setFormData(prev => {
       const newModules = [...prev.modules];
-      newModules[index] = value;
+      // Ensure the module at index exists and is an object
+      if (!newModules[index] || typeof newModules[index] !== 'object') {
+        newModules[index] = { content: "", description: "" };
+      }
+      // Update the specific field
+      newModules[index] = {
+        ...newModules[index],
+        [field]: value
+      };
       
       return {
         ...prev,
@@ -170,7 +196,7 @@ const ManageAboutUs = () => {
   const addModule = () => {
     setFormData(prev => ({
       ...prev,
-      modules: [...prev.modules, ""]
+      modules: [...prev.modules, { content: "", description: "" }]
     }));
   };
 
@@ -444,11 +470,16 @@ const ManageAboutUs = () => {
                 {/* Modules Section */}
                 <Form.Group className="mb-3">
                   <Form.Label>Modules</Form.Label>
+
                   <div className="modules-container">
                     {formData.modules.map((module, index) => (
-                      <div key={index} className="module-item mb-3 p-3 border rounded">
+                      <div
+                        key={index}
+                        className="module-item mb-3 p-3 border rounded"
+                      >
                         <div className="d-flex justify-content-between align-items-center mb-2">
                           <h5>Module {index + 1}</h5>
+
                           {isEditing && formData.modules.length > 1 && (
                             <Button
                               variant="outline-danger"
@@ -459,21 +490,40 @@ const ManageAboutUs = () => {
                             </Button>
                           )}
                         </div>
-                        
+
+                        {/* Module Content */}
                         <Form.Group className="mb-2">
                           <Form.Label>Module Content</Form.Label>
                           <Form.Control
                             type="text"
-                            placeholder={`Enter module ${index + 1} content`}
-                            value={module}
-                            onChange={(e) => handleModuleChange(index, e.target.value)}
+                            placeholder={`Enter module ${index + 1} title`}
+                            value={module.content || ""}
+                            onChange={(e) =>
+                              handleModuleChange(index, "content", e.target.value)
+                            }
+                            required
+                            disabled={!isEditing}
+                          />
+                        </Form.Group>
+
+                        {/* Module Description */}
+                        <Form.Group className="mb-2">
+                          <Form.Label>Module Description</Form.Label>
+                          <Form.Control
+                            as="textarea"
+                            rows={3}
+                            placeholder={`Enter module ${index + 1} description`}
+                            value={module.description || ""}
+                            onChange={(e) =>
+                              handleModuleChange(index, "description", e.target.value)
+                            }
                             required
                             disabled={!isEditing}
                           />
                         </Form.Group>
                       </div>
                     ))}
-                    
+
                     {isEditing && (
                       <Button
                         variant="outline-primary"

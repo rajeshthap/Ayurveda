@@ -50,7 +50,7 @@ function App() {
   const hiddenPaths = new Set([
     "/Dashboard",
     "/AddAboutUs",
-     "ManageAboutUs",
+     "/ManageAboutUs",
       "/AddJourney",
       "/ManageJourney",
 

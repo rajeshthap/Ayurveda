@@ -35,41 +35,50 @@ export default function Login() {
   const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+// Login.js - Update the handleSubmit function
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    if (!formData.email_or_phone || !formData.password) {
-      setError("कृपया सभी फ़ील्ड भरें");
-      return;
-    }
+  if (!formData.email_or_phone || !formData.password) {
+    setError("कृपया सभी फ़ील्ड भरें");
+    return;
+  }
 
-    setIsLoading(true);
-    setError("");
+  setIsLoading(true);
+  setError("");
 
-    try {
-      const response = await fetch(
-        "https://mahadevaaya.com/trilokayurveda/trilokabackend/api/login/",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(formData),
-        }
-      );
-
-      const data = await response.json();
-
-      if (response.ok) {
-        login(data);
-        navigate("/Dashboard", { replace: true });
-      } else {
-        setError(data.message || "लॉगिन विफल");
+  try {
+    const response = await fetch(
+      "https://mahadevaaya.com/trilokayurveda/trilokabackend/api/login/",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
       }
-    } catch {
-      setError("सर्वर से कनेक्ट नहीं हो पाया");
-    } finally {
-      setIsLoading(false);
+    );
+
+    const data = await response.json();
+    
+    // Add these debug logs
+    console.log("Full API Response:", data);
+    console.log("Response status:", response.status);
+    console.log("Access token:", data.access || data.token);
+    console.log("Refresh token:", data.refresh);
+    console.log("Role:", data.role);
+    console.log("Unique ID:", data.unique_id || data.user_id || data.id);
+
+    if (response.ok) {
+      login(data);
+      navigate("/Dashboard", { replace: true });
+    } else {
+      setError(data.message || "लॉगिन विफल");
     }
-  };
+  } catch {
+    setError("सर्वर से कनेक्ट नहीं हो पाया");
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   return (
     <div className="login-box">
