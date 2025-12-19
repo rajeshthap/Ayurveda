@@ -105,13 +105,24 @@ const menuItems = [
   label: "Our Focus",
   submenu: [
     {
-      label: "Add Our Focus",
+      label: "Add Auto-Immune Diseases",
       path: "/AddOurFocus",
       icon: <FaPlusSquare />, // add focus
     },
     {
-      label: "Manage Our Focus",
+      label: "Manage Auto-Immune Diseases",
       path: "/ManageOurFocus",
+      icon: <FaTasks />, // manage focus
+    },
+
+     {
+      label: "Add Degenerative Disorders",
+      path: "/AddDigenerative",
+      icon: <FaPlusSquare />, // add focus
+    },
+    {
+      label: "Manage Degenerative Disorders",
+      path: "/ManageDigenerative",
       icon: <FaTasks />, // manage focus
     },
   ],
