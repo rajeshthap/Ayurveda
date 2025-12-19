@@ -48,6 +48,8 @@ import AddAutoImmune from './componets/dash_board/our_focus_dashboard/AddAutoImm
 import ManageProfile from './componets/dash_board/about_us/ManageProfile';
 import ManageFQA from './componets/dash_board/features_page/ManageFQA';
 import AddFQA from './componets/dash_board/features_page/AddFQA';
+import AddOurFocus from './componets/dash_board/our_focus_dashboard/AddOurFocus';
+import ManageOurFocus from './componets/dash_board/our_focus_dashboard/ManageOurFocus';
 
 
 function App() {
@@ -65,7 +67,9 @@ function App() {
       "/ManageProfile",
       "/AddAutoImmune",
       "/AddFQA",
-      "/ManageFQA"
+      "/ManageFQA",
+      "/AddOurFocus",
+      "/ManageOurFocus"
 
      ]);
 
@@ -80,7 +84,9 @@ function App() {
     "/ManageProfile",
     "/AddAutoImmune",
     "/AddFQA",
-    "/ManageFQA"
+    "/ManageFQA",
+    "/AddOurFocus",
+    "/ManageOurFocus"
 
   ]);
 
@@ -129,6 +135,8 @@ function App() {
 <Route path="/AddAutoImmune" element={<AddAutoImmune />} />
 <Route path="/AddFQA" element={<AddFQA />} />
 <Route path="/ManageFQA" element={<ManageFQA />} />
+<Route path="/AddOurFocus" element={<AddOurFocus />} />
+<Route path="/ManageOurFocus" element={<ManageOurFocus />} />
 
 {/* <Route path="*" element={<NotFound />} />  */}
 </Routes>
