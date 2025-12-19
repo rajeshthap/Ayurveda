@@ -78,7 +78,8 @@ function App() {
       "/AddPresentationAwards",
       "/ManagePresentationAwards",
       "/ManageMediaGallery",
-      "/AddMediaGallery"
+      "/AddMediaGallery",
+      "/ManageDisclamier"
 
      ]);
 
@@ -99,7 +100,8 @@ function App() {
     "/AddPresentationAwards",
     "/ManagePresentationAwards",
     "/ManageMediaGallery",
-    "/AddMediaGallery"
+    "/AddMediaGallery",
+    "/ManageDisclamier"
 
   ]);
 
