@@ -132,6 +132,16 @@ const menuItems = [
           path: "/ManageFQA",
           icon: <FaImage />,
         },
+         {
+          label: "Add Presentation Awards",
+          path: "/AddPresentationAwards",
+          icon: <FaImage />,
+        },
+         {
+          label: "Manage Presentation Awards",
+          path: "/ManagePresentationAwards",
+          icon: <FaImage />,
+        },
         
         
        

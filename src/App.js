@@ -50,6 +50,10 @@ import ManageFQA from './componets/dash_board/features_page/ManageFQA';
 import AddFQA from './componets/dash_board/features_page/AddFQA';
 import AddOurFocus from './componets/dash_board/our_focus_dashboard/AddOurFocus';
 import ManageOurFocus from './componets/dash_board/our_focus_dashboard/ManageOurFocus';
+import ManagePresentationAwards from './componets/dash_board/features_page/ManagePresentationAwards';
+import AddPresentationAwards from './componets/dash_board/features_page/AddPresentationAwards';
+import AddMediaGallery from './componets/dash_board/features_page/AddMediaGallery';
+import ManageMediaGallery from './componets/dash_board/features_page/ManageMediaGallery';
 
 
 function App() {
@@ -69,7 +73,11 @@ function App() {
       "/AddFQA",
       "/ManageFQA",
       "/AddOurFocus",
-      "/ManageOurFocus"
+      "/ManageOurFocus",
+      "/AddPresentationAwards",
+      "/ManagePresentationAwards",
+      "/ManageMediaGallery",
+      "/AddMediaGallery"
 
      ]);
 
@@ -86,7 +94,11 @@ function App() {
     "/AddFQA",
     "/ManageFQA",
     "/AddOurFocus",
-    "/ManageOurFocus"
+    "/ManageOurFocus",
+    "/AddPresentationAwards",
+    "/ManagePresentationAwards",
+    "/ManageMediaGallery",
+    "/AddMediaGallery"
 
   ]);
 
@@ -137,6 +149,10 @@ function App() {
 <Route path="/ManageFQA" element={<ManageFQA />} />
 <Route path="/AddOurFocus" element={<AddOurFocus />} />
 <Route path="/ManageOurFocus" element={<ManageOurFocus />} />
+<Route path="/AddPresentationAwards" element={<AddPresentationAwards />} />
+<Route path="/ManagePresentationAwards" element={<ManagePresentationAwards />} />
+<Route path="/AddMediaGallery" element={<AddMediaGallery />} />
+<Route path="/ManageMediaGallery" element={<ManageMediaGallery />} />
 
 {/* <Route path="*" element={<NotFound />} />  */}
 </Routes>
