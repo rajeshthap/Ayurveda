@@ -63,7 +63,9 @@ function App() {
       "/AddProfbhavnasingh",
       "/AddProfile",
       "/ManageProfile",
-      "/AddAutoImmune"
+      "/AddAutoImmune",
+      "/AddFQA",
+      "/ManageFQA"
 
      ]);
 
@@ -76,7 +78,9 @@ function App() {
     "/AddProfbhavnasingh",
     "/AddProfile" ,
     "/ManageProfile",
-    "/AddAutoImmune"
+    "/AddAutoImmune",
+    "/AddFQA",
+    "/ManageFQA"
 
   ]);
 
