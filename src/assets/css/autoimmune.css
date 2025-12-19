@@ -24,6 +24,8 @@
   background: url(../images/achievement-bg.png);
 }
 
+
+
 /* Hover animation */
 .ayur-card:hover {
   transform: translateY(-10px);
@@ -91,9 +93,10 @@
     z-index: 2;
 }
 .ann-heading h3{
-    color: #43a047;
-    font-weight: 600;
-    font-size: 24px;
+    color: #000000;
+    font-weight: 700;
+    font-size: 32px;
+    margin-bottom: 5PX;
 }
 /* Mobile adjustments */
 @media (max-width: 767px) {
