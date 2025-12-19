@@ -6,6 +6,7 @@ import { useAuth } from "../../context/AuthContext";
 import { useAuthFetch } from "../../context/AuthFetch";
 import LeftNav from "../LeftNav";
 import DashBoardHeader from "../DashBoardHeader";
+import "../../../assets/css/dashboardcard.css";
 import { FaPlus, FaTrash, FaEdit, FaSave, FaTimes, FaSearch, FaCalendarAlt, FaImage } from "react-icons/fa";
 
 const ManageMediaGallery = () => {
@@ -19,12 +20,12 @@ const ManageMediaGallery = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [isTablet, setIsTablet] = useState(false);
 
-  // Form state for presentation and award items
+  // Form state for media gallery items
   const [formData, setFormData] = useState({
     items: [{ title: "", image: null, date: "" }], // Initialize with one empty item
   });
 
-  // State for presentation and award items from API
+  // State for media gallery items from API
   const [items, setItems] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isFetching, setIsFetching] = useState(false);
@@ -90,7 +91,7 @@ const ManageMediaGallery = () => {
     return () => window.removeEventListener("resize", checkDevice);
   }, []);
 
-  // Fetch presentation and award items on component mount
+  // Fetch media gallery items on component mount
   useEffect(() => {
     fetchItems();
   }, []);
@@ -128,12 +129,12 @@ const ManageMediaGallery = () => {
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
-  // Fetch presentation and award items from API
+  // Fetch media gallery items from API
   const fetchItems = async () => {
     setIsLoading(true);
     setIsFetching(true);
     try {
-      const url = `${API_BASE_URL}/api/presentationandaward-items/`;
+      const url = `${API_BASE_URL}/api/media-gallery-items/`;
       let response = await fetch(url, {
         method: "GET",
         headers: {
@@ -154,7 +155,7 @@ const ManageMediaGallery = () => {
       }
 
       if (!response.ok) {
-        throw new Error("Failed to fetch presentation and award items");
+        throw new Error("Failed to fetch media gallery items");
       }
 
       const result = await response.json();
@@ -195,11 +196,11 @@ const ManageMediaGallery = () => {
 
         setItems(processedItems);
       } else {
-        throw new Error("No presentation and award items found");
+        throw new Error("No media gallery items found");
       }
     } catch (error) {
-      console.error("Error fetching presentation and award items:", error);
-      setMessage(error.message || "An error occurred while fetching presentation and award items");
+      console.error("Error fetching media gallery items:", error);
+      setMessage(error.message || "An error occurred while fetching media gallery items");
       setVariant("danger");
       setShowAlert(true);
     } finally {
@@ -342,7 +343,7 @@ const ManageMediaGallery = () => {
         dataToSend.append("image", editingItemData.image);
       }
 
-      const url = `${API_BASE_URL}/api/presentationandaward-items/`;
+      const url = `${API_BASE_URL}/api/media-gallery-items/`;
       let response = await fetch(url, {
         method: "PUT",
         body: dataToSend,
@@ -373,13 +374,13 @@ const ManageMediaGallery = () => {
           /* not JSON */
         }
         throw new Error(
-          (errorData && errorData.message) || "Failed to update presentation and award item"
+          (errorData && errorData.message) || "Failed to update media gallery item"
         );
       }
 
       const result = await response.json();
       if (result.success) {
-        setMessage("Presentation and award item updated successfully!");
+        setMessage("Media gallery item updated successfully!");
         setVariant("success");
         setShowAlert(true);
         setEditingItemId(null);
@@ -393,10 +394,10 @@ const ManageMediaGallery = () => {
         fetchItems(); // Refresh the items list
         setTimeout(() => setShowAlert(false), 3000);
       } else {
-        throw new Error(result.message || "Failed to update presentation and award item");
+        throw new Error(result.message || "Failed to update media gallery item");
       }
     } catch (error) {
-      console.error("Error updating presentation and award item:", error);
+      console.error("Error updating media gallery item:", error);
       let errorMessage = "An unexpected error occurred. Please try again.";
       if (error.message) {
         errorMessage = error.message;
@@ -426,7 +427,7 @@ const ManageMediaGallery = () => {
       const dataToSend = new FormData();
       dataToSend.append("id", itemToDelete);
       
-      const url = `${API_BASE_URL}/api/presentationandaward-items/`;
+      const url = `${API_BASE_URL}/api/media-gallery-items/`;
       let response = await fetch(url, {
         method: "DELETE",
         body: dataToSend,
@@ -457,13 +458,13 @@ const ManageMediaGallery = () => {
           /* not JSON */
         }
         throw new Error(
-          (errorData && errorData.message) || "Failed to delete presentation and award item"
+          (errorData && errorData.message) || "Failed to delete media gallery item"
         );
       }
 
       const result = await response.json();
       if (result.success) {
-        setMessage("Presentation and award item deleted successfully!");
+        setMessage("Media gallery item deleted successfully!");
         setVariant("success");
         setShowAlert(true);
         setShowDeleteModal(false);
@@ -471,10 +472,10 @@ const ManageMediaGallery = () => {
         fetchItems(); // Refresh the items list
         setTimeout(() => setShowAlert(false), 3000);
       } else {
-        throw new Error(result.message || "Failed to delete presentation and award item");
+        throw new Error(result.message || "Failed to delete media gallery item");
       }
     } catch (error) {
-      console.error("Error deleting presentation and award item:", error);
+      console.error("Error deleting media gallery item:", error);
       let errorMessage = "An unexpected error occurred. Please try again.";
       if (error.message) {
         errorMessage = error.message;
@@ -515,7 +516,7 @@ const ManageMediaGallery = () => {
       }
       
       // Send the data as FormData
-      const url = `${API_BASE_URL}/api/presentationandaward-items/`;
+      const url = `${API_BASE_URL}/api/media-gallery-items/`;
       let response = await fetch(url, {
         method: "POST",
         headers: {
@@ -545,12 +546,12 @@ const ManageMediaGallery = () => {
       
       // Check if the API call was successful
       if (!response.ok || !responseData.success) {
-        throw new Error(responseData.message || "Failed to save presentation and award items");
+        throw new Error(responseData.message || "Failed to save media gallery items");
       }
 
       // SUCCESS PATH
       const itemCount = formData.items.length;
-      setMessage(`✅ Success! ${itemCount} presentation and award item${itemCount > 1 ? 's have' : ' has'} been added successfully.`);
+      setMessage(`✅ Success! ${itemCount} media gallery item${itemCount > 1 ? 's have' : ' has'} been added successfully.`);
       setVariant("success");
       setShowAlert(true);
       resetForm();
@@ -560,7 +561,7 @@ const ManageMediaGallery = () => {
       setTimeout(() => setShowAlert(false), 5000);
     } catch (error) {
       // FAILURE PATH
-      console.error("Error adding presentation and award items:", error);
+      console.error("Error adding media gallery items:", error);
       let errorMessage = "An unexpected error occurred. Please try again.";
 
       if (
@@ -669,9 +670,23 @@ const ManageMediaGallery = () => {
 
           <Container fluid className="dashboard-body dashboard-main-container">
             <div className="d-flex justify-content-between align-items-center mb-4">
-              <h1 className="page-title mb-0">Manage Presentation & Award Items</h1>
+              <h1 className="page-title mb-0">Manage Media Gallery Items</h1>
               <div className="d-flex gap-2">
-               
+                <div style={{ width: '300px' }}>
+                  <div className="input-group">
+                    <span className="input-group-text"><FaSearch /></span>
+                    <input
+                      type="text"
+                      placeholder="Search by ID, title, or date..."
+                      className="form-control"
+                      value={searchTerm}
+                      onChange={(e) => {
+                        setSearchTerm(e.target.value);
+                        setCurrentPage(1);
+                      }}
+                    />
+                  </div>
+                </div>
                 <Button 
                   variant="outline-secondary" 
                   onClick={() => {
@@ -697,7 +712,7 @@ const ManageMediaGallery = () => {
               </Alert>
             )}
 
-            {/* Presentation & Award Items Cards */}
+            {/* Media Gallery Items Cards */}
             {isLoading ? (
               <div className="text-center my-5">
                 <Spinner animation="border" role="status">
@@ -714,69 +729,72 @@ const ManageMediaGallery = () => {
                   </div>
                 )}
                 
-                <div className="d-flex justify-content-end mb-3">
-                 
-                </div>
+              
                 
                 <Row>
                   {currentItems.length === 0 ? (
                     <Col xs={12} className="text-center my-5">
-                      <p>{searchTerm ? 'No presentation and award items match your search.' : 'No presentation and award items found.'}</p>
+                      <p>{searchTerm ? 'No media gallery items match your search.' : 'No media gallery items found.'}</p>
                     </Col>
                   ) : (
                     currentItems.map((item) => (
                       <Col lg={4} md={6} sm={12} className="mb-4" key={item.id}>
-                        <Card className="h-100">
-                          <Card.Header className="d-flex justify-content-between align-items-center">
-                            <Card.Title className="mb-0">Item #{item.id}</Card.Title>
-                           
-                          </Card.Header>
-                          <Card.Body>
-                            {item.image && (
-                              <div className="mb-3 text-center">
-                                {imageLoadErrors[item.id] ? (
-                                  <div className="text-center p-3 bg-light rounded">
-                                    <FaImage className="mb-2" size={32} />
-                                    <p className="mb-0 text-muted">Image not available</p>
-                                  </div>
-                                ) : (
-                                  <Image 
-                                    src={item.fullImageUrl || getImageUrl(item.image)} 
-                                    alt={item.title} 
-                                    fluid 
-                                    style={{ maxHeight: '200px' }}
-                                    thumbnail
-                                    onError={() => handleImageError(item.id)}
-                                  />
-                                )}
-                                
+                        <Card className="h-100 shadow-sm card-hover">
+                          <div className="card-img-container position-relative">
+                            {item.image ? (
+                              <Image 
+                                src={item.fullImageUrl || getImageUrl(item.image)} 
+                                alt={item.title} 
+                                className="card-img-top"
+                                style={{ height: '200px', objectFit: 'cover' }}
+                                onError={() => handleImageError(item.id)}
+                              />
+                            ) : (
+                              <div className="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-light">
+                                <div className="text-center">
+                                  <FaImage className="mb-2" size={32} />
+                                  <p className="mb-0 text-muted">No image available</p>
+                                </div>
                               </div>
                             )}
-                            <h5>{item.title}</h5>
-                            <p><FaCalendarAlt className="me-2" />{item.formatted_date}</p>
-                            <div className="mt-2">
+                            
+                            {/* Item ID badge */}
+                            <Badge bg="primary" className="position-absolute top-0 start-0 m-2">
+                              ID: {item.id}
+                            </Badge>
+                          </div>
+                          
+                          <Card.Body className="d-flex flex-column">
+                            <Card.Title className="mb-2">{item.title}</Card.Title>
+                            <Card.Text className="text-muted mb-2">
+                              <FaCalendarAlt className="me-2" />
+                              {item.formatted_date}
+                            </Card.Text>
+                            <div className="mt-auto">
                               <small className="text-muted">Created: {item.formatted_created_at}</small>
                             </div>
                           </Card.Body>
-                           <div>
-                              <Button
-                                variant="outline-primary"
-                                size="sm"
-                                className="me-2"
-                                onClick={() => startEditing(item)}
-                                disabled={isSubmitting}
-                              >
-                                <FaEdit /> Edit
-                              </Button>
-                              <Button
-                                variant="outline-danger"
-                                size="sm"
-                                onClick={() => confirmDelete(item.id)}
-                                disabled={isSubmitting}
-                              >
-                                <FaTrash /> Delete
-                              </Button>
-                            </div>
+                          
+                          {/* Action buttons at the bottom of the card */}
+                          <div className="card-footer d-flex justify-content-between align-items-center p-2">
+                            <Button
+                              variant="outline-primary"
+                              size="sm"
+                              className="me-2"
+                              onClick={() => startEditing(item)}
+                              disabled={isSubmitting}
+                            >
+                              <FaEdit /> Edit
+                            </Button>
+                            <Button
+                              variant="outline-danger"
+                              size="sm"
+                              onClick={() => confirmDelete(item.id)}
+                              disabled={isSubmitting}
+                            >
+                              <FaTrash /> Delete
+                            </Button>
+                          </div>
                         </Card>
                       </Col>
                     ))
@@ -810,23 +828,23 @@ const ManageMediaGallery = () => {
               </>
             )}
 
-            {/* Add New Presentation & Award Item Form */}
+            {/* Add New Media Gallery Item Form */}
             <Row className="mt-4">
               <Col>
-                <h2>Add New Presentation & Award Item</h2>
+                <h2>Add New Media Gallery Item</h2>
                 <Form onSubmit={handleSubmit}>
                   {/* Items Section */}
                   <Form.Group className="mb-3">
-                    <Form.Label>Presentation & Award Items</Form.Label>
+                    <Form.Label>Media Gallery Items</Form.Label>
 
-                    <div className="item-container">
+                    <div className="media-container">
                       {formData.items.map((item, index) => (
                         <div
                           key={index}
-                          className="item mb-3 p-3 border rounded"
+                          className="media-item mb-3 p-3 border rounded"
                         >
                           <div className="d-flex justify-content-between align-items-center mb-2">
-                            <h5>Item {index + 1}</h5>
+                            <h5>Media Item {index + 1}</h5>
 
                             {formData.items.length > 1 && (
                               <Button
@@ -922,7 +940,7 @@ const ManageMediaGallery = () => {
                         onClick={addItem}
                         className="mt-2"
                       >
-                        <FaPlus /> Add Another Item
+                        <FaPlus /> Add Another Media Item
                       </Button>
                     </div>
                   </Form.Group>
@@ -933,7 +951,7 @@ const ManageMediaGallery = () => {
                       type="submit"
                       disabled={isSubmitting}
                     >
-                      {isSubmitting ? "Submitting..." : "Submit Item"}
+                      {isSubmitting ? "Submitting..." : "Submit Media Items"}
                     </Button>
                     <Button
                       variant="secondary"
@@ -953,7 +971,7 @@ const ManageMediaGallery = () => {
       {/* Edit Modal */}
       <Modal show={showEditModal} onHide={cancelEditing} size="lg">
         <Modal.Header closeButton>
-          <Modal.Title>Edit Presentation & Award Item #{currentEditItem?.id}</Modal.Title>
+          <Modal.Title>Edit Media Gallery Item #{currentEditItem?.id}</Modal.Title>
         </Modal.Header>
         <Form onSubmit={saveEditedItem}>
           <Modal.Body>
@@ -1076,7 +1094,7 @@ const ManageMediaGallery = () => {
           <Modal.Title>Confirm Delete</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          Are you sure you want to delete this presentation and award item? This action cannot be undone.
+          Are you sure you want to delete this media gallery item? This action cannot be undone.
         </Modal.Body>
         <Modal.Footer>
           <Button

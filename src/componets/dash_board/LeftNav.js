@@ -153,6 +153,11 @@ const menuItems = [
           path: "/ManageMediaGallery",
           icon: <FaImage />,
         },
+         {
+          label: "Manage Disclamir",
+          path: "/ManageDisclamier",
+          icon: <FaImage />,
+        },
        
       ],
     },

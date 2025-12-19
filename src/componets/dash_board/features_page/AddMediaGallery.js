@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Container, Row, Col, Form, Button, Alert } from "react-bootstrap";
+import { Container, Row, Col, Form, Button, Alert, Image } from "react-bootstrap";
 import "../../../assets/css/dashboard.css";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { useAuthFetch } from "../../context/AuthFetch";
 import LeftNav from "../LeftNav";
 import DashBoardHeader from "../DashBoardHeader";
-import { FaPlus, FaTrash } from "react-icons/fa";
+import { FaPlus, FaTrash, FaTimes, FaImage } from "react-icons/fa";
 
 const AddMediaGallery = () => {
   const { auth, logout, refreshAccessToken } = useAuth();
@@ -19,10 +19,20 @@ const AddMediaGallery = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [isTablet, setIsTablet] = useState(false);
 
+  // Base URL for API
+  const API_BASE_URL = "https://mahadevaaya.com/trilokayurveda/trilokabackend";
+
   // Form state for media gallery items
   const [formData, setFormData] = useState({
     items: [{ title: "", image: null, date: "" }], // Initialize with one empty item
   });
+
+  // State for media gallery items from API
+  const [items, setItems] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Image preview state
+  const [imagePreviews, setImagePreviews] = useState({});
 
   // Submission state
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -43,7 +53,127 @@ const AddMediaGallery = () => {
     return () => window.removeEventListener("resize", checkDevice);
   }, []);
 
+  // Fetch media gallery items on component mount
+  useEffect(() => {
+    fetchItems();
+  }, []);
+
+  // Create image preview when a new image is selected
+  useEffect(() => {
+    const previews = {};
+    
+    // Create previews for form data images
+    formData.items.forEach((item, index) => {
+      if (item.image && item.image instanceof File) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setImagePreviews(prev => ({
+            ...prev,
+            [`form-${index}`]: reader.result
+          }));
+        };
+        reader.readAsDataURL(item.image);
+      }
+    });
+  }, [formData]);
+
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
+
+  // Fetch media gallery items from API
+  const fetchItems = async () => {
+    setIsLoading(true);
+    try {
+      const url = `${API_BASE_URL}/api/media-gallery-items/`;
+      let response = await fetch(url, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${auth?.access}`,
+        },
+      });
+
+      // If unauthorized, try refreshing token and retry once
+      if (response.status === 401) {
+        const newAccess = await refreshAccessToken();
+        if (!newAccess) throw new Error("Session expired");
+        response = await fetch(url, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${newAccess}`,
+          },
+        });
+      }
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch media gallery items");
+      }
+
+      const result = await response.json();
+      console.log("GET API Response:", result);
+
+      if (result.success && result.data) {
+        // Process data to format dates
+        const processedItems = result.data.map(item => {
+          const processedItem = { ...item };
+          
+          // Format created_at date
+          if (item.created_at) {
+            const createdDate = new Date(item.created_at);
+            processedItem.formatted_created_at = createdDate.toLocaleDateString('en-US', {
+              year: 'numeric',
+              month: 'short',
+              day: 'numeric'
+            });
+          }
+          
+          // Format date field
+          if (item.date) {
+            const itemDate = new Date(item.date);
+            processedItem.formatted_date = itemDate.toLocaleDateString('en-US', {
+              year: 'numeric',
+              month: 'short',
+              day: 'numeric'
+            });
+          }
+          
+          // Add full image URL
+          if (item.image) {
+            processedItem.fullImageUrl = getImageUrl(item.image);
+          }
+          
+          return processedItem;
+        });
+
+        setItems(processedItems);
+      } else {
+        throw new Error("No media gallery items found");
+      }
+    } catch (error) {
+      console.error("Error fetching media gallery items:", error);
+      setMessage(error.message || "An error occurred while fetching media gallery items");
+      setVariant("danger");
+      setShowAlert(true);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Function to get the full image URL
+  const getImageUrl = (imagePath) => {
+    if (!imagePath) return null;
+    
+    // If the image path already includes the full URL, return as is
+    if (imagePath.startsWith('http')) {
+      return imagePath;
+    }
+    
+    // If the image path starts with a slash, prepend the base URL
+    if (imagePath.startsWith('/')) {
+      return `${API_BASE_URL}${imagePath}`;
+    }
+    
+    // Otherwise, prepend the base URL with a slash
+    return `${API_BASE_URL}/${imagePath}`;
+  };
 
   // Handle media item changes
   const handleItemChange = (index, field, value) => {
@@ -101,6 +231,13 @@ const AddMediaGallery = () => {
       ...prev,
       items: prev.items.filter((_, i) => i !== index),
     }));
+    
+    // Clean up image preview
+    setImagePreviews(prev => {
+      const newPreviews = { ...prev };
+      delete newPreviews[`form-${index}`];
+      return newPreviews;
+    });
   };
 
   // Reset form
@@ -108,6 +245,7 @@ const AddMediaGallery = () => {
     setFormData({
       items: [{ title: "", image: null, date: "" }],
     });
+    setImagePreviews({});
     setShowAlert(false);
   };
 
@@ -118,20 +256,18 @@ const AddMediaGallery = () => {
     setShowAlert(false);
 
     try {
-      // Prepare the data for submission
-      const url = "https://mahadevaaya.com/trilokayurveda/trilokabackend/api/media-gallery-items/";
-      
-      // Create FormData for the API
+      // Create FormData for the API with correct structure
       const dataToSend = new FormData();
       
       // Add admin_id
       dataToSend.append("admin_id", admin_id);
       
-      // Add each item to the FormData
+      // Add each item to the FormData with correct field names
       formData.items.forEach((item, index) => {
-        if (item.title) dataToSend.append(`items[${index}][title]`, item.title);
-        if (item.image) dataToSend.append(`items[${index}][image]`, item.image);
-        if (item.date) dataToSend.append(`items[${index}][date]`, item.date);
+        // Based on the error, the API expects flat structure, not nested
+        if (item.title) dataToSend.append(`title`, item.title);
+        if (item.image) dataToSend.append(`image`, item.image);
+        if (item.date) dataToSend.append(`date`, item.date);
       });
       
       // Log the FormData content for debugging
@@ -141,6 +277,7 @@ const AddMediaGallery = () => {
       }
       
       // Send the data as FormData
+      const url = `${API_BASE_URL}/api/media-gallery-items/`;
       let response = await fetch(url, {
         method: "POST",
         headers: {
@@ -179,6 +316,7 @@ const AddMediaGallery = () => {
       setVariant("success");
       setShowAlert(true);
       resetForm();
+      fetchItems(); // Refresh the items list
 
       // Hide success alert after 5 seconds
       setTimeout(() => setShowAlert(false), 5000);
@@ -238,117 +376,193 @@ const AddMediaGallery = () => {
               </Alert>
             )}
 
-            <Form onSubmit={handleSubmit}>
-              {/* Media Items Section */}
-              <Form.Group className="mb-3">
-                <Form.Label>Media Items</Form.Label>
-
-                <div className="media-container">
-                  {formData.items.map((item, index) => (
-                    <div
-                      key={index}
-                      className="media-item mb-3 p-3 border rounded"
-                    >
-                      <div className="d-flex justify-content-between align-items-center mb-2">
-                        <h5>Media Item {index + 1}</h5>
-
-                        {formData.items.length > 1 && (
-                          <Button
-                            variant="outline-danger"
-                            size="sm"
-                            onClick={() => removeItem(index)}
-                          >
-                            <FaTrash /> Remove
-                          </Button>
-                        )}
+            {/* Existing Media Gallery Items */}
+            <div className="mb-4">
+              <h3>Existing Media Gallery Items</h3>
+              {isLoading ? (
+                <div className="text-center my-5">
+                  <div className="spinner-border text-primary" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                  </div>
+                </div>
+              ) : items.length === 0 ? (
+                <div className="text-center my-5">
+                  <p>No media gallery items found.</p>
+                </div>
+              ) : (
+                <Row className="g-4">
+                  {items.map((item) => (
+                    <Col lg={4} md={6} sm={12} key={item.id}>
+                      <div className="card h-100 shadow-sm">
+                        <div className="card-img-container position-relative">
+                          {item.image ? (
+                            <Image
+                              src={item.fullImageUrl || getImageUrl(item.image)}
+                              alt={item.title}
+                              className="card-img-top"
+                              style={{ height: '200px', objectFit: 'cover' }}
+                            />
+                          ) : (
+                            <div className="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-light">
+                              <div className="text-center">
+                                <FaImage className="mb-2" size={32} />
+                                <p className="mb-0 text-muted">No image available</p>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                        <div className="card-body">
+                          <h5 className="card-title">{item.title}</h5>
+                          <p className="card-text text-muted">
+                            <small>Date: {item.formatted_date}</small>
+                          </p>
+                          <p className="card-text text-muted">
+                            <small>Created: {item.formatted_created_at}</small>
+                          </p>
+                        </div>
                       </div>
-
-                      {/* Title */}
-                      <Form.Group className="mb-2">
-                        <Form.Label>Title</Form.Label>
-                        <Form.Control
-                          type="text"
-                          placeholder={`Enter title ${index + 1}`}
-                          value={item.title || ""}
-                          onChange={(e) =>
-                            handleItemChange(
-                              index,
-                              "title",
-                              e.target.value
-                            )
-                          }
-                          required
-                        />
-                      </Form.Group>
-
-                      {/* Date */}
-                      <Form.Group className="mb-2">
-                        <Form.Label>Date</Form.Label>
-                        <Form.Control
-                          type="date"
-                          value={item.date || ""}
-                          onChange={(e) =>
-                            handleItemChange(
-                              index,
-                              "date",
-                              e.target.value
-                            )
-                          }
-                          required
-                        />
-                      </Form.Group>
-
-                      {/* Image */}
-                      <Form.Group className="mb-2">
-                        <Form.Label>Image</Form.Label>
-                        <Form.Control
-                          type="file"
-                          accept="image/*"
-                          onChange={(e) =>
-                            handleImageChange(
-                              index,
-                              e.target.files[0]
-                            )
-                          }
-                        />
-                        {item.image && (
-                          <div className="mt-2">
-                            <small className="text-muted">
-                              Selected: {item.image.name}
-                            </small>
-                          </div>
-                        )}
-                      </Form.Group>
-                    </div>
+                    </Col>
                   ))}
+                </Row>
+              )}
+            </div>
 
+            <hr />
+
+            {/* Add New Media Gallery Item Form */}
+            <div>
+              <h3>Add New Media Gallery Items</h3>
+              <Form onSubmit={handleSubmit}>
+                {/* Media Items Section */}
+                <Form.Group className="mb-3">
+                  <Form.Label>Media Items</Form.Label>
+
+                  <div className="media-container">
+                    {formData.items.map((item, index) => (
+                      <div
+                        key={index}
+                        className="media-item mb-3 p-3 border rounded"
+                      >
+                        <div className="d-flex justify-content-between align-items-center mb-2">
+                          <h5>Media Item {index + 1}</h5>
+
+                          {formData.items.length > 1 && (
+                            <Button
+                              variant="outline-danger"
+                              size="sm"
+                              onClick={() => removeItem(index)}
+                            >
+                              <FaTrash /> Remove
+                            </Button>
+                          )}
+                        </div>
+
+                        {/* Title */}
+                        <Form.Group className="mb-2">
+                          <Form.Label>Title</Form.Label>
+                          <Form.Control
+                            type="text"
+                            placeholder={`Enter title ${index + 1}`}
+                            value={item.title || ""}
+                            onChange={(e) =>
+                              handleItemChange(
+                                index,
+                                "title",
+                                e.target.value
+                              )
+                            }
+                            required
+                          />
+                        </Form.Group>
+
+                        {/* Date */}
+                        <Form.Group className="mb-2">
+                          <Form.Label>Date</Form.Label>
+                          <Form.Control
+                            type="date"
+                            value={item.date || ""}
+                            onChange={(e) =>
+                              handleItemChange(
+                                index,
+                                "date",
+                                e.target.value
+                              )
+                            }
+                            required
+                          />
+                        </Form.Group>
+
+                        {/* Image */}
+                        <Form.Group className="mb-2">
+                          <Form.Label>Image</Form.Label>
+                          <Form.Control
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) =>
+                              handleImageChange(
+                                index,
+                                e.target.files[0]
+                              )
+                            }
+                          />
+                          {item.image && (
+                            <div className="mt-2">
+                              {item.image instanceof File ? (
+                                <div>
+                                  <small className="text-muted">
+                                    Selected: {item.image.name}
+                                  </small>
+                                  {imagePreviews[`form-${index}`] && (
+                                    <div className="mt-2">
+                                      <Image 
+                                        src={imagePreviews[`form-${index}`]} 
+                                        alt="Preview" 
+                                        fluid 
+                                        style={{ maxHeight: '150px' }}
+                                        thumbnail
+                                      />
+                                    </div>
+                                  )}
+                                </div>
+                              ) : (
+                                <small className="text-muted">
+                                  Current: {item.image}
+                                </small>
+                              )}
+                            </div>
+                          )}
+                        </Form.Group>
+                      </div>
+                    ))}
+
+                    <Button
+                      variant="outline-primary"
+                      onClick={addItem}
+                      className="mt-2"
+                    >
+                      <FaPlus /> Add Another Media Item
+                    </Button>
+                  </div>
+                </Form.Group>
+
+                <div className="d-flex gap-2 mt-3">
                   <Button
-                    variant="outline-primary"
-                    onClick={addItem}
-                    className="mt-2"
+                    variant="primary"
+                    type="submit"
+                    disabled={isSubmitting}
                   >
-                    <FaPlus /> Add Another Media Item
+                    {isSubmitting ? "Submitting..." : "Submit Media Items"}
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    onClick={resetForm}
+                    type="button"
+                  >
+                    Clear
                   </Button>
                 </div>
-              </Form.Group>
-
-              <div className="d-flex gap-2 mt-3">
-                <Button
-                  variant="primary"
-                  type="submit"
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting ? "Submitting..." : "Submit Media Items"}
-                </Button>
-                <Button
-                  variant="secondary"
-                  onClick={resetForm}
-                  type="button"
-                >
-                  Clear
-                </Button>
-              </div>
-            </Form>
+              </Form>
+            </div>
           </Container>
         </div>
       </div>

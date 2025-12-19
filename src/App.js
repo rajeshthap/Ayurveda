@@ -54,6 +54,7 @@ import ManagePresentationAwards from './componets/dash_board/features_page/Manag
 import AddPresentationAwards from './componets/dash_board/features_page/AddPresentationAwards';
 import AddMediaGallery from './componets/dash_board/features_page/AddMediaGallery';
 import ManageMediaGallery from './componets/dash_board/features_page/ManageMediaGallery';
+import ManageDisclamier from './componets/dash_board/features_page/ManageDisclamier';
 
 
 function App() {
@@ -153,6 +154,7 @@ function App() {
 <Route path="/ManagePresentationAwards" element={<ManagePresentationAwards />} />
 <Route path="/AddMediaGallery" element={<AddMediaGallery />} />
 <Route path="/ManageMediaGallery" element={<ManageMediaGallery />} />
+<Route path="/ManageDisclamier" element={<ManageDisclamier />} />
 
 {/* <Route path="*" element={<NotFound />} />  */}
 </Routes>
