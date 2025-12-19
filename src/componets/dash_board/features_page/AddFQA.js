@@ -2,34 +2,28 @@ import React, { useState, useEffect } from "react";
 import { Container, Row, Col, Form, Button, Alert } from "react-bootstrap";
 import "../../../assets/css/dashboard.css";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
+import { useAuthFetch } from "../../context/AuthFetch";
 import LeftNav from "../LeftNav";
 import DashBoardHeader from "../DashBoardHeader";
-import { useAuth } from "../../context/AuthContext";
 import { FaPlus, FaTrash } from "react-icons/fa";
-import { useAuthFetch } from "../../context/AuthFetch";
 
-const AddFQA = () => {
-  const { logout } = useAuth();
+const AddFAQ = () => {
+  const { auth, logout, refreshAccessToken } = useAuth();
+  const admin_id = auth?.unique_id;
+
+  console.log("Admin ID:", admin_id);
   const authFetch = useAuthFetch();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
   const [isTablet, setIsTablet] = useState(false);
-  
-  // Form state for Journey
+
+  // Form state for FAQ items
   const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    image: null,
-    modules: [""] // Initialize with one empty module
+    module: [{ question: "", answer: "" }], // Initialize with one empty FAQ item
   });
-  
-  // State for image preview
-  const [imagePreview, setImagePreview] = useState(null);
-  
-  // State for description validation error
-  const [descriptionError, setDescriptionError] = useState("");
-  
+
   // Submission state
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState("");
@@ -49,183 +43,147 @@ const AddFQA = () => {
     return () => window.removeEventListener("resize", checkDevice);
   }, []);
 
-  // Cleanup object URL to avoid memory leaks
-  useEffect(() => {
-    return () => {
-      if (imagePreview) {
-        URL.revokeObjectURL(imagePreview);
-      }
-    };
-  }, [imagePreview]);
-
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
-  // Handle form input changes
-  const handleChange = (e) => {
-    const { name, value, files } = e.target;
-    
-    if (name === 'image') {
-      // Handle file input for image
-      const file = files[0];
-      setFormData(prev => ({
-        ...prev,
-        image: file
-      }));
-      
-      // Create a preview URL for selected image
-      if (file) {
-        const previewUrl = URL.createObjectURL(file);
-        setImagePreview(previewUrl);
-      } else {
-        setImagePreview(null);
+  // Handle FAQ item changes
+  const handleFAQChange = (index, field, value) => {
+    setFormData((prev) => {
+      const newModule = [...prev.module];
+      // Ensure the FAQ item at index exists and is an object
+      if (!newModule[index] || typeof newModule[index] !== "object") {
+        newModule[index] = { question: "", answer: "" };
       }
-    } else if (name.startsWith('module')) {
-      // Handle module inputs
-      const moduleIndex = parseInt(name.split('-')[1]);
-      
-      setFormData(prev => {
-        const newModules = [...prev.modules];
-        newModules[moduleIndex] = value;
-        
-        return {
-          ...prev,
-          modules: newModules
-        };
-      });
-    } else {
-      // Handle text inputs
-      setFormData(prev => ({
-        ...prev,
-        [name]: value
-      }));
-      
-      // Validate description length
-      if (name === 'description') {
-        const wordCount = value.trim().split(/\s+/).length;
-        if (value.trim() === '') {
-          setDescriptionError("Description is required.");
-        } else if (wordCount <= 10) {
-          setDescriptionError(`Description must be more than 10 words. You have entered ${wordCount} words.`);
-        } else {
-          setDescriptionError(""); // Clear error if valid
-        }
-      }
-    }
-  };
+      // Update the specific field
+      newModule[index] = {
+        ...newModule[index],
+        [field]: value,
+      };
 
-  // Handle module changes
-  const handleModuleChange = (index, value) => {
-    setFormData(prev => {
-      const newModules = [...prev.modules];
-      newModules[index] = value;
-      
       return {
         ...prev,
-        modules: newModules
+        module: newModule,
       };
     });
   };
 
-  // Add a new module
-  const addModule = () => {
-    setFormData(prev => ({
+  // Add a new FAQ item
+  const addFAQItem = () => {
+    setFormData((prev) => ({
       ...prev,
-      modules: [...prev.modules, ""]
+      module: [...prev.module, { question: "", answer: "" }],
     }));
   };
 
-  // Remove a module
-  const removeModule = (index) => {
-    setFormData(prev => ({
+  // Remove a FAQ item
+  const removeFAQItem = (index) => {
+    setFormData((prev) => ({
       ...prev,
-      modules: prev.modules.filter((_, i) => i !== index)
+      module: prev.module.filter((_, i) => i !== index),
     }));
   };
 
-  // Clear form function
-  const clearForm = () => {
+  // Reset form
+  const resetForm = () => {
     setFormData({
-      title: "",
-      description: "",
-      image: null,
-      modules: [""]
+      module: [{ question: "", answer: "" }],
     });
-    setImagePreview(null);
-    setMessage("");
     setShowAlert(false);
-    setDescriptionError("");
   };
 
-  // Handle form submission
+  // Handle form submission (POST request)
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    // Check for validation errors before submitting
-    if (descriptionError) {
-      setMessage("Please fix the validation errors before submitting.");
-      setVariant("danger");
-      setShowAlert(true);
-      return;
-    }
-    
     setIsSubmitting(true);
     setShowAlert(false);
-    
-    // Create a FormData object to send the file
-    const dataToSend = new FormData();
-    dataToSend.append('title', formData.title);
-    dataToSend.append('description', formData.description);
-    
-    // Add image if it exists
-    if (formData.image) {
-      dataToSend.append('image', formData.image, formData.image.name);
-    }
-    
-    // Add modules as JSON string
-    dataToSend.append('module', JSON.stringify(formData.modules));
-    
+
     try {
-      // Using the provided API endpoint for journey
-      const response = await authFetch('https://mahadevaaya.com/trilokayurveda/trilokabackend/api/journey-item/', {
-        method: 'POST',
-        credentials: 'include',
-        body: dataToSend,
-      });
+      // Prepare the data for submission
+      const url = "https://mahadevaaya.com/trilokayurveda/trilokabackend/api/faq-items/";
       
-      // Handle bad API responses
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ message: 'Server error' }));
-        throw new Error(errorData.message || 'Failed to add journey content');
+      // Create FormData for the API
+      const dataToSend = new FormData();
+      
+      // Add admin_id
+      dataToSend.append("admin_id", admin_id);
+      
+      // Create a properly indexed module array
+      const moduleArray = formData.module.map((item, index) => ({
+        question: item.question,
+        answer: item.answer
+      }));
+      
+      // Add the module array as a JSON string
+      dataToSend.append("module", JSON.stringify(moduleArray));
+      
+      // Log the FormData content for debugging
+      console.log("Submitting FormData:");
+      for (let pair of dataToSend.entries()) {
+        console.log(pair[0] + ": " + pair[1]);
       }
       
+      // Send the data as FormData
+      let response = await fetch(url, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${auth?.access}`,
+        },
+        body: dataToSend,
+      });
+
+      // If unauthorized, try refreshing token and retry once
+      if (response.status === 401) {
+        const newAccess = await refreshAccessToken();
+        if (!newAccess) throw new Error("Session expired");
+        response = await fetch(url, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${newAccess}`,
+          },
+          body: dataToSend,
+        });
+      }
+
+      console.log("Response status:", response.status);
+      
+      // Parse the response
+      const responseData = await response.json();
+      console.log("Response data:", responseData);
+      
+      // Check if the API call was successful
+      if (!response.ok || !responseData.success) {
+        throw new Error(responseData.message || "Failed to save FAQ items");
+      }
+
       // SUCCESS PATH
-      alert('Journey content added successfully!');
-      setMessage("Journey content added successfully!");
+      const faqCount = formData.module.length;
+      setMessage(`✅ Success! ${faqCount} FAQ item${faqCount > 1 ? 's have' : ' has'} been added successfully.`);
       setVariant("success");
       setShowAlert(true);
-      clearForm();
-      
-      // Hide success alert after 3 seconds
-      setTimeout(() => setShowAlert(false), 3000);
-      
+      resetForm();
+
+      // Hide success alert after 5 seconds
+      setTimeout(() => setShowAlert(false), 5000);
     } catch (error) {
       // FAILURE PATH
-      console.error('Error adding journey content:', error);
+      console.error("Error adding FAQ items:", error);
       let errorMessage = "An unexpected error occurred. Please try again.";
-      
-      if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
-        errorMessage = "Network error: Could not connect to the server. Please check the API endpoint.";
+
+      if (
+        error instanceof TypeError &&
+        error.message.includes("Failed to fetch")
+      ) {
+        errorMessage =
+          "Network error: Could not connect to the server. Please check the API endpoint.";
       } else if (error.message) {
         errorMessage = error.message;
       }
-      
-      setMessage(errorMessage);
+
+      setMessage(`❌ Error: ${errorMessage}`);
       setVariant("danger");
       setShowAlert(true);
-      
+
       // Hide error alert after 5 seconds
       setTimeout(() => setShowAlert(false), 5000);
-      
     } finally {
       setIsSubmitting(false);
     }
@@ -233,139 +191,130 @@ const AddFQA = () => {
 
   return (
     <>
-    <div className="dashboard-container">
-      {/* Left Sidebar */}
-      <LeftNav
-        sidebarOpen={sidebarOpen}
-        setSidebarOpen={setSidebarOpen}
-        isMobile={isMobile}
-        isTablet={isTablet}
-      />
+      <div className="dashboard-container">
+        {/* Left Sidebar */}
+        <LeftNav
+          sidebarOpen={sidebarOpen}
+          setSidebarOpen={setSidebarOpen}
+          isMobile={isMobile}
+          isTablet={isTablet}
+        />
 
-      {/* Main Content */}
-      <div className="main-content">
-        <DashBoardHeader toggleSidebar={toggleSidebar} />
+        {/* Main Content */}
+        <div className="main-content">
+          <DashBoardHeader toggleSidebar={toggleSidebar} />
 
-        <Container fluid className="dashboard-body dashboard-main-container">
-          <h1 className="page-title">Add Journey Content</h1>
-          
-          {/* Alert for success/error messages */}
-          {showAlert && (
-            <Alert variant={variant} className="mb-4" onClose={() => setShowAlert(false)} dismissible>
-              {message}
-            </Alert>
-          )}
-          
-          <Form onSubmit={handleSubmit}>
-            <Form.Group className="mb-3">
-              <Form.Label>Title</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Enter title"
-                name="title"
-                value={formData.title}
-                onChange={handleChange}
-                required
-              />
-            </Form.Group>
-            
-            <Form.Group className="mb-3">
-              <Form.Label>Description (must be more than 10 words)</Form.Label>
-              <Form.Control
-                as="textarea"
-                rows={4}
-                placeholder="Enter description"
-                name="description"
-                value={formData.description}
-                onChange={handleChange}
-                required
-                isInvalid={!!descriptionError}
-              />
-              <Form.Control.Feedback type="invalid">
-                {descriptionError}
-              </Form.Control.Feedback>
-            </Form.Group>
-            
-            <Form.Group className="mb-3">
-              <Form.Label>Image</Form.Label>
-              <Form.Control
-                type="file"
-                name="image"
-                onChange={handleChange}
-                accept="image/*"
-              />
-              {imagePreview && (
-                <div className="mt-3">
-                  <img src={imagePreview} alt="Image Preview" style={{ maxWidth: '200px', maxHeight: '200px' }} />
-                </div>
-              )}
-            </Form.Group>
-            
-            {/* Modules Section */}
-            <Form.Group className="mb-3">
-              <Form.Label>Modules</Form.Label>
-              <div className="modules-container">
-                {formData.modules.map((module, index) => (
-                  <div key={index} className="module-item mb-3 p-3 border rounded">
-                    <div className="d-flex justify-content-between align-items-center mb-2">
-                      <h5>Module {index + 1}</h5>
-                      {formData.modules.length > 1 && (
-                        <Button 
-                          variant="outline-danger" 
-                          size="sm"
-                          onClick={() => removeModule(index)}
-                        >
-                          <FaTrash /> Remove
-                        </Button>
-                      )}
+          <Container fluid className="dashboard-body dashboard-main-container">
+            <h1 className="page-title">Add FAQ Items</h1>
+
+            {/* Alert for success/error messages */}
+            {showAlert && (
+              <Alert
+                variant={variant}
+                className="mb-4"
+                onClose={() => setShowAlert(false)}
+                dismissible
+              >
+                {message}
+              </Alert>
+            )}
+
+            <Form onSubmit={handleSubmit}>
+              {/* FAQ Items Section */}
+              <Form.Group className="mb-3">
+                <Form.Label>FAQ Items</Form.Label>
+
+                <div className="faq-container">
+                  {formData.module.map((faq, index) => (
+                    <div
+                      key={index}
+                      className="faq-item mb-3 p-3 border rounded"
+                    >
+                      <div className="d-flex justify-content-between align-items-center mb-2">
+                        <h5>FAQ Item {index + 1}</h5>
+
+                        {formData.module.length > 1 && (
+                          <Button
+                            variant="outline-danger"
+                            size="sm"
+                            onClick={() => removeFAQItem(index)}
+                          >
+                            <FaTrash /> Remove
+                          </Button>
+                        )}
+                      </div>
+
+                      {/* Question */}
+                      <Form.Group className="mb-2">
+                        <Form.Label>Question</Form.Label>
+                        <Form.Control
+                          type="text"
+                          placeholder={`Enter question ${index + 1}`}
+                          value={faq.question || ""}
+                          onChange={(e) =>
+                            handleFAQChange(
+                              index,
+                              "question",
+                              e.target.value
+                            )
+                          }
+                          required
+                        />
+                      </Form.Group>
+
+                      {/* Answer */}
+                      <Form.Group className="mb-2">
+                        <Form.Label>Answer</Form.Label>
+                        <Form.Control
+                          as="textarea"
+                          rows={3}
+                          placeholder={`Enter answer ${index + 1}`}
+                          value={faq.answer || ""}
+                          onChange={(e) =>
+                            handleFAQChange(
+                              index,
+                              "answer",
+                              e.target.value
+                            )
+                          }
+                          required
+                        />
+                      </Form.Group>
                     </div>
-                    
-                    <Form.Group>
-                      <Form.Label>Module Value</Form.Label>
-                      <Form.Control
-                        type="text"
-                        placeholder={`Enter module ${index + 1} value`}
-                        name={`module-${index}`}
-                        value={module}
-                        onChange={handleChange}
-                        required
-                      />
-                    </Form.Group>
-                  </div>
-                ))}
-                
-                <Button 
-                  variant="outline-primary" 
-                  onClick={addModule}
-                  className="mt-2"
+                  ))}
+
+                  <Button
+                    variant="outline-primary"
+                    onClick={addFAQItem}
+                    className="mt-2"
+                  >
+                    <FaPlus /> Add Another FAQ Item
+                  </Button>
+                </div>
+              </Form.Group>
+
+              <div className="d-flex gap-2 mt-3">
+                <Button
+                  variant="primary"
+                  type="submit"
+                  disabled={isSubmitting}
                 >
-                  <FaPlus /> Add Another Module
+                  {isSubmitting ? "Submitting..." : "Submit FAQ Items"}
+                </Button>
+                <Button
+                  variant="secondary"
+                  onClick={resetForm}
+                  type="button"
+                >
+                  Clear
                 </Button>
               </div>
-            </Form.Group>
-            
-            <Button 
-              variant="primary" 
-              type="submit" 
-              disabled={isSubmitting}
-              className="me-2"
-            >
-              {isSubmitting ? 'Submitting...' : 'Add Journey Content'}
-            </Button>
-            
-            <Button 
-              variant="secondary" 
-              onClick={clearForm}
-              type="button"
-            >
-              Clear
-            </Button>
-          </Form>
-        </Container>
+            </Form>
+          </Container>
+        </div>
       </div>
-    </div>
     </>
   );
 };
 
-export default AddFQA;
+export default AddFAQ;
