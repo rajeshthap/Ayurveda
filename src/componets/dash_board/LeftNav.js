@@ -143,7 +143,16 @@ const menuItems = [
           icon: <FaImage />,
         },
         
-        
+         {
+          label: "Add Media Gallery",
+          path: "/AddMediaGallery",
+          icon: <FaImage />,
+        },
+         {
+          label: "Manage Media Gallery",
+          path: "/ManageMediaGallery",
+          icon: <FaImage />,
+        },
        
       ],
     },
