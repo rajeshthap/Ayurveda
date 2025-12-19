@@ -123,13 +123,13 @@ const menuItems = [
       label: "Feature",
       submenu: [
         {
-          label: "Add Featured In",
-          path: "/AddFeaturedIn",
+          label: "Add FQA",
+          path: "/AddFQA",
           icon: <FaImage />,
         },
          {
-          label: "Manage Featured In",
-          path: "/ManageFeaturedIn",
+          label: "Manage FQA",
+          path: "/ManageFQA",
           icon: <FaImage />,
         },
         

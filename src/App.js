@@ -46,6 +46,8 @@ import AddProfbhavnasingh from './componets/dash_board/about_us/AddProfbhavnasin
 import AddProfile from './componets/dash_board/about_us/AddProfile';
 import AddAutoImmune from './componets/dash_board/our_focus_dashboard/AddAutoImmune';
 import ManageProfile from './componets/dash_board/about_us/ManageProfile';
+import ManageFQA from './componets/dash_board/features_page/ManageFQA';
+import AddFQA from './componets/dash_board/features_page/AddFQA';
 
 
 function App() {
@@ -121,6 +123,8 @@ function App() {
 <Route path="/Login" element={<Login />} />
 <Route path="/AddProfbhavnasingh" element={<AddProfbhavnasingh />} />
 <Route path="/AddAutoImmune" element={<AddAutoImmune />} />
+<Route path="/AddFQA" element={<AddFQA />} />
+<Route path="/ManageFQA" element={<ManageFQA />} />
 
 {/* <Route path="*" element={<NotFound />} />  */}
 </Routes>
