@@ -25,6 +25,14 @@ function OurExpertise() {
     { img: care6, title: "Own Manufacturing", desc: "Individualized precision Medicine & High Quality", path: "/OwnManufacturing" },
   ];
 
+  // Function to scroll to top
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  };
+
   return (
     <div className="ayur-care-slider-wrapper">
       <div className="row">
@@ -58,7 +66,7 @@ function OurExpertise() {
             {data.map((item, index) => (
               <SwiperSlide key={index}>
                 <div className="ayur-careslide-box">
-                  <Link to={item.path}>
+                  <Link to={item.path} onClick={scrollToTop}>
                     <div className="ayur-careslider-img">
                       <img src={item.img} alt={item.title} />
                     </div>
