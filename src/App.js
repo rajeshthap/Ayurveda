@@ -59,6 +59,8 @@ import AddDigenerative from './componets/dash_board/our_focus_dashboard/AddDigen
 import ManageDigenerative from './componets/dash_board/our_focus_dashboard/ManageDigenerative';
 import AddCncds from './componets/dash_board/our_focus_dashboard/AddCncds';
 import ManageCncds from './componets/dash_board/our_focus_dashboard/ManageCncds';
+import AddWellnessolution from './componets/dash_board/our_focus_dashboard/AddWellnessolution';
+import ManageWellnessolution from './componets/dash_board/our_focus_dashboard/ManageWellnessolution';
 
 
 function App() {
@@ -88,6 +90,8 @@ function App() {
       "/ManageDigenerative",
       "/AddCncds",
       "/ManageCncds",
+      "/AddWellnessolution",
+      "/ManageWellnessolution",
 
      ]);
 
@@ -114,6 +118,8 @@ function App() {
     "/ManageDigenerative",
     "/AddCncds",
     "/ManageCncds",
+    "/AddWellnessolution",
+    "/ManageWellnessolution",
 
   ]);
 
@@ -168,6 +174,8 @@ function App() {
 <Route path="/ManageDigenerative" element={<ManageDigenerative />} />
 <Route path="/AddCncds" element={<AddCncds/>} />
 <Route path="/ManageCncds" element={<ManageCncds />} />
+<Route path="/AddWellnessolution" element={<AddWellnessolution/>} />
+<Route path="/ManageWellnessolution" element={<ManageWellnessolution />} />
 <Route path="/AddPresentationAwards" element={<AddPresentationAwards />} />
 <Route path="/ManagePresentationAwards" element={<ManagePresentationAwards />} />
 <Route path="/AddMediaGallery" element={<AddMediaGallery />} />

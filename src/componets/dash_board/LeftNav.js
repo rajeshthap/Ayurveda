@@ -136,6 +136,16 @@ const menuItems = [
       path: "/ManageCncds",
       icon: <FaTasks />, // manage focus
     },
+     {
+      label: "Add Wellness Solutions",
+      path: "/AddWellnessolution",
+      icon: <FaPlusSquare />, // add focus
+    },
+    {
+      label: "Manage Wellness Solutions",
+      path: "/ManageWellnessolution",
+      icon: <FaTasks />, // manage focus
+    },
   ],
 },
 
