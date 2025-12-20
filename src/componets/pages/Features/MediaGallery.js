@@ -7,11 +7,12 @@ import "../../../assets/css/MediaGallery.css"
 
 const API_BASE = 'https://mahadevaaya.com/trilokayurveda/trilokabackend';
 
-const MediaGallery = () => {
+const MediaGallery = ({ showBannerOnly = false }) => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Fetch data whenever the component mounts, as the cards are always needed.
     fetch(`${API_BASE}/api/media-gallery-items/`)
       .then((res) => res.json())
       .then((data) => {
@@ -22,24 +23,33 @@ const MediaGallery = () => {
         console.error('API Error:', err);
         setLoading(false);
       });
-  }, []);
+  }, []); // Empty dependency array ensures this runs only once on mount
 
   return (
     <div className="ayur-bgcover ayur-about-sec">
-      {/* Header Section - Same as PresentationAwards */}
-      <div className='about-bg'>
-        <div className='ayur-bread-content text-center'>
-          <h2 style={{ fontWeight: 'bold' }}>Media Gallery</h2>
-          <div className="ayur-bread-list">
-            <span>
-              <a href="index.html">Home </a>
-            </span>
-            <span className="ayur-active-page">/ Media Gallery</span>
+      {/* 
+        Header Section (Banner)
+        This is now conditionally rendered.
+        It will be hidden if showBannerOnly prop is true.
+      */}
+      {!showBannerOnly && (
+        <div className='about-bg'>
+          <div className='ayur-bread-content text-center'>
+            <h2 style={{ fontWeight: 'bold' }}>Media Gallery</h2>
+            <div className="ayur-bread-list">
+              <span>
+                <a href="index.html">Home </a>
+              </span>
+              <span className="ayur-active-page">/ Media Gallery</span>
+            </div>
           </div>
         </div>
-      </div>
-
-      {/* Main Content Section - Same structure as PresentationAwards */}
+      )}
+      
+      {/* 
+        Main Content Section (Cards)
+        This section is now always rendered, regardless of the showBannerOnly prop.
+      */}
       <div className="row">
         <div className="ayur-bgcover ayur-about-sec">
           <div className="container fluid about-us">
@@ -125,14 +135,15 @@ const MediaGallery = () => {
             </div>
           </div>
           
-          {/* Background shapes - Same as PresentationAwards */}
-          <div className="ayur-bgshape ayur-about-bgshape">
-            <img src={BgShape2} alt="img" />
-            <img src={BgLeaf2} alt="img" />
-          </div>
+          {/* Background shapes are also only shown if the banner is shown */}
+          {!showBannerOnly && (
+            <div className="ayur-bgshape ayur-about-bgshape">
+              <img src={BgShape2} alt="img" />
+              <img src={BgLeaf2} alt="img" />
+            </div>
+          )}
         </div>
       </div>
-
     </div>
   );
 };

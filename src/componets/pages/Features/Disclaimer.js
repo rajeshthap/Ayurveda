@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
  
 // Import images at the top
 import AboutImg from '../../../assets/images/about-img.png';
@@ -9,6 +9,59 @@ import { Link } from 'react-router-dom';
 import { Row } from 'react-bootstrap';
  
 const Disclaimer = () => {
+  const [disclaimerData, setDisclaimerData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+ 
+  useEffect(() => {
+    const fetchDisclaimerData = async () => {
+      try {
+        const response = await fetch('https://mahadevaaya.com/trilokayurveda/trilokabackend/api/disclamier-items/');
+        if (!response.ok) {
+          throw new Error('Failed to fetch disclaimer data');
+        }
+        const data = await response.json();
+        setDisclaimerData(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+ 
+    fetchDisclaimerData();
+  }, []);
+ 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+ 
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+ 
+  // Extract the disclaimer content from the API response
+  const disclaimerContent = disclaimerData?.data?.[0]?.module?.[0]?.description || '';
+ 
+  // Split the content by numbered points and format them
+  const formatDisclaimerContent = (content) => {
+    if (!content) return [];
+    
+    // Split by numbered points (e.g., "1.", "2.", etc.)
+    const points = content.split(/\d+\./).filter(point => point.trim());
+    
+    return points.map((point, index) => {
+      // Remove any leading/trailing whitespace and newlines
+      const cleanPoint = point.trim();
+      return {
+    
+        content: cleanPoint
+      };
+    });
+  };
+ 
+  const formattedPoints = formatDisclaimerContent(disclaimerContent);
+ 
   return (
     <div className="ayur-bgcover ayur-about-sec">
       <div className='about-bg'>
@@ -27,42 +80,19 @@ const Disclaimer = () => {
         <div className="ayur-bgcover ayur-about-sec">
           <div className="container fluid about-us">
             <div className="row">
-              <div className="col-lg-6 col-md-12 col-sm-12">
-                <div className="ayur-about-img">
-                  <img
-                    src={Inneraboutimg}
-                    alt="img"
-                    data-tilt=""
-                    data-tilt-max="10"
-                    data-tilt-speed="1000"
-                    data-tilt-perspective="1000"
-                    style={{
-                      willChange: 'transform',
-                      transform:
-                        'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)',
-                    }}
-                  />
-                </div>
-              </div>
-              <div className="col-lg-6 col-md-12 col-sm-12">
+          
+              <div className="col-lg-12 col-md-12 col-sm-12">
                 <div className="ayur-heading-wrap ayur-about-head">
                   <h3>Disclaimer</h3>
                   <h4>"Important Information About Our Services</h4>
                   <div>
-                    {/* Add your disclaimer content here */}
-                    <h5 className='pt-3'>Medical Advice:</h5>
-                    <p>The information provided on this website is for educational purposes only and is not intended as medical advice. The content is not a substitute for professional medical advice, diagnosis, or treatment. Always seek the advice of your physician or other qualified health provider with any questions you may have regarding a medical condition.</p>
-                    
-                    <h5>Treatment Results:</h5>
-                    <p>Individual results may vary. The testimonials and examples used are exceptional results and do not apply to the average person. They are not intended to represent or guarantee that anyone will achieve the same or similar results. Each individual's success depends on their background, dedication, desire, and motivation.</p>
-                    
-                    <h5>Product Information:</h5>
-                    <p>The herbal formulations and products mentioned on this website are not intended to diagnose, treat, cure, or prevent any disease. These statements have not been evaluated by the Food and Drug Administration or any other regulatory authority. Please consult your healthcare provider before using any herbal products.</p>
+                    {formattedPoints.map((point) => (
+                      <div key={point.id} className="pt-3">
+                        {/* <h5> {point.id}:</h5> */}
+                        <p>{point.content}</p>
+                      </div>
+                    ))}
                   </div>
- 
-                  <Link to="#" className="ayur-btn">
-                    Contact Us
-                  </Link>
                 </div>
               </div>
             </div>

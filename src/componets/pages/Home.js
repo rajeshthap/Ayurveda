@@ -20,6 +20,7 @@ import PureAyurveda from "./PureAyurveda";
 import OurTestimonial from "./OurTestimonial";
 import OurTeam from "./OurTeam";
 import BannerSection from "./BannerSection";
+import MediaGallery from "./Features/MediaGallery";
 
 function Home() {
   return (
@@ -27,10 +28,12 @@ function Home() {
    <BannerSection />
      <OurExpertise />
      <PresentationsAwards />
-     <About />
-     <Achievment />
+       <MediaGallery showBannerOnly={true} />
+     {/* <About /> */}
+     {/* <Achievment />
      <PureAyurveda />
-     <OurTestimonial />
+  
+     <OurTestimonial /> */}
      <OurTeam />
     </>
   );
