@@ -17,12 +17,12 @@ import { Link } from "react-router-dom";
 
 function OurExpertise() {
   const data = [
-    { img: care1, title: "Autoimmune Diseases", desc: "Cellular Cleansing – The Way Out" },
-    { img: care2, title: "Degenerative Disorders", desc: "There is a Hallmark Line of Action- the Rasayan Chikitsa!" },
-    { img: care3, title: "Metabolic Disorders", desc: "A Good Metabolism – Key to Robust Health!" },
-    { img: care4, title: "Other CNCD’s", desc: "Life Without Too Much Style in the Lifestyle!" },
-    { img: care5, title: "Wellness Solutions", desc: "From Illness Wellness!" },
-    { img: care6, title: "Own Manufacturing", desc: "Individualized precision Medicine & High Quality" },
+    { img: care1, title: "Autoimmune Diseases", desc: "Cellular Cleansing – The Way Out", path: "/AutoImmune" },
+    { img: care2, title: "Degenerative Disorders", desc: "There is a Hallmark Line of Action- the Rasayan Chikitsa!", path: "/Degenerative" },
+    { img: care3, title: "Metabolic Disorders", desc: "A Good Metabolism – Key to Robust Health!", path: "/MetabolicDisorders" },
+    { img: care4, title: "Other CNCD's", desc: "Life Without Too Much Style in the Lifestyle!", path: "/InternalOthercnds" },
+    { img: care5, title: "Wellness Solutions", desc: "From Illness Wellness!", path: "/Internalwellnesssol" },
+    { img: care6, title: "Own Manufacturing", desc: "Individualized precision Medicine & High Quality", path: "/OwnManufacturing" },
   ];
 
   return (
@@ -58,7 +58,7 @@ function OurExpertise() {
             {data.map((item, index) => (
               <SwiperSlide key={index}>
                 <div className="ayur-careslide-box">
-                  <Link to="#">
+                  <Link to={item.path}>
                     <div className="ayur-careslider-img">
                       <img src={item.img} alt={item.title} />
                     </div>
