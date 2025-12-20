@@ -68,6 +68,8 @@ import AddOwnManufacturing from './componets/dash_board/our_focus_dashboard/AddO
 import ManageOwnManufacturing from './componets/dash_board/our_focus_dashboard/ManageOwnManufacturing';
 import AddBlog from './componets/dash_board/AddBlog';
 import ManageBlog from './componets/dash_board/ManageBlog';
+import AddCarousel from './componets/dash_board/carousel/AddCarousel';
+import ManageCarousel from './componets/dash_board/carousel/ManageCarousel';
 
 
 function App() {
@@ -104,7 +106,9 @@ function App() {
       "/AddOwnManufacturing",
       "/ManageOwnManufacturing",
       "/AddBlog",
-      "/ManageBlog"
+      "/ManageBlog",
+      "/AddCarousel",
+      "/ManageCarousel"
 
      ]);
 
@@ -138,7 +142,9 @@ function App() {
     "/AddOwnManufacturing",
     "/ManageOwnManufacturing",
     "/AddBlog",
-    "/ManageBlog"
+    "/ManageBlog",
+    "/AddCarousel",
+    "/ManageCarousel"
 
   ]);
 
@@ -183,6 +189,8 @@ function App() {
 <Route path="/ManageAboutUs" element={<ManageAboutUs />} />
 <Route path="/AddJourney" element={<AddJourney/>} />
 <Route path="/ManageJourney" element={<ManageJourney />} />
+<Route path="/AddCarousel" element={<AddCarousel/>} />
+<Route path="/ManageCarousel" element={<ManageCarousel />} />
 <Route path="/Login" element={<Login />} />
 <Route path="/AddProfbhavnasingh" element={<AddProfbhavnasingh />} />
 <Route path="/AddAutoImmune" element={<AddAutoImmune />} />
