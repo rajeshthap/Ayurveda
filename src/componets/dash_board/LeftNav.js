@@ -58,6 +58,25 @@ const menuItems = [
       active: true,
     },
     
+     {
+      icon: <FaImages />,
+      label: "Carousel",
+      submenu: [
+        {
+          label: "Add Carousel",
+          path: "/AddCarousel",
+          icon: <FaImage />,
+        },
+         {
+          label: "Manage Carousel",
+          path: "/ManageCarousel",
+          icon: <FaImage />,
+        },
+        
+        
+       
+      ],
+    },
     {
       icon: <FaProjectDiagram />,
       label: "The Journey",
