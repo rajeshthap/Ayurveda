@@ -10,7 +10,9 @@ const API_BASE = 'https://mahadevaaya.com/trilokayurveda/trilokabackend';
 const MediaGallery = ({ showBannerOnly = false }) => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
-
+ useEffect(() => {
+    window.scrollTo(0, 0);
+  }, );
   useEffect(() => {
     // Fetch data whenever the component mounts, as the cards are always needed.
     fetch(`${API_BASE}/api/media-gallery-items/`)

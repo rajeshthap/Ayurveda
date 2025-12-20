@@ -266,9 +266,10 @@ const menuItems = [
       submenu: [
         {
           label: "Add Researches",
-          path: "/AddFeaturedIn",
+          path: "/AddResearches",
           icon: <FaImage />,
         },
+        
          {
           label: "Manage Researches",
           path: "/ManageResearches",

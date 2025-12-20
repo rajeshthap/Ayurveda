@@ -7,7 +7,7 @@ import BgLeaf2 from '../../../assets/images/bg-leaf2.png';
 import { Link } from 'react-router-dom';
 
 
-function About() {
+function MediaGallery() {
   return (
     <div className="ayur-bgcover ayur-about-sec">
       <div className="container">
@@ -44,7 +44,7 @@ function About() {
                 in reprehenderit in voluptate velit esse cillum dolore eu fugiat
                 nulla pariatur.
               </p>
-              <Link to="#" className="ayur-btn">
+              <Link to="MediaGallery" className="ayur-btn">
                 Know More
               </Link>
             </div>
@@ -59,4 +59,4 @@ function About() {
   );
 }
 
-export default About;
+export default MediaGallery;

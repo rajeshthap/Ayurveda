@@ -134,17 +134,7 @@ const handleSubmit = async (e) => {
                     </div>
                   </Form.Group>
 
-                  <div>
-                    <span
-                      className="forgot-btn mx-1"
-                      type="button"
-                      onClick={() => navigate("/ForgotPassword")}
-                      disabled={isLoading}
-                    >
-                      Forgot Password ?
-                    </span>
-                  </div>
-
+                 
                   {/* Buttons */}
                   <div className=" text-center mt-3">
                     <Button disabled={isLoading} type="submit" className="w-100 trilok-submit-btn">

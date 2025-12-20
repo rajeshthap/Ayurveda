@@ -74,6 +74,9 @@ import ManageFooter from './componets/dash_board/ManageFooter';
 import BlogsDetails from './componets/pages/BlogsDetails';
 import AddTestinomial from './componets/dash_board/Testinomials/AddTestinomial';
 import ManageTestinomial from './componets/dash_board/Testinomials/ManageTestinomial';
+import ConsultNow from './componets/Consult_now/ConsultNow';
+import AddResearches from './componets/dash_board/researches/AddResearches';
+import ManageResearches from './componets/dash_board/researches/ManageResearches';
 
 
 function App() {
@@ -116,6 +119,8 @@ function App() {
       "/ManageFooter",
       "/AddTestinomial",
       "/ManageTestinomial",
+      "/ManageResearches",
+      "/AddResearches"
 
 
      ]);
@@ -156,6 +161,8 @@ function App() {
     "/ManageFooter",
     "/AddTestinomial",
     "/ManageTestinomial",
+    "/ManageResearches",
+    "/AddResearches"
 
   ]);
 
@@ -231,6 +238,9 @@ function App() {
 <Route path="/ManageBlog" element={<ManageBlog />} />
 <Route path="/ManageFooter" element={<ManageFooter />} />
 <Route path="/BlogsDetails" element={<BlogsDetails />} />
+<Route path="/ConsultNow" element={<ConsultNow />} />
+<Route path="/AddResearches" element={<AddResearches />} />
+<Route path="/ManageResearches" element={<ManageResearches />} />
 
 
 {/* <Route path="*" element={<NotFound />} />  */}

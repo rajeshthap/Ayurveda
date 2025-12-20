@@ -28,9 +28,9 @@ function Home() {
    <BannerSection />
      <OurExpertise />
      <PresentationsAwards />
-       <MediaGallery showBannerOnly={true} />
+       {/* <MediaGallery showBannerOnly={true} /> */}
          <OurTestimonial />
-     {/* <About /> */}
+     <About />
      {/* <Achievment />
      <PureAyurveda />
   
