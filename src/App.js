@@ -57,6 +57,13 @@ import ManageMediaGallery from './componets/dash_board/features_page/ManageMedia
 import ManageDisclamier from './componets/dash_board/features_page/ManageDisclamier';
 import AddDigenerative from './componets/dash_board/our_focus_dashboard/AddDigenerative';
 import ManageDigenerative from './componets/dash_board/our_focus_dashboard/ManageDigenerative';
+import AddCncds from './componets/dash_board/our_focus_dashboard/AddCncds';
+import ManageCncds from './componets/dash_board/our_focus_dashboard/ManageCncds';
+import AddWellnessolution from './componets/dash_board/our_focus_dashboard/AddWellnessolution';
+import ManageWellnessolution from './componets/dash_board/our_focus_dashboard/ManageWellnessolution';
+import AddMetabolicDisorders from './componets/dash_board/our_focus_dashboard/AddMetabolicDisorders';
+import ManageMetabolicDisorders from './componets/dash_board/our_focus_dashboard/ManageMetabolicDisorders';
+import MetabolicDisorders from './componets/pages/our_focus/MetabolicDisorders';
 
 
 function App() {
@@ -84,6 +91,12 @@ function App() {
       "/ManageDisclamier",
       "/AddDigenerative",
       "/ManageDigenerative",
+      "/AddCncds",
+      "/ManageCncds",
+      "/AddWellnessolution",
+      "/ManageWellnessolution",
+      "/AddMetabolicDisorders",
+      "/ManageMetabolicDisorders",
 
      ]);
 
@@ -108,6 +121,12 @@ function App() {
     "/ManageDisclamier",
     "/AddDigenerative",
     "/ManageDigenerative",
+    "/AddCncds",
+    "/ManageCncds",
+    "/AddWellnessolution",
+    "/ManageWellnessolution",
+    "/AddMetabolicDisorders",
+    "/ManageMetabolicDisorders",
 
   ]);
 
@@ -142,6 +161,7 @@ function App() {
 <Route path="/ExternalLinks" element={<ExternalLinks/>} />
 <Route path="/Disclaimer" element={<Disclaimer/>} />
 <Route path="/DegenerativeDiseases" element={<DegenerativeDiseases/>} />
+<Route path="/MetabolicDisorders" element={<MetabolicDisorders/>} />
 <Route path="/Researchers" element={<Researchers/>} />
 <Route path="/Blogs" element={<Blogs/>} />
 <Route path="/ContactUs" element={<ContactUs/>} />
@@ -160,6 +180,12 @@ function App() {
 <Route path="/ManageOurFocus" element={<ManageOurFocus />} />
 <Route path="/AddDigenerative" element={<AddDigenerative/>} />
 <Route path="/ManageDigenerative" element={<ManageDigenerative />} />
+<Route path="/AddCncds" element={<AddCncds/>} />
+<Route path="/ManageCncds" element={<ManageCncds />} />
+<Route path="/AddWellnessolution" element={<AddWellnessolution/>} />
+<Route path="/ManageWellnessolution" element={<ManageWellnessolution />} />
+<Route path="/AddMetabolicDisorders" element={<AddMetabolicDisorders/>} />
+<Route path="/ManageMetabolicDisorders" element={<ManageMetabolicDisorders />} />
 <Route path="/AddPresentationAwards" element={<AddPresentationAwards />} />
 <Route path="/ManagePresentationAwards" element={<ManagePresentationAwards />} />
 <Route path="/AddMediaGallery" element={<AddMediaGallery />} />

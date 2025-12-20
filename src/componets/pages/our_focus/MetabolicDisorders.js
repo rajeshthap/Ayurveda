@@ -7,7 +7,7 @@ import '../../../assets/css/autoimmune.css';
 import BgShape2 from '../../../assets/images/bg-shape2.png';
 import BgLeaf2 from '../../../assets/images/bg-leaf2.png';
 
-function InternalOthercnds() {
+function MetabolicDisorders() {
   const navigate = useNavigate();
   const [focusItems, setFocusItems] = useState([]);
   const [selectedItem, setSelectedItem] = useState(null);
@@ -37,7 +37,7 @@ function InternalOthercnds() {
     const fetchFocusItems = async () => {
       try {
         const response = await fetch(
-          'https://mahadevaaya.com/trilokayurveda/trilokabackend/api/ourfocus-othercndns-items/'
+          'https://mahadevaaya.com/trilokayurveda/trilokabackend/api/ourfocus-metabolicdisorders-items/'
         );
         
         if (!response.ok) {
@@ -77,10 +77,10 @@ function InternalOthercnds() {
       <div className="ayur-bgcover ayur-about-sec">
         <div className='about-bg'>
           <div className='ayur-bread-content'>
-            <h2>Other CNCDs</h2>
+            <h2>Metabolic Disorders</h2>
             <div className="ayur-bread-list">
               <span><a href="/">Home</a></span>
-              <span className="ayur-active-page">/ Other CNCDs</span>
+              <span className="ayur-active-page">/ Metabolic Disorders</span>
             </div>
           </div>
         </div>
@@ -88,7 +88,7 @@ function InternalOthercnds() {
         <div className="container fluid about-us ann-heading">
           <div className="text-center py-5">
             <Spinner animation="border" variant="primary" />
-            <p className="mt-3">Loading diseases...</p>
+            <p className="mt-3">Loading disorders...</p>
           </div>
         </div>
       </div>
@@ -101,10 +101,10 @@ function InternalOthercnds() {
       <div className="ayur-bgcover ayur-about-sec">
         <div className='about-bg'>
           <div className='ayur-bread-content'>
-            <h2>Other CNCDs</h2>
+            <h2>Metabolic Disorders</h2>
             <div className="ayur-bread-list">
               <span><a href="/">Home</a></span>
-              <span className="ayur-active-page">/ Other CNCDs</span>
+              <span className="ayur-active-page">/ Metabolic Disorders</span>
             </div>
           </div>
         </div>
@@ -122,10 +122,10 @@ function InternalOthercnds() {
     <div className="ayur-bgcover ayur-about-sec">
       <div className='about-bg'>
         <div className='ayur-bread-content'>
-          <h2>Other CNCDs</h2>
+          <h2>Metabolic Disorders</h2>
           <div className="ayur-bread-list">
             <span><a href="/">Home</a></span>
-            <span className="ayur-active-page">/ Other CNCDs</span>
+            <span className="ayur-active-page">/ Metabolic Disorders</span>
           </div>
         </div>
       </div>
@@ -136,7 +136,7 @@ function InternalOthercnds() {
             {!selectedItem ? (
               // List View - Show all cards
               <>
-                <h3>List of Diseases</h3>
+                <h3>List of Disorders</h3>
                 <h5>Wellness Center and Speciality Clinic for Chronic Disorders</h5>
                 <Row className="ayur-cards-row">
                   {focusItems.map((item) => (
@@ -225,7 +225,7 @@ function InternalOthercnds() {
                         ))
                       ) : (
                         <Alert variant="info">
-                          No detailed information available for this disease.
+                          No detailed information available for this disorder.
                         </Alert>
                       )}
                     </div>
@@ -245,4 +245,4 @@ function InternalOthercnds() {
   );
 }
 
-export default InternalOthercnds;
+export default MetabolicDisorders;
