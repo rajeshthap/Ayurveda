@@ -29,11 +29,12 @@ function Home() {
      <OurExpertise />
      <PresentationsAwards />
        <MediaGallery showBannerOnly={true} />
+         <OurTestimonial />
      {/* <About /> */}
      {/* <Achievment />
      <PureAyurveda />
   
-     <OurTestimonial /> */}
+    */}
      <OurTeam />
     </>
   );
