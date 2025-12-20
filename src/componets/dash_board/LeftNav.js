@@ -93,6 +93,23 @@ const menuItems = [
         },
       ],
     },
+
+     {
+      icon: <FaProjectDiagram />,
+      label: "Testinomials",
+      submenu: [
+        {
+          label: "Add Testinomial",
+          path: "/AddTestinomial",
+          icon: <FaImage />,
+        },
+         {
+          label: "Manage Testinomial",
+          path: "/ManageTestinomial",
+          icon: <FaImage />,
+        },
+      ],
+    },
    {
   icon: <FaInfoCircle />,   // About Us main
   label: "About Us",

@@ -72,6 +72,8 @@ import AddCarousel from './componets/dash_board/carousel/AddCarousel';
 import ManageCarousel from './componets/dash_board/carousel/ManageCarousel';
 import ManageFooter from './componets/dash_board/ManageFooter';
 import BlogsDetails from './componets/pages/BlogsDetails';
+import AddTestinomial from './componets/dash_board/Testinomials/AddTestinomial';
+import ManageTestinomial from './componets/dash_board/Testinomials/ManageTestinomial';
 
 
 function App() {
@@ -111,7 +113,9 @@ function App() {
       "/ManageBlog",
       "/AddCarousel",
       "/ManageCarousel",
-      "/ManageFooter"
+      "/ManageFooter",
+      "/AddTestinomial",
+      "/ManageTestinomial",
 
 
      ]);
@@ -149,7 +153,9 @@ function App() {
     "/ManageBlog",
     "/AddCarousel",
     "/ManageCarousel",
-    "/ManageFooter"
+    "/ManageFooter",
+    "/AddTestinomial",
+    "/ManageTestinomial",
 
   ]);
 
@@ -213,6 +219,8 @@ function App() {
 <Route path="/ManageMetabolicDisorders" element={<ManageMetabolicDisorders />} />
 <Route path="/AddOwnManufacturing" element={<AddOwnManufacturing/>} />
 <Route path="/ManageOwnManufacturing" element={<ManageOwnManufacturing />} />
+<Route path="/AddTestinomial" element={<AddTestinomial/>} />
+<Route path="/ManageTestinomial" element={<ManageTestinomial />} />
 <Route path="/AddPresentationAwards" element={<AddPresentationAwards />} />
 <Route path="/ManagePresentationAwards" element={<ManagePresentationAwards />} />
 <Route path="/AddMediaGallery" element={<AddMediaGallery />} />
