@@ -1,11 +1,4 @@
-import React from "react";
-
-// Import all banner images
-import Banner1 from "../../assets/images/banner-1.png";
-import Banner2 from "../../assets/images/banner-2.png";
-import Banner3 from "../../assets/images/banner-3.png";
-import Banner4 from "../../assets/images/banner-4.png";
-import Banner5 from "../../assets/images/banner-5.png";
+import React, { useState, useEffect } from "react";
 
 // Import leaf images
 import BanLeafLeft from "../../assets/images/ban-leafleft.png";
@@ -19,7 +12,33 @@ import "swiper/css/navigation";
 import "swiper/css/effect-coverflow";
 
 function BannerSection() {
-  const banners = [Banner1, Banner2, Banner3, Banner4, Banner5];
+  const [carouselData, setCarouselData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCarouselData = async () => {
+      try {
+        const response = await fetch('https://mahadevaaya.com/trilokayurveda/trilokabackend/api/carousel-items/');
+        const result = await response.json();
+        
+        if (result.success) {
+          setCarouselData(result.data);
+        }
+      } catch (error) {
+        console.error('Error fetching carousel data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCarouselData();
+  }, []);
+
+  if (loading) {
+    return <div className="ayur-banner-section">Loading banner...</div>;
+  }
+
+  const baseURL = 'https://mahadevaaya.com/trilokayurveda/trilokabackend';
 
   return (
     <div className="ayur-banner-section">
@@ -33,7 +52,7 @@ function BannerSection() {
               <p>
                 Two decades of rich clinical experience and expertise in treating
                 Degenerative, Auto-immune, Metabolic and other Chronic Non-Communicable
-                Disorders (CNCD’s) through herbs based Internal Medicines.
+                Disorders (CNCD's) through herbs based Internal Medicines.
               </p>
             </div>
           </div>
@@ -61,10 +80,15 @@ function BannerSection() {
                 }}
                 className="swiper ayur-banner-slider"
               >
-                {banners.map((img, idx) => (
-                  <SwiperSlide key={idx}>
+                {carouselData.map((item) => (
+                  <SwiperSlide key={item.id}>
                     <div className="ayur-ban-slide">
-                      <img src={img} alt={`banner-${idx + 1}`} />
+                      <img 
+                        src={`${baseURL}${item.image}`} 
+                        alt={item.title} 
+                      />
+                      <h1 className="ayur-ban-title">{item.title}</h1>
+                      <p className="ayur-ban-desc">{item.description}</p>
                     </div>
                   </SwiperSlide>
                 ))}
@@ -98,6 +122,47 @@ function BannerSection() {
         <img src={BanLeafLeft} alt="leaf-image" />
         <img src={BanLeafRight} alt="leaf-image" />
       </div>
+
+      {/* CSS for text overlay on images */}
+      <style jsx>{`
+        .ayur-ban-slide {
+          position: relative;
+          overflow: hidden;
+        }
+        
+        .ayur-ban-slide img {
+          width: 100%;
+          height: auto;
+          display: block;
+        }
+        
+        .ayur-ban-title {
+          position: absolute;
+          top: 20px;
+          left: 0;
+          right: 0;
+          text-align: center;
+          color: #fff;
+          font-size: 1.8rem;
+          font-weight: bold;
+          text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+          margin: 0;
+          padding: 0 10px;
+        }
+        
+        .ayur-ban-desc {
+          position: absolute;
+          bottom: 20px;
+          left: 0;
+          right: 0;
+          text-align: center;
+          color: #fff;
+          font-size: 1.2rem;
+          text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+          margin: 0;
+          padding: 0 15px;
+        }
+      `}</style>
     </div>
   );
 }

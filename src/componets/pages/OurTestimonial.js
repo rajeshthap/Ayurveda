@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper/modules';
 
@@ -6,35 +6,54 @@ import { Navigation } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
 
-// Import all images
-import TestImg1 from '../../assets/images/test-img1.png';
-import TestImg2 from '../../assets/images/test-img2.png';
-
 // React Icons (SVG replacements)
 import { BiSolidQuoteRight } from "react-icons/bi";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 
 function OurTestimonial() {
-  const testimonials = [
-    {
-      id: 1,
-      text: "Amet minim mollit non deserunt ullamco est sit aliqua as dolor do amet sint. Velit officia consequat duis enim velit mollit. Exercitation veniam consequat sunt nostrud amet.",
-      name: "Leslie Alexander",
-      image: TestImg1
-    },
-    {
-      id: 2,
-      text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl.",
-      name: "Brooklyn Simmons",
-      image: TestImg2
-    },
-    {
-      id: 3,
-      text: "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.",
-      name: "Jane Doe",
-      image: TestImg1
-    }
-  ];
+  const [testimonials, setTestimonials] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchTestimonials = async () => {
+      try {
+        const response = await fetch('https://mahadevaaya.com/trilokayurveda/trilokabackend/api/testimonials-items/');
+        const result = await response.json();
+        
+        if (result.success) {
+          setTestimonials(result.data);
+        }
+      } catch (error) {
+        console.error('Error fetching testimonials:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTestimonials();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="ayur-bgcover ayur-testimonial-sec">
+        <div className="container">
+          <div className="row">
+            <div className="col-lg-12 col-md-12 col-sm-12">
+              <div className="ayur-heading-wrap ayur-test-head">
+                <h5>Our Testimonial</h5>
+                <h3>What Our&nbsp;Client’s&nbsp;Say</h3>
+              </div>
+            </div>
+          </div>
+          <div className="ayur-testimonial-section">
+            <p>Loading testimonials...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+ const baseURL = 'https://mahadevaaya.com/trilokayurveda/trilokabackend';
 
   return (
     <div className="ayur-bgcover ayur-testimonial-sec">
@@ -74,13 +93,16 @@ function OurTestimonial() {
               <SwiperSlide key={testimonial.id}>
                 <div className="ayur-test-box">
                   <div className="ayur-test-text">
-                    <p>{testimonial.text}</p>
+                    <p>{testimonial.description}</p>
                   </div>
 
                   <div className="ayur-test-namesec">
                     <div className="ayur-testname">
-                      <img src={testimonial.image} alt="image-photo" />
-                      <h3>{testimonial.name}</h3>
+                      <img 
+                        src={`${baseURL}${testimonial.image}`} 
+                        alt={`${testimonial.full_name}-photo`} 
+                      />
+                      <h3>{testimonial.full_name}</h3>
                     </div>
 
                     <div className="ayur-testquote">
