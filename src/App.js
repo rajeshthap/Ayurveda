@@ -224,7 +224,7 @@ function App() {
 <Route path="/ManageFooter" element={<ManageFooter />} />
 <Route path="/BlogsDetails" element={<BlogsDetails />} />
 
-ManageBlog
+
 {/* <Route path="*" element={<NotFound />} />  */}
 </Routes>
 
