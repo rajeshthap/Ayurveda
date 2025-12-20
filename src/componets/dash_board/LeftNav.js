@@ -146,6 +146,17 @@ const menuItems = [
       path: "/ManageWellnessolution",
       icon: <FaTasks />, // manage focus
     },
+
+      {
+      label: "Add Metabolic Disorders",
+      path: "/AddMetabolicDisorders",
+      icon: <FaPlusSquare />, // add focus
+    },
+    {
+      label: "Manage Metabolic Disorders",
+      path: "/ManageMetabolicDisorders",
+      icon: <FaTasks />, // manage focus
+    },
   ],
 },
 
