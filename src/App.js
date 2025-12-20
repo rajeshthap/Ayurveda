@@ -66,6 +66,8 @@ import ManageMetabolicDisorders from './componets/dash_board/our_focus_dashboard
 import MetabolicDisorders from './componets/pages/our_focus/MetabolicDisorders';
 import AddOwnManufacturing from './componets/dash_board/our_focus_dashboard/AddOwnManufacturing';
 import ManageOwnManufacturing from './componets/dash_board/our_focus_dashboard/ManageOwnManufacturing';
+import AddBlog from './componets/dash_board/AddBlog';
+import ManageBlog from './componets/dash_board/ManageBlog';
 
 
 function App() {
@@ -101,6 +103,8 @@ function App() {
       "/ManageMetabolicDisorders",
       "/AddOwnManufacturing",
       "/ManageOwnManufacturing",
+      "/AddBlog",
+      "/ManageBlog"
 
      ]);
 
@@ -133,6 +137,8 @@ function App() {
     "/ManageMetabolicDisorders",
     "/AddOwnManufacturing",
     "/ManageOwnManufacturing",
+    "/AddBlog",
+    "/ManageBlog"
 
   ]);
 
@@ -199,6 +205,9 @@ function App() {
 <Route path="/AddMediaGallery" element={<AddMediaGallery />} />
 <Route path="/ManageMediaGallery" element={<ManageMediaGallery />} />
 <Route path="/ManageDisclamier" element={<ManageDisclamier />} />
+<Route path="/ManageDisclamier" element={<ManageDisclamier />} />
+<Route path="/AddBlog" element={<AddBlog />} />
+<Route path="/ManageBlog" element={<ManageBlog />} />
 
 {/* <Route path="*" element={<NotFound />} />  */}
 </Routes>

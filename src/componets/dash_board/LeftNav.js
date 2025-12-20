@@ -257,18 +257,18 @@ const menuItems = [
     },
   
 
-  {
+   {
       icon: <FaImages />,
       label: "Blogs",
       submenu: [
         {
           label: "Add Blogs",
-          path: "/AddBlogs  ",
+          path: "/AddBlog  ",
           icon: <FaImage />,
         },
          {
           label: "Manage Blogs",
-          path: "/ManageBlogs",
+          path: "/ManageBlog",
           icon: <FaImage />,
         },
         
@@ -276,7 +276,6 @@ const menuItems = [
        
       ],
     },
-  
    
 
      {
