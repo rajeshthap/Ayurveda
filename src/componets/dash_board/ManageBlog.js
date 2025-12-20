@@ -2,11 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { Container, Row, Col, Form, Button, Alert, Card, Modal, Spinner, Badge, Pagination, Accordion, Image } from "react-bootstrap";
 import "../../assets/css/dashboard.css";
 import { useNavigate } from "react-router-dom";
-
-
-
 import DashBoardHeader from "../../componets/dash_board/DashBoardHeader";
-
 import { FaPlus, FaTrash, FaEdit, FaSave, FaTimes, FaSearch, FaCalendarAlt, FaImage } from "react-icons/fa";
 import { useAuth } from "../context/AuthContext";
 import { useAuthFetch } from "../context/AuthFetch";
@@ -23,12 +19,12 @@ const ManageBlog = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [isTablet, setIsTablet] = useState(false);
 
-  // Form state for presentation and award items
+  // Form state for blog items
   const [formData, setFormData] = useState({
-    items: [{ title: "", image: null, date: "" }], // Initialize with one empty item
+    items: [{ title: "", image: null, date: "", description: "" }], // Initialize with one empty item
   });
 
-  // State for presentation and award items from API
+  // State for blog items from API
   const [items, setItems] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isFetching, setIsFetching] = useState(false);
@@ -94,7 +90,7 @@ const ManageBlog = () => {
     return () => window.removeEventListener("resize", checkDevice);
   }, []);
 
-  // Fetch presentation and award items on component mount
+  // Fetch blog items on component mount
   useEffect(() => {
     fetchItems();
   }, []);
@@ -132,12 +128,12 @@ const ManageBlog = () => {
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
-  // Fetch presentation and award items from API
+  // Fetch blog items from API
   const fetchItems = async () => {
     setIsLoading(true);
     setIsFetching(true);
     try {
-      const url = `${API_BASE_URL}/api/presentationandaward-items/`;
+      const url = `${API_BASE_URL}/api/blog-items/`;
       let response = await fetch(url, {
         method: "GET",
         headers: {
@@ -158,7 +154,7 @@ const ManageBlog = () => {
       }
 
       if (!response.ok) {
-        throw new Error("Failed to fetch presentation and award items");
+        throw new Error("Failed to fetch blog items");
       }
 
       const result = await response.json();
@@ -199,11 +195,11 @@ const ManageBlog = () => {
 
         setItems(processedItems);
       } else {
-        throw new Error("No presentation and award items found");
+        throw new Error("No blog items found");
       }
     } catch (error) {
-      console.error("Error fetching presentation and award items:", error);
-      setMessage(error.message || "An error occurred while fetching presentation and award items");
+      console.error("Error fetching blog items:", error);
+      setMessage(error.message || "An error occurred while fetching blog items");
       setVariant("danger");
       setShowAlert(true);
     } finally {
@@ -218,7 +214,7 @@ const ManageBlog = () => {
       const newItems = [...prev.items];
       // Ensure the item at index exists and is an object
       if (!newItems[index] || typeof newItems[index] !== "object") {
-        newItems[index] = { title: "", image: null, date: "" };
+        newItems[index] = { title: "", image: null, date: "", description: "" };
       }
       // Update the specific field
       newItems[index] = {
@@ -239,7 +235,7 @@ const ManageBlog = () => {
       const newItems = [...prev.items];
       // Ensure the item at index exists and is an object
       if (!newItems[index] || typeof newItems[index] !== "object") {
-        newItems[index] = { title: "", image: null, date: "" };
+        newItems[index] = { title: "", image: null, date: "", description: "" };
       }
       // Update the image field
       newItems[index] = {
@@ -274,7 +270,7 @@ const ManageBlog = () => {
   const addItem = () => {
     setFormData((prev) => ({
       ...prev,
-      items: [...prev.items, { title: "", image: null, date: "" }],
+      items: [...prev.items, { title: "", image: null, date: "", description: "" }],
     }));
   };
 
@@ -296,7 +292,7 @@ const ManageBlog = () => {
   // Reset form
   const resetForm = () => {
     setFormData({
-      items: [{ title: "", image: null, date: "" }],
+      items: [{ title: "", image: null, date: "", description: "" }],
     });
     setImagePreviews({});
     setShowAlert(false);
@@ -311,6 +307,7 @@ const ManageBlog = () => {
       title: item.title,
       image: null, // We'll use null initially and update if a new image is selected
       date: item.date,
+      description: item.description,
       existing_image: item.image, // Keep track of the existing image
       existing_image_url: getImageUrl(item.image) // Store the full URL
     });
@@ -340,13 +337,14 @@ const ManageBlog = () => {
       dataToSend.append("id", editingItemData.id);
       dataToSend.append("title", editingItemData.title);
       dataToSend.append("date", editingItemData.date);
+      dataToSend.append("description", editingItemData.description);
       
       // Only append image if a new one is selected
       if (editingItemData.image) {
         dataToSend.append("image", editingItemData.image);
       }
 
-      const url = `${API_BASE_URL}/api/presentationandaward-items/`;
+      const url = `${API_BASE_URL}/api/blog-items/`;
       let response = await fetch(url, {
         method: "PUT",
         body: dataToSend,
@@ -377,13 +375,13 @@ const ManageBlog = () => {
           /* not JSON */
         }
         throw new Error(
-          (errorData && errorData.message) || "Failed to update presentation and award item"
+          (errorData && errorData.message) || "Failed to update blog item"
         );
       }
 
       const result = await response.json();
       if (result.success) {
-        setMessage("Presentation and award item updated successfully!");
+        setMessage("Blog item updated successfully!");
         setVariant("success");
         setShowAlert(true);
         setEditingItemId(null);
@@ -397,10 +395,10 @@ const ManageBlog = () => {
         fetchItems(); // Refresh the items list
         setTimeout(() => setShowAlert(false), 3000);
       } else {
-        throw new Error(result.message || "Failed to update presentation and award item");
+        throw new Error(result.message || "Failed to update blog item");
       }
     } catch (error) {
-      console.error("Error updating presentation and award item:", error);
+      console.error("Error updating blog item:", error);
       let errorMessage = "An unexpected error occurred. Please try again.";
       if (error.message) {
         errorMessage = error.message;
@@ -430,7 +428,7 @@ const ManageBlog = () => {
       const dataToSend = new FormData();
       dataToSend.append("id", itemToDelete);
       
-      const url = `${API_BASE_URL}/api/presentationandaward-items/`;
+      const url = `${API_BASE_URL}/api/blog-items/`;
       let response = await fetch(url, {
         method: "DELETE",
         body: dataToSend,
@@ -461,13 +459,13 @@ const ManageBlog = () => {
           /* not JSON */
         }
         throw new Error(
-          (errorData && errorData.message) || "Failed to delete presentation and award item"
+          (errorData && errorData.message) || "Failed to delete blog item"
         );
       }
 
       const result = await response.json();
       if (result.success) {
-        setMessage("Presentation and award item deleted successfully!");
+        setMessage("Blog item deleted successfully!");
         setVariant("success");
         setShowAlert(true);
         setShowDeleteModal(false);
@@ -475,10 +473,10 @@ const ManageBlog = () => {
         fetchItems(); // Refresh the items list
         setTimeout(() => setShowAlert(false), 3000);
       } else {
-        throw new Error(result.message || "Failed to delete presentation and award item");
+        throw new Error(result.message || "Failed to delete blog item");
       }
     } catch (error) {
-      console.error("Error deleting presentation and award item:", error);
+      console.error("Error deleting blog item:", error);
       let errorMessage = "An unexpected error occurred. Please try again.";
       if (error.message) {
         errorMessage = error.message;
@@ -510,6 +508,7 @@ const ManageBlog = () => {
         if (item.title) dataToSend.append(`title`, item.title);
         if (item.image) dataToSend.append(`image`, item.image);
         if (item.date) dataToSend.append(`date`, item.date);
+        if (item.description) dataToSend.append(`description`, item.description);
       });
       
       // Log the FormData content for debugging
@@ -519,7 +518,7 @@ const ManageBlog = () => {
       }
       
       // Send the data as FormData
-      const url = `${API_BASE_URL}/api/presentationandaward-items/`;
+      const url = `${API_BASE_URL}/api/blog-items/`;
       let response = await fetch(url, {
         method: "POST",
         headers: {
@@ -549,12 +548,12 @@ const ManageBlog = () => {
       
       // Check if the API call was successful
       if (!response.ok || !responseData.success) {
-        throw new Error(responseData.message || "Failed to save presentation and award items");
+        throw new Error(responseData.message || "Failed to save blog items");
       }
 
       // SUCCESS PATH
       const itemCount = formData.items.length;
-      setMessage(`✅ Success! ${itemCount} presentation and award item${itemCount > 1 ? 's have' : ' has'} been added successfully.`);
+      setMessage(`✅ Success! ${itemCount} blog item${itemCount > 1 ? 's have' : ' has'} been added successfully.`);
       setVariant("success");
       setShowAlert(true);
       resetForm();
@@ -564,7 +563,7 @@ const ManageBlog = () => {
       setTimeout(() => setShowAlert(false), 5000);
     } catch (error) {
       // FAILURE PATH
-      console.error("Error adding presentation and award items:", error);
+      console.error("Error adding blog items:", error);
       let errorMessage = "An unexpected error occurred. Please try again.";
 
       if (
@@ -625,7 +624,8 @@ const ManageBlog = () => {
         return (
           item.id?.toString().includes(lowerSearch) ||
           item.title?.toLowerCase().includes(lowerSearch) ||
-          item.date?.includes(lowerSearch)
+          item.date?.includes(lowerSearch) ||
+          item.description?.toLowerCase().includes(lowerSearch)
         );
       });
     
@@ -673,9 +673,18 @@ const ManageBlog = () => {
 
           <Container fluid className="dashboard-body dashboard-main-container">
             <div className="d-flex justify-content-between align-items-center mb-4">
-              <h1 className="page-title mb-0">Manage Presentation & Award Items</h1>
+              <h1 className="page-title mb-0">Manage Blog Items</h1>
               <div className="d-flex gap-2">
-               
+                <Form.Control
+                  type="text"
+                  placeholder="Search blog items..."
+                  value={searchTerm}
+                  onChange={(e) => {
+                    setSearchTerm(e.target.value);
+                    setCurrentPage(1);
+                  }}
+                  className="w-auto"
+                />
                 <Button 
                   variant="outline-secondary" 
                   onClick={() => {
@@ -701,7 +710,7 @@ const ManageBlog = () => {
               </Alert>
             )}
 
-            {/* Presentation & Award Items Cards */}
+            {/* Blog Items Cards */}
             {isLoading ? (
               <div className="text-center my-5">
                 <Spinner animation="border" role="status">
@@ -718,22 +727,22 @@ const ManageBlog = () => {
                   </div>
                 )}
                 
-                <div className="d-flex justify-content-end mb-3">
-                 
-                </div>
+               
                 
                 <Row>
                   {currentItems.length === 0 ? (
                     <Col xs={12} className="text-center my-5">
-                      <p>{searchTerm ? 'No presentation and award items match your search.' : 'No presentation and award items found.'}</p>
+                      <p>{searchTerm ? 'No blog items match your search.' : 'No blog items found.'}</p>
                     </Col>
                   ) : (
                     currentItems.map((item) => (
                       <Col lg={4} md={6} sm={12} className="mb-4" key={item.id}>
                         <Card className="h-100">
                           <Card.Header className="d-flex justify-content-between align-items-center">
-                            <Card.Title className="mb-0">Item #{item.id}</Card.Title>
-                           
+                            <Card.Title className="mb-0">Blog #{item.id}</Card.Title>
+                            <Badge bg="secondary">
+                              {item.formatted_created_at}
+                            </Badge>
                           </Card.Header>
                           <Card.Body>
                             {item.image && (
@@ -753,34 +762,35 @@ const ManageBlog = () => {
                                     onError={() => handleImageError(item.id)}
                                   />
                                 )}
-                                
                               </div>
                             )}
                             <h5>{item.title}</h5>
                             <p><FaCalendarAlt className="me-2" />{item.formatted_date}</p>
+                            <p>{item.description && item.description.length > 100 
+                              ? `${item.description.substring(0, 100)}...` 
+                              : item.description}</p>
                             <div className="mt-2">
                               <small className="text-muted">Created: {item.formatted_created_at}</small>
                             </div>
                           </Card.Body>
-                           <div>
-                              <Button
-                                variant="outline-primary"
-                                size="sm"
-                                className="me-2"
-                                onClick={() => startEditing(item)}
-                                disabled={isSubmitting}
-                              >
-                                <FaEdit /> Edit
-                              </Button>
-                              <Button
-                                variant="outline-danger"
-                                size="sm"
-                                onClick={() => confirmDelete(item.id)}
-                                disabled={isSubmitting}
-                              >
-                                <FaTrash /> Delete
-                              </Button>
-                            </div>
+                          <div className="p-3 d-flex justify-content-between">
+                            <Button
+                              variant="outline-primary"
+                              size="sm"
+                              onClick={() => startEditing(item)}
+                              disabled={isSubmitting}
+                            >
+                              <FaEdit /> Edit
+                            </Button>
+                            <Button
+                              variant="outline-danger"
+                              size="sm"
+                              onClick={() => confirmDelete(item.id)}
+                              disabled={isSubmitting}
+                            >
+                              <FaTrash /> Delete
+                            </Button>
+                          </div>
                         </Card>
                       </Col>
                     ))
@@ -814,142 +824,7 @@ const ManageBlog = () => {
               </>
             )}
 
-            {/* Add New Presentation & Award Item Form */}
-            <Row className="mt-4">
-              <Col>
-                <h2>Add New Presentation & Award Item</h2>
-                <Form onSubmit={handleSubmit}>
-                  {/* Items Section */}
-                  <Form.Group className="mb-3">
-                    <Form.Label>Presentation & Award Items</Form.Label>
-
-                    <div className="item-container">
-                      {formData.items.map((item, index) => (
-                        <div
-                          key={index}
-                          className="item mb-3 p-3 border rounded"
-                        >
-                          <div className="d-flex justify-content-between align-items-center mb-2">
-                            <h5>Item {index + 1}</h5>
-
-                            {formData.items.length > 1 && (
-                              <Button
-                                variant="outline-danger"
-                                size="sm"
-                                onClick={() => removeItem(index)}
-                              >
-                                <FaTrash /> Remove
-                              </Button>
-                            )}
-                          </div>
-
-                          {/* Title */}
-                          <Form.Group className="mb-2">
-                            <Form.Label>Title</Form.Label>
-                            <Form.Control
-                              type="text"
-                              placeholder={`Enter title ${index + 1}`}
-                              value={item.title || ""}
-                              onChange={(e) =>
-                                handleItemChange(
-                                  index,
-                                  "title",
-                                  e.target.value
-                                )
-                              }
-                              required
-                            />
-                          </Form.Group>
-
-                          {/* Date */}
-                          <Form.Group className="mb-2">
-                            <Form.Label>Date</Form.Label>
-                            <Form.Control
-                              type="date"
-                              value={item.date || ""}
-                              onChange={(e) =>
-                                handleItemChange(
-                                  index,
-                                  "date",
-                                  e.target.value
-                                )
-                              }
-                              required
-                            />
-                          </Form.Group>
-
-                          {/* Image */}
-                          <Form.Group className="mb-2">
-                            <Form.Label>Image</Form.Label>
-                            <Form.Control
-                              type="file"
-                              accept="image/*"
-                              onChange={(e) =>
-                                handleImageChange(
-                                  index,
-                                  e.target.files[0]
-                                )
-                              }
-                            />
-                            {item.image && (
-                              <div className="mt-2">
-                                {item.image instanceof File ? (
-                                  <div>
-                                    <small className="text-muted">
-                                      Selected: {item.image.name}
-                                    </small>
-                                    {imagePreviews[`form-${index}`] && (
-                                      <div className="mt-2">
-                                        <Image 
-                                          src={imagePreviews[`form-${index}`]} 
-                                          alt="Preview" 
-                                          fluid 
-                                          style={{ maxHeight: '150px' }}
-                                          thumbnail
-                                        />
-                                      </div>
-                                    )}
-                                  </div>
-                                ) : (
-                                  <small className="text-muted">
-                                    Current: {item.image}
-                                  </small>
-                                )}
-                              </div>
-                            )}
-                          </Form.Group>
-                        </div>
-                      ))}
-
-                      <Button
-                        variant="outline-primary"
-                        onClick={addItem}
-                        className="mt-2"
-                      >
-                        <FaPlus /> Add Another Item
-                      </Button>
-                    </div>
-                  </Form.Group>
-
-                  <div className="d-flex gap-2 mt-3">
-                    <Button
-                      variant="primary"
-                      type="submit"
-                      disabled={isSubmitting}
-                    >
-                      {isSubmitting ? "Submitting..." : "Submit Item"}
-                    </Button>
-                    <Button
-                      variant="secondary"
-                      onClick={resetForm}
-                      type="button"
-                    >
-                      Clear
-                    </Button>
-                  </div>
-                </Form>
-              </Col>
-            </Row>
+         
           </Container>
         </div>
       </div>
@@ -957,7 +832,7 @@ const ManageBlog = () => {
       {/* Edit Modal */}
       <Modal show={showEditModal} onHide={cancelEditing} size="lg">
         <Modal.Header closeButton>
-          <Modal.Title>Edit Presentation & Award Item #{currentEditItem?.id}</Modal.Title>
+          <Modal.Title>Edit Blog Item #{currentEditItem?.id}</Modal.Title>
         </Modal.Header>
         <Form onSubmit={saveEditedItem}>
           <Modal.Body>
@@ -1033,6 +908,24 @@ const ManageBlog = () => {
               />
             </Form.Group>
 
+            {/* Description */}
+            <Form.Group className="mb-3">
+              <Form.Label>Description</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={4}
+                placeholder="Enter description"
+                value={editingItemData?.description || ""}
+                onChange={(e) =>
+                  handleEditingItemChange(
+                    "description",
+                    e.target.value
+                  )
+                }
+                required
+              />
+            </Form.Group>
+
             {/* Image */}
             <Form.Group className="mb-3">
               <Form.Label>Image</Form.Label>
@@ -1080,7 +973,7 @@ const ManageBlog = () => {
           <Modal.Title>Confirm Delete</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          Are you sure you want to delete this presentation and award item? This action cannot be undone.
+          Are you sure you want to delete this blog item? This action cannot be undone.
         </Modal.Body>
         <Modal.Footer>
           <Button
