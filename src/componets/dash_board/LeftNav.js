@@ -125,6 +125,17 @@ const menuItems = [
       path: "/ManageDigenerative",
       icon: <FaTasks />, // manage focus
     },
+
+      {
+      label: "Add CNCDs",
+      path: "/AddCncds",
+      icon: <FaPlusSquare />, // add focus
+    },
+    {
+      label: "Manage CNCDs",
+      path: "/ManageCncds",
+      icon: <FaTasks />, // manage focus
+    },
   ],
 },
 
