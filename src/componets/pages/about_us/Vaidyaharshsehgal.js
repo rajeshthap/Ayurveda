@@ -75,7 +75,7 @@ function Vaidyaharshsehgal() {
     });
   } else {
     // Fallback to hardcoded awards if not in API
-    awards = [
+    const awards = [
       {
         icon: <FaAward className="text-warning" />,
         title: 'Uttarakhand Gaurav',
@@ -200,7 +200,7 @@ function Vaidyaharshsehgal() {
                     </div>
                   </div>
                   <div className="ayur-team-name">
-                    <h3>{profileData.title} {profileData.full_name}</h3>
+                    <h3> {profileData.full_name}</h3>
                     <p>{profileData.designation}</p>
                     <p>Founder and CEO</p>
                   </div>

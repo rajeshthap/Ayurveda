@@ -164,7 +164,7 @@ function Vaidyajasminesehgal() {
                     </div>
                   </div>
                   <div className="ayur-team-name">
-                    <h3>{profileData.title} {profileData.full_name}</h3>
+                    <h3> {profileData.full_name}</h3>
                     <p>{profileData.designation}</p>
                     <p>Director</p>
                   </div>
