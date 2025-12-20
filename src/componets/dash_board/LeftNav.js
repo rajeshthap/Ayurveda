@@ -157,6 +157,17 @@ const menuItems = [
       path: "/ManageMetabolicDisorders",
       icon: <FaTasks />, // manage focus
     },
+
+      {
+      label: "Add Own Manufacturing",
+      path: "/AddOwnManufacturing",
+      icon: <FaPlusSquare />, // add focus
+    },
+    {
+      label: "Manage Own Manufacturing",
+      path: "/ManageOwnManufacturing",
+      icon: <FaTasks />, // manage focus
+    },
   ],
 },
 

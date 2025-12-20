@@ -64,6 +64,8 @@ import ManageWellnessolution from './componets/dash_board/our_focus_dashboard/Ma
 import AddMetabolicDisorders from './componets/dash_board/our_focus_dashboard/AddMetabolicDisorders';
 import ManageMetabolicDisorders from './componets/dash_board/our_focus_dashboard/ManageMetabolicDisorders';
 import MetabolicDisorders from './componets/pages/our_focus/MetabolicDisorders';
+import AddOwnManufacturing from './componets/dash_board/our_focus_dashboard/AddOwnManufacturing';
+import ManageOwnManufacturing from './componets/dash_board/our_focus_dashboard/ManageOwnManufacturing';
 
 
 function App() {
@@ -97,6 +99,8 @@ function App() {
       "/ManageWellnessolution",
       "/AddMetabolicDisorders",
       "/ManageMetabolicDisorders",
+      "/AddOwnManufacturing",
+      "/ManageOwnManufacturing",
 
      ]);
 
@@ -127,6 +131,8 @@ function App() {
     "/ManageWellnessolution",
     "/AddMetabolicDisorders",
     "/ManageMetabolicDisorders",
+    "/AddOwnManufacturing",
+    "/ManageOwnManufacturing",
 
   ]);
 
@@ -186,6 +192,8 @@ function App() {
 <Route path="/ManageWellnessolution" element={<ManageWellnessolution />} />
 <Route path="/AddMetabolicDisorders" element={<AddMetabolicDisorders/>} />
 <Route path="/ManageMetabolicDisorders" element={<ManageMetabolicDisorders />} />
+<Route path="/AddOwnManufacturing" element={<AddOwnManufacturing/>} />
+<Route path="/ManageOwnManufacturing" element={<ManageOwnManufacturing />} />
 <Route path="/AddPresentationAwards" element={<AddPresentationAwards />} />
 <Route path="/ManagePresentationAwards" element={<ManagePresentationAwards />} />
 <Route path="/AddMediaGallery" element={<AddMediaGallery />} />
