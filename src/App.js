@@ -70,6 +70,7 @@ import AddBlog from './componets/dash_board/AddBlog';
 import ManageBlog from './componets/dash_board/ManageBlog';
 import AddCarousel from './componets/dash_board/carousel/AddCarousel';
 import ManageCarousel from './componets/dash_board/carousel/ManageCarousel';
+import ManageFooter from './componets/dash_board/ManageFooter';
 
 
 function App() {
@@ -108,7 +109,9 @@ function App() {
       "/AddBlog",
       "/ManageBlog",
       "/AddCarousel",
-      "/ManageCarousel"
+      "/ManageCarousel",
+      "/ManageFooter"
+
 
      ]);
 
@@ -144,7 +147,8 @@ function App() {
     "/AddBlog",
     "/ManageBlog",
     "/AddCarousel",
-    "/ManageCarousel"
+    "/ManageCarousel",
+    "/ManageFooter"
 
   ]);
 
@@ -216,7 +220,7 @@ function App() {
 <Route path="/ManageDisclamier" element={<ManageDisclamier />} />
 <Route path="/AddBlog" element={<AddBlog />} />
 <Route path="/ManageBlog" element={<ManageBlog />} />
-
+<Route path="/ManageFooter" element={<ManageFooter />} />
 {/* <Route path="*" element={<NotFound />} />  */}
 </Routes>
 

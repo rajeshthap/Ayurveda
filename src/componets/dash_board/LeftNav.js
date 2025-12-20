@@ -190,6 +190,13 @@ const menuItems = [
   ],
 },
 
+
+ {
+      icon: <FaTachometerAlt />,
+      label: "Footer",
+      path: "/ManageFooter",
+      active: true,
+    },
   
   {
       icon: <FaImages />,
