@@ -51,24 +51,7 @@ function Vaidyajasminesehgal() {
   const thesisTitle = profileData.module.find(item => item.content === "Thesis Title :");
   const professionalExperience = profileData.module.find(item => item.content === "Professional Experience");
 
-  // Hardcoded awards (not available in API for this profile)
-  const awards = [
-    {
-      icon: <FaAward className="text-warning" />,
-      title: 'Uttarakhand Gaurav',
-      year: '16th Nov. 2008'
-    },
-    {
-      icon: <FaAward className="text-warning" />,
-      title: 'Technocrat\'s Excellency Award',
-      year: '23rd Dec. 2006'
-    },
-    {
-      icon: <FaAward className="text-warning" />,
-      title: 'Uttarakhand Ratna',
-      year: '1st Oct. 2006'
-    }
-  ];
+ 
 
   // Parse the description to extract contact information and education
   const descriptionLines = profileData.description.split('\r\n').filter(line => line.trim() !== '');
@@ -207,24 +190,8 @@ function Vaidyajasminesehgal() {
                     </>
                   )}
 
-                  <h5 className="pt-2">Felicitations/Awards</h5>
-                  <p>Felicitated for the exemplary work in the field of Ayurveda:</p>
-                  <div className="row g-4">
-                    {awards.map((award, index) => (
-                      <div key={index} className="col-12 col-md-6 col-lg-4">
-                        <div className="card h-100 shadow-sm award-card">
-                          <div className="card-body text-center p-4">
-                            <div className="award-icon mb-3">
-                              {award.icon}
-                            </div>
-                            <h5 className="card-title">{award.title}</h5>
-                            <div className="text-muted mb-2">{award.year}</div>
-                            <p className="card-text">{award.description}</p>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                
+                 
                   <Link to="#" className="ayur-btn">
                     Know More
                   </Link>

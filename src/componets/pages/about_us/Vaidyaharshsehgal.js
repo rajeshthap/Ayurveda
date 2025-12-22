@@ -66,7 +66,6 @@ function Vaidyaharshsehgal() {
   );
 
   // Check if awards data exists in the API response
-  // Looking for awards in the modules or as a separate field
   const awardsModule = profileData.module.find(
     (item) =>
       item.content === "Felicitations/Awards" || item.content === "Awards"
@@ -98,7 +97,7 @@ function Vaidyaharshsehgal() {
     });
   } else {
     // Fallback to hardcoded awards if not in API
-    const awards = [
+    awards = [
       {
         icon: <FaAward className="text-warning" />,
         title: "Uttarakhand Gaurav",
@@ -126,17 +125,14 @@ function Vaidyaharshsehgal() {
   const getImageUrl = (imagePath) => {
     if (!imagePath) return team1;
 
-    // If the image path is already a full URL, return it as is
     if (imagePath.startsWith("http")) {
       return imagePath;
     }
 
-    // If the image path starts with /media/, construct the full URL
     if (imagePath.startsWith("/media/")) {
       return `https://mahadevaaya.com/trilokayurveda/trilokabackend${imagePath}`;
     }
 
-    // For any other case, construct the URL with the base path
     return `https://mahadevaaya.com/trilokayurveda/trilokabackend/${imagePath}`;
   };
 
@@ -312,7 +308,6 @@ function Vaidyaharshsehgal() {
                   <p>
                     Felicitated for the exemplary work in the field of Ayurveda:
                   </p>
-                  <p></p>
                   <div className="row g-4">
                     {awards.map((award, index) => (
                       <div key={index} className="col-12 col-md-6 col-lg-4">
