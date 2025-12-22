@@ -7,7 +7,7 @@
 
 
 .ayur-submenu {
-  background-color: #28a745; 
+  background-color: #28a745;
 }
 
 
@@ -15,7 +15,7 @@
   color: #28a745 !important;
   font-weight: 500;
   padding: 10px 18px;
-  
+
   transition: all 0.3s ease;
 }
 
@@ -26,32 +26,22 @@
   border-radius: 8px;
 }
 
-.ayur-btn-consult a{
-   min-width: 100px;
-  max-width: 100%;
-  border-radius: 8px;
-  background-color: #28a745;
-  border: 1px solid #f2efec;
-  font-size: 12px;
+.ayur-btn-consult {
+  background-color: #28a745 !important;
   color: white !important;
-  font-weight: 500;
-  text-align: center;
-  text-transform: capitalize;
-  display: inline-block;
-  padding: 5px 0;
-  position: relative;
-  overflow: hidden;
-  z-index: 1;
-  transition: box-shadow 0.5s;
-  font-family: "Inter", sans-serif;
-  overflow: hidden;
-  transition: all .3s linear;
+
+  border-radius: 8px !important;
+  padding: 6px 6px !important;
+  font-weight: 500 !important;
+  font-size: 13px !important;
 }
 
-.ayur-btn-consult a:hover{
-    color: white;
-    background-color: #157347 !important;
-    border-color: #157347 !important ;}
+.ayur-btn-consult:hover {
+  color: white;
+  background-color: #157347 !important;
+  border-color: #157347 !important;
+}
+
 
 /* Remove border if any */
 .ayur-submenu {
@@ -61,28 +51,31 @@
 
 
 @media (max-width: 991px) {
-   .ayur-submenu {
+  .ayur-submenu {
     background-color: #28a745;
   }
+
   /* --- Hide the default menu on mobile --- */
   .ayur-nav-menu {
     position: fixed;
     top: 0;
-    left: -100%; 
+    left: -100%;
     width: 280px;
     max-width: 80%;
     height: 100vh;
     background-color: #fff;
-    padding-top: 100px; /* Adjust based on your header height */
+    padding-top: 100px;
+    /* Adjust based on your header height */
     box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
     transition: left 0.4s ease-in-out;
     z-index: 999;
     overflow-y: auto;
   }
 
- 
+
   .ayur-navmenu-wrapper.menu-open .ayur-nav-menu {
-    left: 0; /* Slide in from the left */
+    left: 0;
+    /* Slide in from the left */
   }
 
   /* --- Style the navigation links for mobile --- */
@@ -103,7 +96,7 @@
   }
 
   /* --- Style the dropdown arrow for mobile --- */
-  .ayur-nav-menu .ayur-has-menu > a svg {
+  .ayur-nav-menu .ayur-has-menu>a svg {
     width: 12px;
     height: 12px;
     fill: #555;
@@ -118,14 +111,15 @@
     box-shadow: none;
     padding-left: 20px;
   }
-  
+
   .ayur-submenu li a {
     font-size: 14px;
   }
 
   /* --- Style the hamburger toggle button --- */
   .ayur-toggle-btn {
-    display: flex; /* Make it visible */
+    display: flex;
+    /* Make it visible */
     flex-direction: column;
     justify-content: space-around;
     width: 30px;
@@ -140,7 +134,8 @@
   .ayur-toggle-btn span {
     width: 30px;
     height: 3px;
-    background-color: #333; /* Change to your desired color */
+    background-color: #333;
+    /* Change to your desired color */
     border-radius: 10px;
     transition: all 0.3s linear;
     position: relative;
