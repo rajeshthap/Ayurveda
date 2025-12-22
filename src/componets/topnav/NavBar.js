@@ -25,7 +25,7 @@ function NavBar() {
           <div className="row align-items-center">
             <div className="col-lg-2 col-md-4 col-sm-5 col-6">
               <div className="ayur-menu-logo">
-               <Link to="/"><img src={LogoFinal} alt="logo" /></Link> 
+                <Link to="/"><img src={LogoFinal} alt="logo" /></Link>
               </div>
             </div>
 
@@ -105,9 +105,9 @@ function NavBar() {
                     <li><Link to="/Researchers">Researches</Link></li>
                     <li><Link to="/Blogs">Blogs</Link></li>
                     <li><Link to="/ContactUs">Contact Us</Link></li>
-                 
-          <button type="button" className="ayur-btn-consult"><Link to="/ConsultNow">Consult Now</Link></button>
-      
+                    <li><Link className="ayur-btn-consult" to="/ConsultNow">Consult Now</Link></li>
+
+
                   </ul>
                 </div>
 
