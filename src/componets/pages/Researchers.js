@@ -74,18 +74,14 @@ const Researchers = () => {
                       </div>
                     ) : (
                       <>
-                        <div className="researchers-header">
-                          <h1 style={{ fontWeight: 'bold', color: '#28a745' }}>Trilok Ayurveda</h1>
-                          <h2 style={{ fontWeight: 'bold' }}>Wellness Center and Speciality Clinic for Chronic Disorders</h2>
-                        </div>
-
+                       
                         <div className="researchers-section">
                           <h2 style={{ fontWeight: 'bold', color: '#28a745' }}>Research Publications</h2>
                           
                           <div className="research-container">
                             {researchData.map((researcher) => (
                               <div key={researcher.id} className="researcher-profile mb-4 p-3 bg-light rounded">
-                                <h3 style={{ fontWeight: 'bold', color: '#28a745' }}>{researcher.title}</h3>
+                                <h3 >{researcher.title}</h3>
                                 <div className="row">
                                   {/* Left side - PDF Info and Buttons */}
                                   <div className="col-md-3">
