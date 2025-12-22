@@ -57,19 +57,18 @@
 
   /* --- Hide the default menu on mobile --- */
   .ayur-nav-menu {
-    position: fixed;
-    top: 0;
-    left: -100%;
-    width: 280px;
-    max-width: 80%;
-    height: 100vh;
-    background-color: #fff;
-    padding-top: 100px;
-    /* Adjust based on your header height */
-    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-    transition: left 0.4s ease-in-out;
-    z-index: 999;
-    overflow-y: auto;
+      position: fixed;
+        top: 0;
+        left: -100%;
+        width: 391px;
+        max-width: 100%;
+        height: 100vh;
+        background-color: #fff;
+        padding-top: 100px;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+        transition: left 0.4s ease-in-out;
+        z-index: 999;
+        overflow-y: auto;
   }
 
 

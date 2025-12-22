@@ -59,13 +59,7 @@ const handleSubmit = async (e) => {
 
     const data = await response.json();
     
-    // Add these debug logs
-    console.log("Full API Response:", data);
-    console.log("Response status:", response.status);
-    console.log("Access token:", data.access || data.token);
-    console.log("Refresh token:", data.refresh);
-    console.log("Role:", data.role);
-    console.log("Unique ID:", data.unique_id || data.user_id || data.id);
+    
 
     if (response.ok) {
       login(data);
