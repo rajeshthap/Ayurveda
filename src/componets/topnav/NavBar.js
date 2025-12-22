@@ -106,7 +106,7 @@ function NavBar() {
                     <li><Link to="/Blogs">Blogs</Link></li>
                     <li><Link to="/ContactUs">Contact Us</Link></li>
                  
-          <button type="button" className="btn btn-success"><Link to="/ConsultNow">Consult Now</Link></button>
+          <button type="button" className="ayur-btn-consult"><Link to="/ConsultNow">Consult Now</Link></button>
       
                   </ul>
                 </div>
