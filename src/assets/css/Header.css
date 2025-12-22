@@ -31,6 +31,11 @@
   transition: all .3s linear;
 }
 
+.ayur-btn-login:hover{
+    color: white;
+    background-color: #157347 !important;
+    border-color: #157347 !important ;
+}
 .top-nav .container {
   gap: 15px;
 }
