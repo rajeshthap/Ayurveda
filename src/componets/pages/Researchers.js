@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import '../../assets/css/research.css';
 import { Link } from 'react-router-dom';
+import BgShape2 from '../../assets/images/bg-shape2.png';
+import BgLeaf2 from '../../assets/images/bg-leaf2.png';
 
 const Researchers = () => {
   const [researchData, setResearchData] = useState([]);
@@ -36,93 +38,120 @@ const Researchers = () => {
   };
 
   return (
-    <div className="ayur-bgcover ayur-about-sec">
-      {/* Breadcrumb Section */}
-      <div className='about-bg'>
-        <div className='ayur-bread-content'>
-          <h2>Researchers</h2>
-          <div className="ayur-bread-list">
-            <span>
-              <Link to="/">Home</Link>
-            </span>
-            <span className="ayur-active-page">/ Researchers</span>
+    <>
+     
+      
+      <div className="ayur-bgcover ayur-about-sec">
+        {/* Breadcrumb Section */}
+        <div className='about-bg'>
+          <div className='ayur-bread-content'>
+            <h2 style={{ fontWeight: 'bold', color: '#28a745' }}>Researchers</h2>
+            <div className="ayur-bread-list">
+              <span>
+                <Link to="/">Home</Link>
+              </span>
+              <span className="ayur-active-page">/ Researchers</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="row">
+          <div className="ayur-bgcover ayur-about-sec">
+            <div className="container fluid about-us">
+              <div className="row">
+                <div className="col-lg-12 col-md-12 col-sm-12">
+                  <div className="ayur-heading-wrap ayur-about-head">
+                    {loading ? (
+                      <div className="text-center py-5">
+                        <div className="spinner-border text-primary" role="status">
+                          <span className="visually-hidden">Loading...</span>
+                        </div>
+                        <p className="mt-2">Loading research data...</p>
+                      </div>
+                    ) : error ? (
+                      <div className="alert alert-danger text-center">
+                        Error: {error}
+                      </div>
+                    ) : (
+                      <>
+                        <div className="researchers-header">
+                          <h1 style={{ fontWeight: 'bold', color: '#28a745' }}>Trilok Ayurveda</h1>
+                          <h2 style={{ fontWeight: 'bold' }}>Wellness Center and Speciality Clinic for Chronic Disorders</h2>
+                        </div>
+
+                        <div className="researchers-section">
+                          <h2 style={{ fontWeight: 'bold', color: '#28a745' }}>Research Publications</h2>
+                          
+                          <div className="research-container">
+                            {researchData.map((researcher) => (
+                              <div key={researcher.id} className="researcher-profile mb-4 p-3 bg-light rounded">
+                                <h3 style={{ fontWeight: 'bold', color: '#28a745' }}>{researcher.title}</h3>
+                                <div className="row">
+                                  {/* Left side - PDF Info and Buttons */}
+                                  <div className="col-md-3">
+                                    <div className="pdf-container">
+                                      <div className="pdf-item mb-3">
+                                        <h5>Research Document</h5>
+                                        {researcher.pdf_files && (
+                                          <>
+                                            
+                                            <div className="pdf-button-container">
+                                              <a 
+                                                href={getPdfUrl(researcher.pdf_files)} 
+                                                target="_blank" 
+                                                rel="noopener noreferrer" 
+                                                className="pdf-button view"
+                                              >
+                                                
+                                                View PDF
+                                              </a>
+                                              <a 
+                                                href={getPdfUrl(researcher.pdf_files)} 
+                                                download 
+                                                className="pdf-button download"
+                                              >
+                                              
+                                                Download PDF
+                                              </a>
+                                            </div>
+                                          </>
+                                        )}
+                                      </div>
+                                    </div>
+                                  </div>
+                                  
+                                  {/* Right side - Description */}
+                                  <div className="col-md-9">
+                                    <div className="description-container">
+                                      <div className="description-item mb-4">
+                                        <h5>Research Description</h5>
+                                        <div className="description-content">
+                                          {researcher.description && (
+                                            <p dangerouslySetInnerHTML={{ __html: researcher.description }}></p>
+                                          )}
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="ayur-bgshape ayur-about-bgshape">
+              <img src={BgShape2} alt="img" />
+              <img src={BgLeaf2} alt="img" />
+            </div>
           </div>
         </div>
       </div>
-
-      <div className="researchers-container">
-        <div className="researchers-header">
-          <h1>Trilok Ayurveda</h1>
-          <h2>Wellness Center and Speciality Clinic for Chronic Disorders</h2>
-        </div>
-
-        <div className="researchers-section">
-          <h2>Research Publications</h2>
-          
-          {loading ? (
-            <div className="loading-message">Loading research data...</div>
-          ) : error ? (
-            <div className="error-message">Error: {error}</div>
-          ) : (
-            <div className="research-container">
-              {researchData.map((researcher) => (
-                <div key={researcher.id} className="researcher-profile">
-                  <h3>{researcher.title}</h3>
-                  <div className="row">
-                    {/* Left side - PDF */}
-                    <div className="col-md-3">
-                      <div className="pdf-container">
-                        <div className="pdf-item mb-3">
-                          <h5>Research Document</h5>
-                          {researcher.pdf_files && (
-                            <div className="pdf-viewer">
-                              {/* Using object tag for better PDF display */}
-                              <object
-                                data={getPdfUrl(researcher.pdf_files)}
-                                type="application/pdf"
-                                width="100%"
-                                height="200px"
-                                title={`PDF for ${researcher.title}`}
-                              >
-                                <p>PDF cannot be displayed. 
-                                  <a href={getPdfUrl(researcher.pdf_files)} target="_blank" rel="noopener noreferrer">Click here to download</a>
-                                </p>
-                              </object>
-                              <div className="pdf-download">
-                                <a href={getPdfUrl(researcher.pdf_files)} target="_blank" rel="noopener noreferrer" className="btn btn-sm btn-primary">
-                                  View PDF
-                                </a>
-                                <a href={getPdfUrl(researcher.pdf_files)} download className="btn btn-sm btn-secondary ml-2">
-                                  Download PDF
-                                </a>
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                    
-                    {/* Right side - Description */}
-                    <div className="col-md-9">
-                      <div className="description-container">
-                        <div className="description-item mb-4">
-                          <h5>Research Description</h5>
-                          <div className="description-content">
-                            {researcher.description && (
-                              <p dangerouslySetInnerHTML={{ __html: researcher.description }}></p>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
+    </>
   );
 };
 

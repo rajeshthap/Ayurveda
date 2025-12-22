@@ -112,9 +112,14 @@
   margin-top: 5px;
 }
 
+.pdf-button .btn{
+  font-size: 12px;
+  background-color: red !important;
+}
 .pdf-download .btn {
   font-size: 12px;
-  padding: 5px 10px;
+
+  background-color: #2c6e49;
 }
 
 .ml-2 {
