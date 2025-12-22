@@ -29,7 +29,7 @@ export default function Login() {
 
   //  Redirect if logged in
   useEffect(() => {
-    if (isAuthenticated) navigate("/Dashboard", { replace: true });
+    if (isAuthenticated) navigate("/TotalConsultNow", { replace: true });
   }, [isAuthenticated, navigate]);
 
   const handleChange = (e) =>

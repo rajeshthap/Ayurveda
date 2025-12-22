@@ -180,15 +180,19 @@
     .ayur-banner-slider .swiper-button-prev {
         left: 1%;
     }
-    .ayur-nav-menu{
+
+    .ayur-nav-menu {
         padding-top: 0px !important;
     }
+
     .ayur-banner-slider .swiper-button-next {
         right: 1%;
     }
-.ayur-navmenu-wrapper{
-text-align: left !important;
-}
+
+    .ayur-navmenu-wrapper {
+        text-align: left !important;
+    }
+
     .ayur-banner-slider>.swiper-button-prev,
     .ayur-banner-slider .swiper-button-next {
         top: 57%;
@@ -294,6 +298,7 @@ text-align: left !important;
 
     .ayur-has-menu ul.ayur-submenu.ayur-submenu-open {
         display: block;
+        position: static;
         padding: 15px 0px 0px 10px;
     }
 

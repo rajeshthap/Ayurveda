@@ -39,8 +39,6 @@ const Researchers = () => {
 
   return (
     <>
-     
-      
       <div className="ayur-bgcover ayur-about-sec">
         {/* Breadcrumb Section */}
         <div className='about-bg'>
@@ -74,14 +72,13 @@ const Researchers = () => {
                       </div>
                     ) : (
                       <>
-                       
                         <div className="researchers-section">
                           <h2 style={{ fontWeight: 'bold', color: '#28a745' }}>Research Publications</h2>
                           
                           <div className="research-container">
                             {researchData.map((researcher) => (
                               <div key={researcher.id} className="researcher-profile mb-4 p-3 bg-light rounded">
-                                <h3 >{researcher.title}</h3>
+                                <h3>{researcher.title}</h3>
                                 <div className="row">
                                   {/* Left side - PDF Info and Buttons */}
                                   <div className="col-md-3">
@@ -90,7 +87,6 @@ const Researchers = () => {
                                         <h5>Research Document</h5>
                                         {researcher.pdf_files && (
                                           <>
-                                            
                                             <div className="pdf-button-container">
                                               <a 
                                                 href={getPdfUrl(researcher.pdf_files)} 
@@ -98,15 +94,14 @@ const Researchers = () => {
                                                 rel="noopener noreferrer" 
                                                 className="pdf-button view"
                                               >
-                                                
                                                 View PDF
                                               </a>
                                               <a 
                                                 href={getPdfUrl(researcher.pdf_files)} 
-                                                download 
+                                                target="_blank" 
+                                                rel="noopener noreferrer" 
                                                 className="pdf-button download"
                                               >
-                                              
                                                 Download PDF
                                               </a>
                                             </div>
