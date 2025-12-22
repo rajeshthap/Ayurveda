@@ -1,19 +1,14 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { Container, Row, Col, Form, Button, Alert, Card, Modal, Spinner, Badge, Pagination, Accordion, Image } from "react-bootstrap";
+import React, { useState, useEffect } from "react";
+import { Container, Row, Col, Form, Button, Alert, Card, Modal, Spinner, Badge, Pagination } from "react-bootstrap";
 import "../../../assets/css/dashboard.css";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import { useAuthFetch } from "../../context/AuthFetch";
 import LeftNav from "../LeftNav";
 import DashBoardHeader from "../DashBoardHeader";
-import { FaPlus, FaTrash, FaEdit, FaSave, FaTimes, FaCalendarAlt, FaImage, FaFilePdf } from "react-icons/fa";
+import { FaPlus, FaTrash, FaEdit, FaSave, FaTimes, FaCalendarAlt, FaFilePdf } from "react-icons/fa";
 
 const ManageResearches = () => {
-  const { auth, logout, refreshAccessToken } = useAuth();
-  const admin_id = auth?.unique_id;
-
-  console.log("Admin ID:", admin_id);
-  const authFetch = useAuthFetch();
+  const { auth, refreshAccessToken } = useAuth();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
@@ -23,8 +18,6 @@ const ManageResearches = () => {
   const [items, setItems] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isFetching, setIsFetching] = useState(false);
-  const [editingItemId, setEditingItemId] = useState(null);
-  const [editingItemData, setEditingItemData] = useState(null);
 
   // Submission state
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -40,9 +33,12 @@ const ManageResearches = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
 
-  // Image preview state
-  const [imagePreviews, setImagePreviews] = useState({});
-  const [imageLoadErrors, setImageLoadErrors] = useState({});
+  // Form state for editing
+  const [editFormData, setEditFormData] = useState({
+    title: "",
+    description: "",
+    pdf_files: null
+  });
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
@@ -51,22 +47,22 @@ const ManageResearches = () => {
   // Base URL for API
   const API_BASE_URL = "https://mahadevaaya.com/trilokayurveda/trilokabackend";
 
-  // Function to get the full image URL
-  const getImageUrl = (imagePath) => {
-    if (!imagePath) return null;
+  // Function to get the full PDF URL
+  const getPdfUrl = (pdfPath) => {
+    if (!pdfPath) return null;
     
-    // If the image path already includes the full URL, return as is
-    if (imagePath.startsWith('http')) {
-      return imagePath;
+    // If the PDF path already includes the full URL, return as is
+    if (pdfPath.startsWith('http')) {
+      return pdfPath;
     }
     
-    // If the image path starts with a slash, prepend the base URL
-    if (imagePath.startsWith('/')) {
-      return `${API_BASE_URL}${imagePath}`;
+    // If the PDF path starts with a slash, prepend the base URL
+    if (pdfPath.startsWith('/')) {
+      return `${API_BASE_URL}${pdfPath}`;
     }
     
     // Otherwise, prepend the base URL with a slash
-    return `${API_BASE_URL}/${imagePath}`;
+    return `${API_BASE_URL}/${pdfPath}`;
   };
 
   // Check device width
@@ -117,7 +113,7 @@ const ManageResearches = () => {
       console.log("GET API Response:", result);
 
       if (result.success && result.data) {
-        // Process data to format dates and image URLs
+        // Process data to format dates
         const processedItems = result.data.map(item => {
           const processedItem = { ...item };
           
@@ -141,9 +137,9 @@ const ManageResearches = () => {
             });
           }
           
-          // Add full image URL for the first image in module
-          if (item.module && item.module.length > 0 && item.module[0] && item.module[0][0]) {
-            processedItem.firstImageUrl = getImageUrl(item.module[0][0]);
+          // Add full PDF URL
+          if (item.pdf_files) {
+            processedItem.fullPdfUrl = getPdfUrl(item.pdf_files);
           }
           
           return processedItem;
@@ -169,43 +165,42 @@ const ManageResearches = () => {
     fetchItems();
   }, []);
 
-  // Handle item changes
-  const handleItemChange = (index, field, value) => {
-    setEditingItemData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
-
-  // Handle image file change
-  const handleImageChange = (file) => {
-    setEditingItemData((prev) => ({
-      ...prev,
-      image: file,
-    }));
-  };
-
   // Start editing an item
   const startEditing = (item) => {
     setCurrentEditItem(item);
-    setEditingItemData({
-      id: item.id,
+    setEditFormData({
       title: item.title,
-      module: item.module ? [...item.module] : [],
-      existing_images: item.module ? item.module.map(m => m[0]) : []
+      description: item.description,
+      pdf_files: null
     });
     setShowEditModal(true);
   };
 
+  // Handle form input changes
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setEditFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  // Handle file change
+  const handleFileChange = (e) => {
+    setEditFormData(prev => ({
+      ...prev,
+      pdf_files: e.target.files[0]
+    }));
+  };
+
   // Cancel editing
   const cancelEditing = () => {
-    setEditingItemId(null);
-    setEditingItemData(null);
     setShowEditModal(false);
-    setImagePreviews(prev => {
-      const newPreviews = { ...prev };
-      delete newPreviews['edit'];
-      return newPreviews;
+    setCurrentEditItem(null);
+    setEditFormData({
+      title: "",
+      description: "",
+      pdf_files: null
     });
   };
 
@@ -217,14 +212,13 @@ const ManageResearches = () => {
 
     try {
       const dataToSend = new FormData();
-      dataToSend.append("id", editingItemData.id);
-      dataToSend.append("title", editingItemData.title);
+      dataToSend.append("id", currentEditItem.id);
+      dataToSend.append("title", editFormData.title);
+      dataToSend.append("description", editFormData.description);
       
-      // Add each module to FormData
-      editingItemData.module.forEach((module, index) => {
-        if (module[0]) dataToSend.append(`module[${index}][0]`, module[0]);
-        if (module[1]) dataToSend.append(`module[${index}][1]`, module[1]);
-      });
+      if (editFormData.pdf_files) {
+        dataToSend.append("pdf_files", editFormData.pdf_files);
+      }
       
       const url = `${API_BASE_URL}/api/researches-items/`;
       let response = await fetch(url, {
@@ -268,14 +262,7 @@ const ManageResearches = () => {
         setMessage("Research item updated successfully!");
         setVariant("success");
         setShowAlert(true);
-        setEditingItemId(null);
-        setEditingItemData(null);
         setShowEditModal(false);
-        setImagePreviews(prev => {
-          const newPreviews = { ...prev };
-          delete newPreviews['edit'];
-          return newPreviews;
-        });
         fetchItems(); // Refresh items list
         setTimeout(() => setShowAlert(false), 3000);
       } else {
@@ -383,14 +370,6 @@ const ManageResearches = () => {
   
   const handlePageChange = (pageNumber) => setCurrentPage(pageNumber);
 
-  // Handle image load error
-  const handleImageError = (itemId) => {
-    setImageLoadErrors(prev => ({
-      ...prev,
-      [itemId]: true
-    }));
-  };
-
   return (
     <>
       <div className="dashboard-container">
@@ -409,6 +388,7 @@ const ManageResearches = () => {
           <Container fluid className="dashboard-body dashboard-main-container">
             <div className="d-flex justify-content-between align-items-center mb-4">
               <h1 className="page-title mb-0">Manage Research Items</h1>
+             
             </div>
 
             {/* Alert for success/error messages */}
@@ -447,103 +427,67 @@ const ManageResearches = () => {
                     </Col>
                   ) : (
                     currentItems.map((item) => (
-                      <Col lg={12} md={12} sm={12} className="mb-4" key={item.id}>
+                      <Col lg={6} md={12} sm={12} className="mb-4" key={item.id}>
                         <Card className="h-100">
-                         
                           <Card.Body>
-                            {/* {item.firstImageUrl && (
-                                <div className="mb-3 text-center">
-                                  <Image 
-                                    src={item.firstImageUrl} 
-                                    alt={item.title} 
-                                    fluid 
-                                    style={{ maxHeight: '200px' }}
-                                    thumbnail
-                                  />
+                           
+                               <div className="d-flex justify-content-between">
+                               <h3> {item.title}</h3>
+                                  <a 
+                                    href={item.fullPdfUrl} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                    className="btn btn-sm btn-outline-primary"
+                                  >
+                                    View PDF
+                                  </a>
                                 </div>
-                            )} */}
-                            <h5>{item.title}</h5>
-                            <p><FaCalendarAlt className="me-2" />{item.formatted_created_at}</p>
-                            <div className="mt-2">
-                              <small className="text-muted">Created: {item.formatted_created_at}</small>
+                            <Card.Text>
+                              {item.description}
+                            </Card.Text>
+                            
+                            <div className="d-flex justify-content-between align-items-center mb-3">
+                              <small className="text-muted">
+                                <FaCalendarAlt className="me-1" />
+                                Created: {item.formatted_created_at}
+                              </small>
                               {item.updated_at !== item.created_at && (
-                                <small className="text-muted">Updated: {item.formatted_updated_at}</small>
+                                <small className="text-muted">
+                                  Updated: {item.formatted_updated_at}
+                                </small>
                               )}
                             </div>
                             
-                            {/* Display Modules */}
-                            {item.module && item.module.length > 0 && (
-                              <div className="mt-3">
-                                <h6>Research Modules:</h6>
-                                <Accordion defaultActiveKey="0">
-                                  {item.module.map((module, index) => (
-                                    <Accordion.Item eventKey={index.toString()} key={index}>
-                                      <Accordion.Header>
-                                        <div className="d-flex justify-content-between align-items-center">
-                                          <span>
-                                            {module[0] && (
-                                              <>
-                                                <FaFilePdf className="me-2" />
-                                                {module[0].split('/').pop()}
-                                              </>
-                                            )}
-                                            {!module[0] && (
-                                              <span>No file</span>
-                                            )}
-                                          </span>
-                                          <span className="text-muted">
-                                            {module[1] || 'No description'}
-                                          </span>
-                                        </div>
-                                      </Accordion.Header>
-                                      <Accordion.Body>
-                                        <div className="d-flex">
-                                          <div className="me-3">
-                                            <strong>File:</strong>
-                                            <div>
-                                              {module[0] ? (
-                                                <Badge bg="success" className="me-2">
-                                                  Available
-                                                </Badge>
-                                              ) : (
-                                                <Badge bg="secondary" className="me-2">
-                                                  Not Available
-                                                </Badge>
-                                              )}
-                                            </div>
-                                          </div>
-                                          <div>
-                                            <strong>Description:</strong>
-                                            <div>{module[1] || 'No description'}</div>
-                                          </div>
-                                        </div>
-                                      </Accordion.Body>
-                                    </Accordion.Item>
-                                  ))}
-                                </Accordion>
+                            {item.pdf_files && (
+                              <div className="mb-3">
+                              
+                             
                               </div>
                             )}
+                               <div className="d-flex justify-content-between">
+                              <Button
+                                variant="outline-primary"
+                                size="sm"
+                                onClick={() => startEditing(item)}
+                                disabled={isSubmitting}
+                              >
+                                <FaEdit /> Edit
+                              </Button>
+                              <Button
+                                variant="outline-danger"
+                                size="sm"
+                                onClick={() => confirmDelete(item.id)}
+                                disabled={isSubmitting}
+                              >
+                                <FaTrash /> Delete
+                              </Button>
+                            </div>
                           </Card.Body>
                           
                           {/* Edit and Delete Buttons */}
-                          <div className="d-flex justify-content-between p-4 mt-3">
-                            <Button
-                              variant="outline-primary"
-                              size="sm"
-                              onClick={() => startEditing(item)}
-                              disabled={isSubmitting}
-                            >
-                              <FaEdit /> Edit
-                            </Button>
-                            <Button
-                              variant="outline-danger"
-                              size="sm"
-                              onClick={() => confirmDelete(item.id)}
-                              disabled={isSubmitting}
-                            >
-                              <FaTrash /> Delete
-                            </Button>
-                          </div>
+                        
+                         
+                        
                         </Card>
                       </Col>
                     ))
@@ -587,70 +531,48 @@ const ManageResearches = () => {
         </Modal.Header>
         <Form onSubmit={saveEditedItem}>
           <Modal.Body>
-            <Row>
-              <Col md={12}>
-                <Form.Group className="mb-3">
-                  <Form.Label>Title</Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder="Enter title"
-                    value={editingItemData?.title || ""}
-                    onChange={(e) => handleItemChange("title", e.target.value)}
-                    required
-                  />
-                </Form.Group>
-              </Col>
-            </Row>
+            <Form.Group className="mb-3">
+              <Form.Label>Title</Form.Label>
+              <Form.Control
+                type="text"
+                name="title"
+                placeholder="Enter title"
+                value={editFormData.title}
+                onChange={handleInputChange}
+                required
+              />
+            </Form.Group>
             
-            <Row>
-              <Col md={12}>
-                <h5 className="mb-3">Research Modules</h5>
-                
-                {editingItemData?.module && editingItemData.module.map((module, index) => (
-                  <div key={index} className="border rounded p-3 mb-3">
-                    <Row>
-                      <Col md={6}>
-                        <Form.Group className="mb-3">
-                          <Form.Label>PDF File</Form.Label>
-                          <Form.Control
-                            type="file"
-                            accept=".pdf"
-                            onChange={(e) => {
-                              const newModules = [...editingItemData.module];
-                              newModules[index] = [e.target.files[0], module[1]];
-                              handleItemChange("module", newModules);
-                            }}
-                          />
-                          {module[0] && (
-                            <div className="mt-2">
-                              <small className="text-muted">
-                                Current: {module[0].split('/').pop()}
-                              </small>
-                            </div>
-                          )}
-                        </Form.Group>
-                      </Col>
-                      <Col md={6}>
-                        <Form.Group className="mb-3">
-                          <Form.Label>Description</Form.Label>
-                          <Form.Control
-                            as="textarea"
-                            rows={3}
-                            placeholder="Enter description"
-                            value={module[1] || ""}
-                            onChange={(e) => {
-                              const newModules = [...editingItemData.module];
-                              newModules[index] = [module[0], e.target.value];
-                              handleItemChange("module", newModules);
-                            }}
-                          />
-                        </Form.Group>
-                      </Col>
-                    </Row>
-                  </div>
-                ))}
-              </Col>
-            </Row>
+            <Form.Group className="mb-3">
+              <Form.Label>Description</Form.Label>
+              <Form.Control
+                as="textarea"
+                name="description"
+                rows={4}
+                placeholder="Enter description"
+                value={editFormData.description}
+                onChange={handleInputChange}
+                required
+              />
+            </Form.Group>
+            
+            <Form.Group className="mb-3">
+              <Form.Label>PDF File</Form.Label>
+              <Form.Control
+                type="file"
+                accept=".pdf"
+                onChange={handleFileChange}
+              />
+              {currentEditItem?.pdf_files && (
+                <div className="mt-2">
+                  <small className="text-muted">
+                    Current file: <a href={getPdfUrl(currentEditItem.pdf_files)} target="_blank" rel="noopener noreferrer">
+                      {currentEditItem.pdf_files.split('/').pop()}
+                    </a>
+                  </small>
+                </div>
+              )}
+            </Form.Group>
           </Modal.Body>
           <Modal.Footer>
             <Button

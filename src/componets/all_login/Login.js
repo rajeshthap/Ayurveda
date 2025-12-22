@@ -27,7 +27,7 @@ export default function Login() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  // 🔁 Redirect if logged in
+  //  Redirect if logged in
   useEffect(() => {
     if (isAuthenticated) navigate("/Dashboard", { replace: true });
   }, [isAuthenticated, navigate]);
@@ -69,7 +69,7 @@ const handleSubmit = async (e) => {
 
     if (response.ok) {
       login(data);
-      navigate("/Dashboard", { replace: true });
+      navigate("/TotalConsultNow", { replace: true });
     } else {
       setError(data.message || "लॉगिन विफल");
     }

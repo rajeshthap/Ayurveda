@@ -1,37 +1,29 @@
 import React, { useState, useEffect } from "react";
-import { Container, Row, Col, Form, Button, Alert } from "react-bootstrap";
+import { Container, Form, Button, Alert } from "react-bootstrap";
 import "../../../assets/css/dashboard.css";
-import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import { useAuthFetch } from "../../context/AuthFetch";
 import LeftNav from "../LeftNav";
 import DashBoardHeader from "../DashBoardHeader";
-import { FaPlus, FaTrash, FaFilePdf } from "react-icons/fa";
+import { FaFilePdf } from "react-icons/fa";
 
 const AddResearches = () => {
-  const { auth, logout, refreshAccessToken } = useAuth();
-  const admin_id = auth?.unique_id;
+  const { auth, refreshAccessToken } = useAuth();
 
-  console.log("Admin ID:", admin_id);
-  const authFetch = useAuthFetch();
-  const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
   const [isTablet, setIsTablet] = useState(false);
 
-  // Form state for research items
+  // Form state matching the API structure
   const [formData, setFormData] = useState({
     title: "",
-    module: [
-      { file: null, description: "" },
-      { file: null, description: "" }
-    ]
+    description: "",
+    pdf_files: null, // Single file for PDF upload
   });
 
   // Submission state
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState("");
-  const [variant, setVariant] = useState("success"); // 'success' or 'danger'
+  const [variant, setVariant] = useState("success");
   const [showAlert, setShowAlert] = useState(false);
   const [formErrors, setFormErrors] = useState({});
 
@@ -52,102 +44,25 @@ const AddResearches = () => {
 
   // Handle title change
   const handleTitleChange = (value) => {
-    setFormData(prev => ({
-      ...prev,
-      title: value
-    }));
-    // Clear title error if it exists
+    setFormData((prev) => ({ ...prev, title: value }));
     if (formErrors.title) {
-      setFormErrors(prev => ({
-        ...prev,
-        title: ""
-      }));
+      setFormErrors((prev) => ({ ...prev, title: "" }));
     }
   };
 
-  // Handle module item changes
-  const handleModuleChange = (index, field, value) => {
-    setFormData((prev) => {
-      const newModule = [...prev.module];
-      // Ensure module item at index exists
-      if (!newModule[index]) {
-        newModule[index] = { file: null, description: "" };
-      }
-      // Update the specific field
-      newModule[index] = {
-        ...newModule[index],
-        [field]: value,
-      };
-
-      return {
-        ...prev,
-        module: newModule,
-      };
-    });
-    // Clear module error if it exists
-    if (formErrors.module) {
-      setFormErrors(prev => ({
-        ...prev,
-        module: ""
-      }));
+  // Handle description change
+  const handleDescriptionChange = (value) => {
+    setFormData((prev) => ({ ...prev, description: value }));
+    if (formErrors.description) {
+      setFormErrors((prev) => ({ ...prev, description: "" }));
     }
   };
 
   // Handle file change
-  const handleFileChange = (index, file) => {
-    setFormData((prev) => {
-      const newModule = [...prev.module];
-      // Ensure module item at index exists
-      if (!newModule[index]) {
-        newModule[index] = { file: null, description: "" };
-      }
-      // Update the file field
-      newModule[index] = {
-        ...newModule[index],
-        file: file,
-      };
-
-      return {
-        ...prev,
-        module: newModule,
-      };
-    });
-    // Clear module error if it exists
-    if (formErrors.module) {
-      setFormErrors(prev => ({
-        ...prev,
-        module: ""
-      }));
-    }
-  };
-
-  // Add a new module item
-  const addModuleItem = () => {
-    setFormData((prev) => ({
-      ...prev,
-      module: [...prev.module, { file: null, description: "" }]
-    }));
-    // Clear module error if it exists
-    if (formErrors.module) {
-      setFormErrors(prev => ({
-        ...prev,
-        module: ""
-      }));
-    }
-  };
-
-  // Remove a module item
-  const removeModuleItem = (index) => {
-    setFormData((prev) => ({
-      ...prev,
-      module: prev.module.filter((_, i) => i !== index),
-    }));
-    // Clear module error if it exists
-    if (formErrors.module) {
-      setFormErrors(prev => ({
-        ...prev,
-        module: ""
-      }));
+  const handleFileChange = (file) => {
+    setFormData((prev) => ({ ...prev, pdf_files: file }));
+    if (formErrors.pdf_files) {
+      setFormErrors((prev) => ({ ...prev, pdf_files: "" }));
     }
   };
 
@@ -155,10 +70,8 @@ const AddResearches = () => {
   const resetForm = () => {
     setFormData({
       title: "",
-      module: [
-        { file: null, description: "" },
-        { file: null, description: "" }
-      ]
+      description: "",
+      pdf_files: null,
     });
     setShowAlert(false);
     setFormErrors({});
@@ -167,21 +80,16 @@ const AddResearches = () => {
   // Validate form before submission
   const validateForm = () => {
     const errors = {};
-    
-    // Validate title
     if (!formData.title.trim()) {
       errors.title = "Research title is required";
     }
-    
-    // Validate modules - need at least 2 with either file or description
-    const validModules = formData.module.filter(item => 
-      (item.file && item.file.name) || item.description.trim()
-    );
-    
-    if (validModules.length < 2) {
-      errors.module = "Please provide at least 2 modules with either a PDF file or description";
+    if (!formData.description.trim()) {
+      errors.description = "Research description is required";
     }
-    
+    if (!formData.pdf_files) {
+      errors.pdf_files = "A PDF file is required";
+    }
+
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -189,46 +97,40 @@ const AddResearches = () => {
   // Handle form submission (POST request)
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    // Validate form first
+
     if (!validateForm()) {
       return;
     }
-    
+
+    if (!auth) {
+      setMessage("Error: Authentication not found. Please log in again.");
+      setVariant("danger");
+      setShowAlert(true);
+      return;
+    }
+
     setIsSubmitting(true);
     setShowAlert(false);
 
     try {
-      // Prepare data for submission
+      // API endpoint
       const url = "https://mahadevaaya.com/trilokayurveda/trilokabackend/api/researches-items/";
-      
-      // Create FormData for API
       const dataToSend = new FormData();
-      
-      // Add admin_id
-      dataToSend.append("admin_id", admin_id);
-      
-      // Add title
+
+      // Append data to match the API structure
       dataToSend.append("title", formData.title);
-      
-      // Filter and add only valid modules (those with file or description)
-      const validModules = formData.module.filter(item => 
-        (item.file && item.file.name) || item.description.trim()
-      );
-      
-      // Add each valid module item to FormData
-      validModules.forEach((item, index) => {
-        if (item.file) dataToSend.append(`module[${index}][file]`, item.file);
-        if (item.description) dataToSend.append(`module[${index}][description]`, item.description);
-      });
-      
-      // Log FormData content for debugging
-      console.log("Submitting FormData:");
-      for (let pair of dataToSend.entries()) {
-        console.log(pair[0] + ": " + pair[1]);
+      dataToSend.append("description", formData.description);
+      if (formData.pdf_files) {
+        dataToSend.append("pdf_files", formData.pdf_files);
       }
-      
-      // Send the data as FormData
+
+      console.log("--- Final FormData Payload ---");
+      for (let [key, value] of dataToSend.entries()) {
+        console.log(`${key}:`, value instanceof File ? `File: ${value.name} (Size: ${value.size} bytes)` : value);
+      }
+      console.log("----------------------------");
+
+      // Make the fetch request
       let response = await fetch(url, {
         method: "POST",
         headers: {
@@ -237,59 +139,74 @@ const AddResearches = () => {
         body: dataToSend,
       });
 
-      // If unauthorized, try refreshing token and retry once
       if (response.status === 401) {
         const newAccess = await refreshAccessToken();
-        if (!newAccess) throw new Error("Session expired");
+        if (!newAccess) throw new Error("Session expired. Please log in again.");
         response = await fetch(url, {
           method: "POST",
-          headers: {
-            Authorization: `Bearer ${newAccess}`,
-          },
+          headers: { Authorization: `Bearer ${newAccess}` },
           body: dataToSend,
         });
       }
 
-      console.log("Response status:", response.status);
-      
-      // Parse the response
-      const responseData = await response.json();
-      console.log("Response data:", responseData);
-      
-      // Check if the API call was successful
-      if (!response.ok || !responseData.success) {
-        throw new Error(responseData.message || "Failed to save research items");
+      if (!response.ok) {
+        let errorData;
+        try {
+          const contentType = response.headers.get("content-type");
+          if (contentType && contentType.includes("application/json")) {
+            errorData = await response.json();
+          } else {
+            const text = await response.text();
+            throw new Error(`Server returned ${response.status}: ${text}`);
+          }
+        } catch (e) {
+          throw new Error(`Server returned ${response.status} but couldn't parse the response`);
+        }
+
+        // Error handling for the API structure
+        if (errorData.errors) {
+          console.error("Detailed API Errors:", JSON.stringify(errorData.errors, null, 2));
+          const errorMessages = Object.values(errorData.errors).flat().join(" | ");
+          throw new Error(errorMessages);
+        } else if (errorData.message) {
+          throw new Error(errorData.message);
+        } else {
+          throw new Error(`Server returned ${response.status} with no specific error message`);
+        }
       }
 
-      // SUCCESS PATH
-      setMessage(`Success! Research "${formData.title}" with ${validModules.length} module${validModules.length > 1 ? 's' : ''} has been added successfully.`);
+      const responseData = await response.json();
+      console.log("API Response:", responseData); // Debug log to see the actual response structure
+
+      // FIXED: More robust success handling to accommodate different response structures
+      let researchData;
+      if (responseData.data) {
+        // If the response has a data property with the research item
+        researchData = responseData.data;
+      } else if (responseData.title) {
+        // If the response directly contains the research item
+        researchData = responseData;
+      } else {
+        // Fallback for unexpected response structure
+        researchData = { title: formData.title, id: "unknown" };
+      }
+
+      // Success handling with fallbacks
+      const title = researchData.title || formData.title;
+      const id = researchData.id || "unknown";
+      
+      setMessage(`Success! Research "${title}" (ID: ${id}) has been added.`);
       setVariant("success");
       setShowAlert(true);
       resetForm();
 
-      // Hide success alert after 5 seconds
-      setTimeout(() => setShowAlert(false), 5000);
+      setTimeout(() => setShowAlert(false), 8000);
     } catch (error) {
-      // FAILURE PATH
-      console.error("Error adding research items:", error);
-      let errorMessage = "An unexpected error occurred. Please try again.";
-
-      if (
-        error instanceof TypeError &&
-        error.message.includes("Failed to fetch")
-      ) {
-        errorMessage =
-          "Network error: Could not connect to the server. Please check the API endpoint.";
-      } else if (error.message) {
-        errorMessage = error.message;
-      }
-
-      setMessage(`Error: ${errorMessage}`);
+      console.error("Caught error in handleSubmit:", error);
+      setMessage(`Error: ${error.message}`);
       setVariant("danger");
       setShowAlert(true);
-
-      // Hide error alert after 5 seconds
-      setTimeout(() => setShowAlert(false), 5000);
+      setTimeout(() => setShowAlert(false), 7000);
     } finally {
       setIsSubmitting(false);
     }
@@ -298,7 +215,6 @@ const AddResearches = () => {
   return (
     <>
       <div className="dashboard-container">
-        {/* Left Sidebar */}
         <LeftNav
           sidebarOpen={sidebarOpen}
           setSidebarOpen={setSidebarOpen}
@@ -306,14 +222,12 @@ const AddResearches = () => {
           isTablet={isTablet}
         />
 
-        {/* Main Content */}
         <div className="main-content">
           <DashBoardHeader toggleSidebar={toggleSidebar} />
 
           <Container fluid className="dashboard-body dashboard-main-container">
-            <h1 className="page-title">Add Research Items</h1>
+            <h1 className="page-title">Add Research Item</h1>
 
-            {/* Alert for success/error messages */}
             {showAlert && (
               <Alert
                 variant={variant}
@@ -326,118 +240,62 @@ const AddResearches = () => {
             )}
 
             <Form onSubmit={handleSubmit}>
-              {/* Research Title */}
               <Form.Group className="mb-4">
                 <Form.Label>Research Title</Form.Label>
                 <Form.Control
                   type="text"
                   placeholder="Enter research title"
-                  value={formData.title || ""}
+                  value={formData.title}
                   onChange={(e) => handleTitleChange(e.target.value)}
                   isInvalid={!!formErrors.title}
                   required
                 />
-                {formErrors.title && (
-                  <Form.Control.Feedback type="invalid">
-                    {formErrors.title}
-                  </Form.Control.Feedback>
-                )}
+                <Form.Control.Feedback type="invalid">
+                  {formErrors.title}
+                </Form.Control.Feedback>
               </Form.Group>
 
-              {/* Module Items Section */}
-              <Form.Group className="mb-3">
-                <Form.Label>Research Modules (PDF Files & Descriptions)</Form.Label>
-                {formErrors.module && (
-                  <div className="text-danger mb-2">{formErrors.module}</div>
+              <Form.Group className="mb-4">
+                <Form.Label>Research Description</Form.Label>
+                <Form.Control
+                  as="textarea"
+                  rows={4}
+                  placeholder="Enter a detailed description of the research"
+                  value={formData.description}
+                  onChange={(e) => handleDescriptionChange(e.target.value)}
+                  isInvalid={!!formErrors.description}
+                  required
+                />
+                <Form.Control.Feedback type="invalid">
+                  {formErrors.description}
+                </Form.Control.Feedback>
+              </Form.Group>
+
+              <Form.Group className="mb-4">
+                <Form.Label>PDF File</Form.Label>
+                <Form.Control
+                  type="file"
+                  accept=".pdf"
+                  onChange={(e) => handleFileChange(e.target.files[0])}
+                  isInvalid={!!formErrors.pdf_files}
+                  required
+                />
+                <Form.Control.Feedback type="invalid">
+                  {formErrors.pdf_files}
+                </Form.Control.Feedback>
+                {formData.pdf_files && (
+                  <div className="mt-2 file-selected">
+                    <FaFilePdf className="me-2" />
+                    <span>{formData.pdf_files.name}</span>
+                  </div>
                 )}
-
-                <div className="module-container">
-                  {formData.module.map((item, index) => (
-                    <div
-                      key={index}
-                      className="module-item mb-3 p-3 border rounded"
-                    >
-                      <div className="d-flex justify-content-between align-items-center mb-2">
-                        <h5>Module {index + 1}</h5>
-
-                        {formData.module.length > 1 && (
-                          <Button
-                            variant="outline-danger"
-                            size="sm"
-                            onClick={() => removeModuleItem(index)}
-                          >
-                            <FaTrash /> Remove
-                          </Button>
-                        )}
-                      </div>
-
-                      {/* Description */}
-                      <Form.Group className="mb-2">
-                        <Form.Label>Description</Form.Label>
-                        <Form.Control
-                          type="text"
-                          placeholder={`Enter description for module ${index + 1}`}
-                          value={item.description || ""}
-                          onChange={(e) =>
-                            handleModuleChange(
-                              index,
-                              "description",
-                              e.target.value
-                            )
-                          }
-                          required
-                        />
-                      </Form.Group>
-
-                      {/* PDF File */}
-                      <Form.Group className="mb-2">
-                        <Form.Label>PDF File</Form.Label>
-                        <div className="file-input-container">
-                          <Form.Control
-                            type="file"
-                            accept=".pdf"
-                            onChange={(e) =>
-                              handleFileChange(
-                                index,
-                                e.target.files[0]
-                              )
-                            }
-                            required={!item.description.trim()}
-                          />
-                          {item.file && (
-                            <div className="mt-2 file-selected">
-                              <FaFilePdf className="me-2" />
-                              <span>{item.file.name}</span>
-                            </div>
-                          )}
-                        </div>
-                      </Form.Group>
-                    </div>
-                  ))}
-
-                  <Button
-                    variant="outline-primary"
-                    onClick={addModuleItem}
-                    className="mt-2"
-                  >
-                    <FaPlus /> Add Another Module
-                  </Button>
-                </div>
               </Form.Group>
 
               <div className="d-flex gap-2 mt-3">
-                <Button
-                  variant="primary"
-                  type="submit"
-                  disabled={isSubmitting}
-                >
+                <Button variant="primary" type="submit" disabled={isSubmitting}>
                   {isSubmitting ? "Submitting..." : "Submit Research"}
                 </Button>
-                <Button
-                  variant="secondary"
-                  onClick={resetForm}
-                  type="button"
-                >
+                <Button variant="secondary" onClick={resetForm} type="button">
                   Clear
                 </Button>
               </div>
@@ -447,21 +305,6 @@ const AddResearches = () => {
       </div>
 
       <style jsx>{`
-        .module-container {
-          display: flex;
-          flex-direction: column;
-          gap: 1rem;
-        }
-        
-        .module-item {
-          background-color: #f8f9fa;
-          border: 1px solid #dee2e6;
-        }
-        
-        .file-input-container {
-          position: relative;
-        }
-        
         .file-selected {
           display: flex;
           align-items: center;

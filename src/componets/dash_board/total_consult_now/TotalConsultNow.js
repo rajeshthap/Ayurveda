@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Container, Row, Col, Form, Button, Alert, Card, Modal, Spinner, Badge, Table, Image, Pagination } from "react-bootstrap";
+import { Container, Row, Col, Form, Button, Alert, Card, Modal, Spinner, Badge, Table, Image, Pagination, Accordion } from "react-bootstrap"; // 1. IMPORT ACCORDION
 import "../../../assets/css/dashboard.css";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
@@ -227,7 +227,7 @@ const TotalConsultNow = () => {
                   </Col>
                 </Row>
 
-                {/* Consultation Entries Cards */}
+                {/* Consultation Entries Accordion */}
                 {showTable && (
                   <>
                     {isFetching && (
@@ -244,222 +244,228 @@ const TotalConsultNow = () => {
                       </div>
                     ) : (
                       <>
-                        <Row>
+                        {/* 2. WRAP THE ENTRIES IN AN ACCORDION COMPONENT */}
+                        <Accordion defaultActiveKey="0">
                           {currentItems.map((entry, index) => (
-                            <Col lg={12} key={entry.id || index}>
-                              <Card className="consultation-card mb-4 shadow-sm">
-                                <Card.Header className="consultation-header d-flex justify-content-between align-items-center">
-                                  <div className="d-flex align-items-center">
-                                    <div className="consultation-avatar bg-success text-white rounded-circle d-flex align-items-center justify-content-center me-3">
-                                      {entry.name ? entry.name.charAt(0).toUpperCase() : 'U'}
-                                    </div>
-                                    <div>
-                                      <h5 className="mb-0 text-white">{entry.name}</h5>
-                                    
-                                    </div>
+                            // 3. EACH ENTRY IS NOW AN ACCORDION.ITEM
+                            <Accordion.Item eventKey={entry.id || index.toString()} key={entry.id || index}>
+                              {/* 4. CREATE A CUSTOM HEADER FOR EACH ACCORDION ITEM */}
+                              <Accordion.Header>
+                                <div className="d-flex align-items-center w-100">
+                                  <div className="consultation-avatar bg-success text-white rounded-circle d-flex align-items-center justify-content-center me-3">
+                                    {entry.name ? entry.name.charAt(0).toUpperCase() : 'U'}
                                   </div>
-                                  <div className="consultation-date text-white">
+                                  <div className="flex-grow-1">
+                                    <h5 className="mb-0">{entry.name}</h5>
+                                    <small>{entry.contact_number} | {entry.email}</small>
+                                  </div>
+                                  <div className="text-end me-3">
                                     <FaCalendarAlt className="me-1" />
-                                    {entry.formatted_date || entry.date}
+                                    <small>{entry.formatted_date || entry.date}</small>
                                   </div>
-                                </Card.Header>
-                                
-                                <Card.Body className="p-4">
-                                  <Row>
-                                    {/* Left Column: Personal Information */}
-                                    <Col md={6} className="mb-4 mb-md-0">
-                                      <h6 className="section-title text-success"><FaUser className="me-2" />Personal Information</h6>
-                                      <div className="info-group">
-                                        <div className="info-item">
-                                          <span className="info-label"><FaPhone className="me-2 text-success" />Contact:</span>
-                                          <span className="info-value">{entry.contact_number}</span>
+                                </div>
+                              </Accordion.Header>
+                              
+                              {/* 5. MOVE THE EXISTING CARD.BODY CONTENT INTO THE ACCORDION.BODY */}
+                              <Accordion.Body>
+                                <Card className="consultation-card shadow-sm">
+                                  <Card.Body className="p-4">
+                                    <Row>
+                                      {/* Left Column: Personal Information */}
+                                      <Col md={6} className="mb-4 mb-md-0">
+                                        <h6 className="section-title text-success"><FaUser className="me-2" />Personal Information</h6>
+                                        <div className="info-group">
+                                          <div className="info-item">
+                                            <span className="info-label"><FaPhone className="me-2 text-success" />Contact:</span>
+                                            <span className="info-value">{entry.contact_number}</span>
+                                          </div>
+                                          <div className="info-item">
+                                            <span className="info-label"><FaEnvelope className="me-2 text-success" />Email:</span>
+                                            <span className="info-value">{entry.email}</span>
+                                          </div>
+                                          <div className="info-item">
+                                            <span className="info-label"><FaVenusMars className="me-2 text-success" />Gender:</span>
+                                            <span className="info-value">{entry.gender}</span>
+                                          </div>
+                                          <div className="info-item">
+                                            <span className="info-label"><FaRulerVertical className="me-2 text-success" />Height:</span>
+                                            <span className="info-value">{entry.height}</span>
+                                          </div>
+                                          <div className="info-item">
+                                            <span className="info-label"><FaWeight className="me-2 text-success" />Weight:</span>
+                                            <span className="info-value">{entry.weight}</span>
+                                          </div>
+                                          <div className="info-item">
+                                            <span className="info-label"><FaHome className="me-2 text-success" />Address:</span>
+                                            <span className="info-value">{entry.complete_address}</span>
+                                          </div>
+                                          <div className="info-item">
+                                            <span className="info-label"><FaClipboardList className="me-2 text-success" />Occupation:</span>
+                                            <span className="info-value">{entry.occupation}</span>
+                                          </div>
                                         </div>
-                                        <div className="info-item">
-                                          <span className="info-label"><FaEnvelope className="me-2 text-success" />Email:</span>
-                                          <span className="info-value">{entry.email}</span>
-                                        </div>
-                                        <div className="info-item">
-                                          <span className="info-label"><FaVenusMars className="me-2 text-success" />Gender:</span>
-                                          <span className="info-value">{entry.gender}</span>
-                                        </div>
-                                        <div className="info-item">
-                                          <span className="info-label"><FaRulerVertical className="me-2 text-success" />Height:</span>
-                                          <span className="info-value">{entry.height}</span>
-                                        </div>
-                                        <div className="info-item">
-                                          <span className="info-label"><FaWeight className="me-2 text-success" />Weight:</span>
-                                          <span className="info-value">{entry.weight}</span>
-                                        </div>
-                                        <div className="info-item">
-                                          <span className="info-label"><FaHome className="me-2 text-success" />Address:</span>
-                                          <span className="info-value">{entry.complete_address}</span>
-                                        </div>
-                                        <div className="info-item">
-                                          <span className="info-label"><FaClipboardList className="me-2 text-success" />Occupation:</span>
-                                          <span className="info-value">{entry.occupation}</span>
-                                        </div>
-                                      </div>
-                                    </Col>
+                                      </Col>
 
-                                    {/* Right Column: Medical Information */}
-                                    <Col md={6} className="mb-4 mb-md-0">
-                                      <h6 className="section-title text-success"><FaStethoscope className="me-2" />Medical Information</h6>
-                                      <div className="info-group">
-                                        <div className="info-item">
-                                          <span className="info-label"><FaNotesMedical className="me-2 text-success" />Chief Complaint:</span>
-                                          <span className="info-value">{entry.chief_complaint}</span>
+                                      {/* Right Column: Medical Information */}
+                                      <Col md={6} className="mb-4 mb-md-0">
+                                        <h6 className="section-title text-success"><FaStethoscope className="me-2" />Medical Information</h6>
+                                        <div className="info-group">
+                                          <div className="info-item">
+                                            <span className="info-label"><FaNotesMedical className="me-2 text-success" />Chief Complaint:</span>
+                                            <span className="info-value">{entry.chief_complaint}</span>
+                                          </div>
+                                          <div className="info-item">
+                                            <span className="info-label"><FaUserClock className="me-2 text-success" />Duration:</span>
+                                            <span className="info-value">{entry.complaint_duration}</span>
+                                          </div>
+                                          <div className="info-item">
+                                            <span className="info-label"><FaInfoCircle className="me-2 text-success" />Mode of Onset:</span>
+                                            <span className="info-value">{entry.mode_of_onset}</span>
+                                          </div>
+                                          <div className="info-item">
+                                            <span className="info-label"><FaUserNurse className="me-2 text-success" />Family History:</span>
+                                            <span className="info-value">{entry.family_history}</span>
+                                          </div>
+                                          <div className="info-item">
+                                            <span className="info-label"><FaNotesMedical className="me-2 text-success" />Past History:</span>
+                                            <span className="info-value">{entry.past_history}</span>
+                                          </div>
+                                          <div className="info-item">
+                                            <span className="info-label"><FaCut className="me-2 text-success" />Any Surgery:</span>
+                                            <span className="info-value">{entry.any_surgery}</span>
+                                          </div>
+                                          <div className="info-item">
+                                            <span className="info-label"><FaStethoscope className="me-2 text-success" />Current Treatment:</span>
+                                            <span className="info-value">{entry.current_treatment}</span>
+                                          </div>
                                         </div>
-                                        <div className="info-item">
-                                          <span className="info-label"><FaUserClock className="me-2 text-success" />Duration:</span>
-                                          <span className="info-value">{entry.complaint_duration}</span>
+                                      </Col>
+                                    </Row>
+                                    
+                                    <Row>
+                                      {/* Women's Health Section */}
+                                      <Col md={6} className="mb-4">
+                                        <h6 className="section-title text-success"><FaBaby className="me-2" />Women's Health</h6>
+                                        <div className="info-group">
+                                          <div className="info-item">
+                                            <span className="info-label">Number of Pregnancies:</span>
+                                            <span className="info-value">{entry.number_of_pregnancies}</span>
+                                          </div>
+                                          <div className="info-item">
+                                            <span className="info-label">Number of Alive Kids:</span>
+                                            <span className="info-value">{entry.number_of_alive_kids}</span>
+                                          </div>
+                                          <div className="info-item">
+                                            <span className="info-label">Mode of Delivery:</span>
+                                            <span className="info-value">{entry.mode_of_delivery}</span>
+                                          </div>
+                                          <div className="info-item">
+                                            <span className="info-label">Menstrual History:</span>
+                                            <span className="info-value">{entry.menstrual_history}</span>
+                                          </div>
                                         </div>
-                                        <div className="info-item">
-                                          <span className="info-label"><FaInfoCircle className="me-2 text-success" />Mode of Onset:</span>
-                                          <span className="info-value">{entry.mode_of_onset}</span>
-                                        </div>
-                                        <div className="info-item">
-                                          <span className="info-label"><FaUserNurse className="me-2 text-success" />Family History:</span>
-                                          <span className="info-value">{entry.family_history}</span>
-                                        </div>
-                                        <div className="info-item">
-                                          <span className="info-label"><FaNotesMedical className="me-2 text-success" />Past History:</span>
-                                          <span className="info-value">{entry.past_history}</span>
-                                        </div>
-                                        <div className="info-item">
-                                          <span className="info-label"><FaCut className="me-2 text-success" />Any Surgery:</span>
-                                          <span className="info-value">{entry.any_surgery}</span>
-                                        </div>
-                                        <div className="info-item">
-                                          <span className="info-label"><FaStethoscope className="me-2 text-success" />Current Treatment:</span>
-                                          <span className="info-value">{entry.current_treatment}</span>
-                                        </div>
-                                      </div>
-                                    </Col>
-                                  </Row>
-                                  
-                                  <Row>
-                                    {/* Women's Health Section */}
-                                    <Col md={6} className="mb-4">
-                                      <h6 className="section-title text-success"><FaBaby className="me-2" />Women's Health</h6>
-                                      <div className="info-group">
-                                        <div className="info-item">
-                                          <span className="info-label">Number of Pregnancies:</span>
-                                          <span className="info-value">{entry.number_of_pregnancies}</span>
-                                        </div>
-                                        <div className="info-item">
-                                          <span className="info-label">Number of Alive Kids:</span>
-                                          <span className="info-value">{entry.number_of_alive_kids}</span>
-                                        </div>
-                                        <div className="info-item">
-                                          <span className="info-label">Mode of Delivery:</span>
-                                          <span className="info-value">{entry.mode_of_delivery}</span>
-                                        </div>
-                                        <div className="info-item">
-                                          <span className="info-label">Menstrual History:</span>
-                                          <span className="info-value">{entry.menstrual_history}</span>
-                                        </div>
-                                      </div>
-                                    </Col>
+                                      </Col>
 
-                                    {/* Lifestyle & Habits Section */}
-                                    <Col md={6} className="mb-4">
-                                      <h6 className="section-title text-success"><FaAppleAlt className="me-2" />Lifestyle & Habits</h6>
-                                      <div className="info-group">
-                                        <div className="info-item">
-                                          <span className="info-label">Life Style:</span>
-                                          <span className="info-value">{entry.life_style}</span>
+                                      {/* Lifestyle & Habits Section */}
+                                      <Col md={6} className="mb-4">
+                                        <h6 className="section-title text-success"><FaAppleAlt className="me-2" />Lifestyle & Habits</h6>
+                                        <div className="info-group">
+                                          <div className="info-item">
+                                            <span className="info-label">Life Style:</span>
+                                            <span className="info-value">{entry.life_style}</span>
+                                          </div>
+                                          <div className="info-item">
+                                            <span className="info-label"><FaAppleAlt className="me-2 text-success" />Appetite:</span>
+                                            <span className="info-value">{entry.appetite}</span>
+                                          </div>
+                                          <div className="info-item">
+                                            <span className="info-label"><FaBed className="me-2 text-success" />Sleep:</span>
+                                            <span className="info-value">{entry.sleep}</span>
+                                          </div>
+                                          <div className="info-item">
+                                            <span className="info-label">Taste Preference:</span>
+                                            <span className="info-value">{entry.taste_preference}</span>
+                                          </div>
                                         </div>
-                                        <div className="info-item">
-                                          <span className="info-label"><FaAppleAlt className="me-2 text-success" />Appetite:</span>
-                                          <span className="info-value">{entry.appetite}</span>
+                                      </Col>
+                                    </Row>
+                                    
+                                    <Row>
+                                      {/* Physical & Mental Health Section */}
+                                      <Col md={6} className="mb-4">
+                                        <h6 className="section-title text-success"><FaRunning className="me-2" />Physical Health</h6>
+                                        <div className="info-group">
+                                          <div className="info-item">
+                                            <span className="info-label">Body Built:</span>
+                                            <span className="info-value">{entry.body_built}</span>
+                                          </div>
+                                          <div className="info-item">
+                                            <span className="info-label"><FaIdCard className="me-2 text-success" />Complexion:</span>
+                                            <span className="info-value">{entry.complexion}</span>
+                                          </div>
+                                          <div className="info-item">
+                                            <span className="info-label"><FaHandHoldingMedical className="me-2 text-success" />Joint Characteristics:</span>
+                                            <span className="info-value">{entry.joint_characteristics}</span>
+                                          </div>
+                                          <div className="info-item">
+                                            <span className="info-label"><FaHandHoldingMedical className="me-2 text-success" />Veins Tendons:</span>
+                                            <span className="info-value">{entry.veins_tendons}</span>
+                                          </div>
                                         </div>
-                                        <div className="info-item">
-                                          <span className="info-label"><FaBed className="me-2 text-success" />Sleep:</span>
-                                          <span className="info-value">{entry.sleep}</span>
-                                        </div>
-                                        <div className="info-item">
-                                          <span className="info-label">Taste Preference:</span>
-                                          <span className="info-value">{entry.taste_preference}</span>
-                                        </div>
-                                      </div>
-                                    </Col>
-                                  </Row>
-                                  
-                                  <Row>
-                                    {/* Physical & Mental Health Section */}
-                                    <Col md={6} className="mb-4">
-                                      <h6 className="section-title text-success"><FaRunning className="me-2" />Physical Health</h6>
-                                      <div className="info-group">
-                                        <div className="info-item">
-                                          <span className="info-label">Body Built:</span>
-                                          <span className="info-value">{entry.body_built}</span>
-                                        </div>
-                                        <div className="info-item">
-                                          <span className="info-label"><FaIdCard className="me-2 text-success" />Complexion:</span>
-                                          <span className="info-value">{entry.complexion}</span>
-                                        </div>
-                                        <div className="info-item">
-                                          <span className="info-label"><FaHandHoldingMedical className="me-2 text-success" />Joint Characteristics:</span>
-                                          <span className="info-value">{entry.joint_characteristics}</span>
-                                        </div>
-                                        <div className="info-item">
-                                          <span className="info-label"><FaHandHoldingMedical className="me-2 text-success" />Veins Tendons:</span>
-                                          <span className="info-value">{entry.veins_tendons}</span>
-                                        </div>
-                                      </div>
-                                    </Col>
+                                      </Col>
 
-                                    <Col md={6} className="mb-4">
-                                      <h6 className="section-title text-success"><FaBrain className="me-2" />Mental Health</h6>
-                                      <div className="info-group">
-                                        <div className="info-item">
-                                          <span className="info-label"><FaThermometer className="me-2 text-success" />Temperature Preference:</span>
-                                          <span className="info-value">{entry.temperature_preference}</span>
+                                      <Col md={6} className="mb-4">
+                                        <h6 className="section-title text-success"><FaBrain className="me-2" />Mental Health</h6>
+                                        <div className="info-group">
+                                          <div className="info-item">
+                                            <span className="info-label"><FaThermometer className="me-2 text-success" />Temperature Preference:</span>
+                                            <span className="info-value">{entry.temperature_preference}</span>
+                                          </div>
+                                          <div className="info-item">
+                                            <span className="info-label"><FaThermometer className="me-2 text-success" />Body Temperature:</span>
+                                            <span className="info-value">{entry.patient_body_temperature}</span>
+                                          </div>
+                                          <div className="info-item">
+                                            <span className="info-label"><FaEye className="me-2 text-success" />Eye Condition:</span>
+                                            <span className="info-value">{entry.eye_condition}</span>
+                                          </div>
+                                          <div className="info-item">
+                                            <span className="info-label"><FaTooth className="me-2 text-success" />Teeth & Gums:</span>
+                                            <span className="info-value">{entry.teeth_gums_nature}</span>
+                                          </div>
+                                          <div className="info-item">
+                                            <span className="info-label"><FaAppleAlt className="me-2 text-success" />Excretory Habits:</span>
+                                            <span className="info-value">{entry.excretory_habits}</span>
+                                          </div>
+                                          <div className="info-item">
+                                            <span className="info-label">Urination:</span>
+                                            <span className="info-value">{entry.urination}</span>
+                                          </div>
                                         </div>
-                                        <div className="info-item">
-                                          <span className="info-label"><FaThermometer className="me-2 text-success" />Body Temperature:</span>
-                                          <span className="info-value">{entry.patient_body_temperature}</span>
+                                      </Col>
+                                    </Row>
+                                    
+                                    <Row>
+                                      <Col md={12}>
+                                        <h6 className="section-title text-success"><FaBrain className="me-2" />Psychological Status</h6>
+                                        <div className="info-group">
+                                          <div className="info-item">
+                                            <span className="info-label">Psychological Status:</span>
+                                            <span className="info-value">{entry.psychological_status}</span>
+                                          </div>
+                                          <div className="info-item">
+                                            <span className="info-label">Memory:</span>
+                                            <span className="info-value">{entry.memory}</span>
+                                          </div>
                                         </div>
-                                        <div className="info-item">
-                                          <span className="info-label"><FaEye className="me-2 text-success" />Eye Condition:</span>
-                                          <span className="info-value">{entry.eye_condition}</span>
-                                        </div>
-                                        <div className="info-item">
-                                          <span className="info-label"><FaTooth className="me-2 text-success" />Teeth & Gums:</span>
-                                          <span className="info-value">{entry.teeth_gums_nature}</span>
-                                        </div>
-                                        <div className="info-item">
-                                          <span className="info-label"><FaAppleAlt className="me-2 text-success" />Excretory Habits:</span>
-                                          <span className="info-value">{entry.excretory_habits}</span>
-                                        </div>
-                                        <div className="info-item">
-                                          <span className="info-label">Urination:</span>
-                                          <span className="info-value">{entry.urination}</span>
-                                        </div>
-                                      </div>
-                                    </Col>
-                                  </Row>
-                                  
-                                  <Row>
-                                    <Col md={12}>
-                                      <h6 className="section-title text-success"><FaBrain className="me-2" />Psychological Status</h6>
-                                      <div className="info-group">
-                                        <div className="info-item">
-                                          <span className="info-label">Psychological Status:</span>
-                                          <span className="info-value">{entry.psychological_status}</span>
-                                        </div>
-                                        <div className="info-item">
-                                          <span className="info-label">Memory:</span>
-                                          <span className="info-value">{entry.memory}</span>
-                                        </div>
-                                      </div>
-                                    </Col>
-                                  </Row>
-                                </Card.Body>
-                              </Card>
-                            </Col>
+                                      </Col>
+                                    </Row>
+                                  </Card.Body>
+                                </Card>
+                              </Accordion.Body>
+                            </Accordion.Item>
                           ))}
-                        </Row>
+                        </Accordion>
                         
                         {/* Pagination */}
                         {totalPages > 1 && (
@@ -494,8 +500,6 @@ const TotalConsultNow = () => {
           </Container>
         </div>
       </div>
-
-     
     </>
   );
 };

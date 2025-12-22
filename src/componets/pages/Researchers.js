@@ -28,9 +28,11 @@ const Researchers = () => {
 
   // Function to get the full URL for PDFs
   const getPdfUrl = (pdfPath) => {
-    // Remove 'research_pdfs/' prefix if it exists to avoid duplication
-    const cleanPath = pdfPath.startsWith('research_pdfs/') ? pdfPath : `research_pdfs/${pdfPath}`;
-    return `https://mahadevaaya.com/trilokayurveda/trilokabackend/media/${cleanPath}`;
+    // The API already returns the full path, so just prepend the base URL if needed
+    if (pdfPath.startsWith('/media/')) {
+      return `https://mahadevaaya.com/trilokayurveda/trilokabackend${pdfPath}`;
+    }
+    return pdfPath;
   };
 
   return (
@@ -67,57 +69,50 @@ const Researchers = () => {
                 <div key={researcher.id} className="researcher-profile">
                   <h3>{researcher.title}</h3>
                   <div className="row">
-                    {/* Left side - PDFs */}
+                    {/* Left side - PDF */}
                     <div className="col-md-3">
                       <div className="pdf-container">
-                        {researcher.module.map((item, itemIndex) => {
-                          const pdfUrl = getPdfUrl(item[0]);
-                          return (
-                            <div key={itemIndex} className="pdf-item mb-3">
-                              <h5>Research {itemIndex + 1}</h5>
-                              {item[0] && (
-                                <div className="pdf-viewer">
-                                  {/* Using object tag for better PDF display */}
-                                  <object
-                                    data={pdfUrl}
-                                    type="application/pdf"
-                                    width="100%"
-                                    height="200px"
-                                    title={`PDF ${itemIndex + 1}`}
-                                  >
-                                    <p>PDF cannot be displayed. 
-                                      <a href={pdfUrl} target="_blank" rel="noopener noreferrer">Click here to download</a>
-                                    </p>
-                                  </object>
-                                  <div className="pdf-download">
-                                    <a href={pdfUrl} target="_blank" rel="noopener noreferrer" className="btn btn-sm btn-primary">
-                                      View PDF
-                                    </a>
-                                    <a href={pdfUrl} download className="btn btn-sm btn-secondary ml-2">
-                                      Download PDF
-                                    </a>
-                                  </div>
-                                </div>
-                              )}
+                        <div className="pdf-item mb-3">
+                          <h5>Research Document</h5>
+                          {researcher.pdf_files && (
+                            <div className="pdf-viewer">
+                              {/* Using object tag for better PDF display */}
+                              <object
+                                data={getPdfUrl(researcher.pdf_files)}
+                                type="application/pdf"
+                                width="100%"
+                                height="200px"
+                                title={`PDF for ${researcher.title}`}
+                              >
+                                <p>PDF cannot be displayed. 
+                                  <a href={getPdfUrl(researcher.pdf_files)} target="_blank" rel="noopener noreferrer">Click here to download</a>
+                                </p>
+                              </object>
+                              <div className="pdf-download">
+                                <a href={getPdfUrl(researcher.pdf_files)} target="_blank" rel="noopener noreferrer" className="btn btn-sm btn-primary">
+                                  View PDF
+                                </a>
+                                <a href={getPdfUrl(researcher.pdf_files)} download className="btn btn-sm btn-secondary ml-2">
+                                  Download PDF
+                                </a>
+                              </div>
                             </div>
-                          );
-                        })}
+                          )}
+                        </div>
                       </div>
                     </div>
                     
-                    {/* Right side - Descriptions */}
+                    {/* Right side - Description */}
                     <div className="col-md-9">
                       <div className="description-container">
-                        {researcher.module.map((item, itemIndex) => (
-                          <div key={itemIndex} className="description-item mb-4">
-                            <h5>Research {itemIndex + 1}</h5>
-                            <div className="description-content">
-                              {item[1] && (
-                                <p dangerouslySetInnerHTML={{ __html: item[1] }}></p>
-                              )}
-                            </div>
+                        <div className="description-item mb-4">
+                          <h5>Research Description</h5>
+                          <div className="description-content">
+                            {researcher.description && (
+                              <p dangerouslySetInnerHTML={{ __html: researcher.description }}></p>
+                            )}
                           </div>
-                        ))}
+                        </div>
                       </div>
                     </div>
                   </div>
