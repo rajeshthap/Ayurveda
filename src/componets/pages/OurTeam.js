@@ -22,6 +22,21 @@ function OurTeam() {
       });
   }, []);
 
+  // Function to get the specific path for each team member
+  const getMemberPath = (id) => {
+    switch(id) {
+      case 11: return '/Vaidyaharshsehgal';
+      case 12: return '/Vaidyajasminesehgal';
+      case 13: return '/Profbhavnasingh';
+      default: return '/team';
+    }
+  };
+
+  // Function to handle card click and scroll to top
+  const handleCardClick = () => {
+    window.scrollTo(0, 0);
+  };
+
   if (loading) {
     return (
       <div className="ayur-bgcover ayur-team-sec">
@@ -39,6 +54,9 @@ function OurTeam() {
     );
   }
 
+  // Sort team members by ID in ascending order
+  const sortedTeamMembers = [...teamMembers].sort((a, b) => a.id - b.id);
+
   return (
     <div className="ayur-bgcover ayur-team-sec">
       <div className="container">
@@ -50,13 +68,13 @@ function OurTeam() {
           </div>
         </div>
         <div className="row">
-          {teamMembers.map((member) => (
+          {sortedTeamMembers.map((member) => (
             <div key={member.id} className="col-lg-4 col-md-6 col-sm-6">
-              {/* 
-                The Link now points to a URL with the member's ID.
-                This is the standard and most reliable way.
-              */}
-              <Link to={`/Vaidyaharshsehgal` } className="team-card-link">
+              <Link 
+                to={getMemberPath(member.id)} 
+                className="team-card-link"
+                onClick={handleCardClick}
+              >
                 <div className="ayur-team-box">
                   <div className="ayur-team-img-wrapper">
                     <div className="ayur-team-img">
@@ -82,7 +100,6 @@ function OurTeam() {
                       </div>
                       <p>{member.designation}</p>
                       <div className="ayur-team-sociallink">
-                        {/* Add stopPropagation to prevent Link navigation when clicking social icons */}
                         <a href="#" onClick={(e) => e.stopPropagation()} target="_blank" rel="noopener noreferrer">
                           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-facebook" viewBox="0 0 16 16">
                             <path d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625H5.09v-2.316h3.658V9.25c0-3.607 2.163-5.603 5.438-5.603 1.576 0 2.933.118 3.33.171v3.79h-2.286c-1.79 0-2.136.85-2.136 2.097v2.416h4.273l-.558 2.316h-3.715v5.625C13.074 15.397 16 12.066 16 8.049z"/>
