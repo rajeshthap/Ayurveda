@@ -264,7 +264,7 @@ button.ayur-btn,
 input.ayur-btn {
   min-width: 145px;
   max-width: 100%;
-  border-radius: 22px;
+  border-radius: 8px;
   background-color: #28a745;
 
   border: 1px solid #f2efec;

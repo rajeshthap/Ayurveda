@@ -38,7 +38,7 @@ function NavBar() {
 
                 <div className="ayur-nav-menu">
                   <ul>
-                    <li className="active"><Link to="#">Home</Link></li>
+                    <li className="active"><Link to="/">Home</Link></li>
 
                     <li className="ayur-has-menu">
                       <Link to="/">

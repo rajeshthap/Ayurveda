@@ -262,7 +262,7 @@ const ContactUs = () => {
                   </Form.Control.Feedback>
                 </Form.Group>
                 
-                <Button variant="primary" type="submit" className="trilok-submit-btn">
+                <Button variant="" type="submit" className="ayur-btn">
                   Send Message
                 </Button>
               </Form>

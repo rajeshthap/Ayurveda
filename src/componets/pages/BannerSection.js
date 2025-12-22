@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 // Import leaf images
 import BanLeafLeft from "../../assets/images/ban-leafleft.png";
 import BanLeafRight from "../../assets/images/ban-leafright.png";
+import "../../assets/css/banner.css";
 
 // Swiper imports
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -123,46 +124,7 @@ function BannerSection() {
         <img src={BanLeafRight} alt="leaf-image" />
       </div>
 
-      {/* CSS for text overlay on images */}
-      <style jsx>{`
-        .ayur-ban-slide {
-          position: relative;
-          overflow: hidden;
-        }
-        
-        .ayur-ban-slide img {
-          width: 100%;
-          height: auto;
-          display: block;
-        }
-        
-        .ayur-ban-title {
-          position: absolute;
-          top: 20px;
-          left: 0;
-          right: 0;
-          text-align: center;
-          color: #fff;
-          font-size: 1.8rem;
-          font-weight: bold;
-          text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
-          margin: 0;
-          padding: 0 10px;
-        }
-        
-        .ayur-ban-desc {
-          position: absolute;
-          bottom: 20px;
-          left: 0;
-          right: 0;
-          text-align: center;
-          color: #fff;
-          font-size: 1.2rem;
-          text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
-          margin: 0;
-          padding: 0 15px;
-        }
-      `}</style>
+     
     </div>
   );
 }

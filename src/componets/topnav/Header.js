@@ -60,7 +60,7 @@ function Header() {
            
         </div>
  <Link to="/Login">
-  <Button className="login-btn">Login</Button>
+  <Button className="ayur-btn-login">Login</Button>
 </Link>
       </div>
     </div>

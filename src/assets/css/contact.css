@@ -203,8 +203,10 @@
 }
 
 .trilok-submit-btn:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 20px rgba(78, 159, 61, 0.4);
+ 
+      background-color: #157347 important;
+    border-color: #0d5d1f;
+     color: white;
 }
 
 .trilok-submit-btn:active {
