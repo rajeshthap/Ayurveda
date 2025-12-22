@@ -376,66 +376,16 @@ const AddMediaGallery = () => {
               </Alert>
             )}
 
-            {/* Existing Media Gallery Items */}
-            <div className="mb-4">
-              <h3>Existing Media Gallery Items</h3>
-              {isLoading ? (
-                <div className="text-center my-5">
-                  <div className="spinner-border text-primary" role="status">
-                    <span className="visually-hidden">Loading...</span>
-                  </div>
-                </div>
-              ) : items.length === 0 ? (
-                <div className="text-center my-5">
-                  <p>No media gallery items found.</p>
-                </div>
-              ) : (
-                <Row className="g-4">
-                  {items.map((item) => (
-                    <Col lg={4} md={6} sm={12} key={item.id}>
-                      <div className="card h-100 shadow-sm">
-                        <div className="card-img-container position-relative">
-                          {item.image ? (
-                            <Image
-                              src={item.fullImageUrl || getImageUrl(item.image)}
-                              alt={item.title}
-                              className="card-img-top"
-                              style={{ height: '200px', objectFit: 'cover' }}
-                            />
-                          ) : (
-                            <div className="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-light">
-                              <div className="text-center">
-                                <FaImage className="mb-2" size={32} />
-                                <p className="mb-0 text-muted">No image available</p>
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                        <div className="card-body">
-                          <h5 className="card-title">{item.title}</h5>
-                          <p className="card-text text-muted">
-                            <small>Date: {item.formatted_date}</small>
-                          </p>
-                          <p className="card-text text-muted">
-                            <small>Created: {item.formatted_created_at}</small>
-                          </p>
-                        </div>
-                      </div>
-                    </Col>
-                  ))}
-                </Row>
-              )}
-            </div>
-
-            <hr />
+           
+          
 
             {/* Add New Media Gallery Item Form */}
             <div>
-              <h3>Add New Media Gallery Items</h3>
+              
               <Form onSubmit={handleSubmit}>
                 {/* Media Items Section */}
                 <Form.Group className="mb-3">
-                  <Form.Label>Media Items</Form.Label>
+                
 
                   <div className="media-container">
                     {formData.items.map((item, index) => (
@@ -444,7 +394,7 @@ const AddMediaGallery = () => {
                         className="media-item mb-3 p-3 border rounded"
                       >
                         <div className="d-flex justify-content-between align-items-center mb-2">
-                          <h5>Media Item {index + 1}</h5>
+                          <h5>Media Gallery {index + 1}</h5>
 
                           {formData.items.length > 1 && (
                             <Button

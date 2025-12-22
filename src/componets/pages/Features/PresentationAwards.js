@@ -1,22 +1,30 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { Row, Col, Container } from 'react-bootstrap';
-import Like from '../../../assets/images/like.svg';
-import LikeFill from '../../../assets/images/like-fill.svg';
-import BgShape2 from '../../../assets/images/bg-shape2.png';
-import BgLeaf2 from '../../../assets/images/bg-leaf2.png';
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { Row, Col, Container } from "react-bootstrap";
+import Like from "../../../assets/images/like.svg";
+import LikeFill from "../../../assets/images/like-fill.svg";
+import BgShape2 from "../../../assets/images/bg-shape2.png";
+import BgLeaf2 from "../../../assets/images/bg-leaf2.png";
 
-const API_BASE =
-  'https://mahadevaaya.com/trilokayurveda/trilokabackend';
+const API_BASE = "https://mahadevaaya.com/trilokayurveda/trilokabackend";
 
-const PresentationAwards = () => {
+// Array of background colors for dates
+const dateColors = [
+  "#F8B500", // Red
+  "#21c0f2", // Teal
+  "#00bf13", // Blue
+  "#96CEB4", // Green
+  "#FFEAA7", // Yellow
+  "#DDA0DD", // Plum
+  "#F8B500", // Orange
+];
+
+const PresentationAwards = ({ showBanner = true, showAboutUsClass = true }) => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(
-      `${API_BASE}/api/presentationandaward-items/`
-    )
+    fetch(`${API_BASE}/api/presentationandaward-items/`)
       .then((res) => res.json())
       .then((data) => {
         // ✅ IMPORTANT FIX
@@ -24,39 +32,48 @@ const PresentationAwards = () => {
         setLoading(false);
       })
       .catch((err) => {
-        console.error('API Error:', err);
+        console.error("API Error:", err);
         setLoading(false);
       });
   }, []);
 
   return (
     <div className="ayur-bgcover ayur-about-sec">
-      {/* Header Section - Same as AboutUs */}
-      <div className='about-bg'>
-        <div className='ayur-bread-content text-center'>
-          <h2 style={{ fontWeight: 'bold' }}>Presentations & Awards</h2>
-          <div className="ayur-bread-list">
-            <span>
-              <a href="index.html">Home </a>
-            </span>
-            <span className="ayur-active-page">/ Presentations & Awards</span>
+      {/* Header Section - Conditionally rendered based on showBanner prop */}
+      {showBanner && (
+        <div className="about-bg">
+          <div className="ayur-bread-content text-center">
+            <h2 style={{ fontWeight: "bold" }}>Presentations & Awards</h2>
+            <div className="ayur-bread-list">
+              <span>
+                <a href="index.html">Home </a>
+              </span>
+              <span className="ayur-active-page">/ Presentations & Awards</span>
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Main Content Section - Same structure as AboutUs */}
       <div className="row">
         <div className="ayur-bgcover ayur-about-sec">
-          <div className="container fluid about-us">
+          <div
+            className={`container fluid ${showAboutUsClass ? "about-us" : ""}`}
+          >
             <div className="row">
               <div className="col-lg-12 col-md-12 col-sm-12">
-                <div className="ayur-heading-wrap ayur-about-head">
+                <div className="ayur-heading-wrap ayur-about-head text-center">
                   {loading ? (
                     <div className="text-center py-5">
-                      <div className="spinner-border text-primary" role="status">
+                      <div
+                        className="spinner-border text-primary"
+                        role="status"
+                      >
                         <span className="visually-hidden">Loading...</span>
                       </div>
-                      <p className="mt-2">Loading Presentations & Awards content...</p>
+                      <p className="mt-2">
+                        Loading Presentations & Awards content...
+                      </p>
                     </div>
                   ) : items.length === 0 ? (
                     <div className="alert alert-warning text-center">
@@ -65,11 +82,19 @@ const PresentationAwards = () => {
                   ) : (
                     <>
                       {/* Content Header */}
-                      <h3 style={{ fontWeight: 'bold', fontSize: '2rem', marginBottom: '2rem' }}>Presentations & Awards</h3>
-                      
+                      <h3
+                        style={{
+                          fontWeight: "bold",
+                          fontSize: "2rem",
+                          marginBottom: "2rem",
+                        }}
+                      >
+                        Presentations & Awards
+                      </h3>
+
                       {/* Presentation Items Grid */}
                       <div className="row">
-                        {items.map((item) => (
+                        {items.map((item, index) => (
                           <div
                             className="col-lg-4 col-md-6 col-sm-6"
                             key={item.id}
@@ -81,27 +106,34 @@ const PresentationAwards = () => {
                                   alt={item.title}
                                   onError={(e) => {
                                     e.target.onerror = null;
-                                    console.error('Image failed to load:', e.target.src);
+                                    console.error(
+                                      "Image failed to load:",
+                                      e.target.src
+                                    );
                                   }}
                                 />
 
                                 <div className="ayur-tpro-sale">
-                                  <p>
+                                  {/* --- CHANGE IS HERE --- */}
+                                  <p
+                                    style={{
+                                      backgroundColor:
+                                        dateColors[index % dateColors.length],
+                                      color: "#fff", // Added white color for text readability
+                                    }}
+                                  >
                                     {new Date(item.date).toLocaleDateString(
-                                      'en-IN',
+                                      "en-IN",
                                       {
-                                        day: '2-digit',
-                                        month: 'short',
-                                        year: 'numeric',
+                                        day: "2-digit",
+                                        month: "short",
+                                        year: "numeric",
                                       }
                                     )}
                                   </p>
 
                                   <div className="ayur-tpro-like">
-                                    <Link
-                                      to=""
-                                      className="ayur-tpor-click"
-                                    >
+                                    <Link to="" className="ayur-tpor-click">
                                       <img
                                         src={Like}
                                         className="unlike"
@@ -119,9 +151,7 @@ const PresentationAwards = () => {
 
                               <div className="ayur-tpro-text">
                                 <h3>
-                                  <Link to="#">
-                                    {item.title}
-                                  </Link>
+                                  <Link to="#">{item.title}</Link>
                                 </h3>
 
                                 <div className="ayur-tpro-price"></div>
@@ -142,7 +172,7 @@ const PresentationAwards = () => {
               </div>
             </div>
           </div>
-          
+
           {/* Background shapes - Same as AboutUs */}
           <div className="ayur-bgshape ayur-about-bgshape">
             <img src={BgShape2} alt="img" />
@@ -152,11 +182,9 @@ const PresentationAwards = () => {
       </div>
 
       {/* Footer Section */}
-      <footer className="bg-light py-4">
-      
-      </footer>
+      <footer className="bg-light py-4"></footer>
     </div>
   );
-}
+};
 
 export default PresentationAwards;

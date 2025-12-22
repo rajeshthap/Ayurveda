@@ -1,64 +1,37 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import '../../assets/css/research.css';
 import { Link } from 'react-router-dom';
 
 const Researchers = () => {
-  // Research data for Vaidya Harsh Sehgal
-  const harshSehgalResearch = [
-    {
-      title: "Clinical Evaluation of Trikatu & Kumari as Hypolipidemic Drug",
-      authors: "Singh B, Upadhyay SD",
-      year: "2018",
-      journal: "International Journal of Ayurveda and Pharma Research",
-      pages: "Vol. 6, Issue 5, pp. 12-18"
-    },
-    {
-      title: "Efficacy of Ayurvedic formulations in management of chronic skin disorders",
-      authors: "Sehgal H, Singh B",
-      year: "2019",
-      journal: "Journal of Ayurvedic and Herbal Medicine",
-      pages: "Vol. 3, Issue 2, pp. 45-52"
-    },
-    {
-      title: "Role of Panchakarma in lifestyle disorders: A clinical study",
-      authors: "Sehgal H, Sharma A",
-      year: "2020",
-      journal: "AYU (An International Quarterly Journal of Research in Ayurveda)",
-      pages: "Vol. 41, Issue 1, pp. 28-35"
-    }
-  ];
+  const [researchData, setResearchData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Research data for Prof.(Dr.) Bhavna Singh
-  const bhavnaSinghResearch = [
-    {
-      title: "Clinical Evaluation of Trikatu & Kumari as Hypolipidemic Drug",
-      authors: "Singh B, Upadhyay SD",
-      year: "2018",
-      journal: "International Journal of Ayurveda and Pharma Research",
-      pages: "Vol. 6, Issue 5, pp. 12-18"
-    },
-    {
-      title: "Ayurvedic management of osteoarthritis: A randomized controlled trial",
-      authors: "Singh B, Kumar V, Sehgal H",
-      year: "2019",
-      journal: "Journal of Research in Ayurveda and Siddha",
-      pages: "Vol. 40, Issue 3, pp. 112-120"
-    },
-    {
-      title: "Standardization of Ayurvedic formulations: A review",
-      authors: "Singh B, Patel R",
-      year: "2020",
-      journal: "World Journal of Pharmaceutical Research",
-      pages: "Vol. 9, Issue 8, pp. 568-578"
-    },
-    {
-      title: "Efficacy of Guggulu in hyperlipidemia: A clinical study",
-      authors: "Singh B, Sehgal H, Sharma A",
-      year: "2021",
-      journal: "International Journal of Green Pharmacy",
-      pages: "Vol. 15, Issue 1, pp. 78-85"
-    }
-  ];
+  useEffect(() => {
+    const fetchResearchData = async () => {
+      try {
+        const response = await fetch('https://mahadevaaya.com/trilokayurveda/trilokabackend/api/researches-items/');
+        if (!response.ok) {
+          throw new Error('Failed to fetch data');
+        }
+        const data = await response.json();
+        setResearchData(data.data || []);
+        setLoading(false);
+      } catch (err) {
+        setError(err.message);
+        setLoading(false);
+      }
+    };
+
+    fetchResearchData();
+  }, []);
+
+  // Function to get the full URL for PDFs
+  const getPdfUrl = (pdfPath) => {
+    // Remove 'research_pdfs/' prefix if it exists to avoid duplication
+    const cleanPath = pdfPath.startsWith('research_pdfs/') ? pdfPath : `research_pdfs/${pdfPath}`;
+    return `https://mahadevaaya.com/trilokayurveda/trilokabackend/media/${cleanPath}`;
+  };
 
   return (
     <div className="ayur-bgcover ayur-about-sec">
@@ -66,11 +39,11 @@ const Researchers = () => {
       <div className='about-bg'>
         <div className='ayur-bread-content'>
           <h2>Researchers</h2>
-          <div class="ayur-bread-list">
+          <div className="ayur-bread-list">
             <span>
               <Link to="/">Home</Link>
             </span>
-            <span class="ayur-active-page">/ Researchers</span>
+            <span className="ayur-active-page">/ Researchers</span>
           </div>
         </div>
       </div>
@@ -84,35 +57,74 @@ const Researchers = () => {
         <div className="researchers-section">
           <h2>Research Publications</h2>
           
-          <div className="researcher-profile">
-            <h3>Vaidya Harsh Sehgal</h3>
-            <div className="research-list">
-              {harshSehgalResearch.map((research, index) => (
-                <div key={index} className="research-item">
-                  <h4>{research.title}</h4>
-                  <p><strong>Authors:</strong> {research.authors}</p>
-                  <p><strong>Year:</strong> {research.year}</p>
-                  <p><strong>Journal:</strong> {research.journal}</p>
-                  <p><strong>Pages:</strong> {research.pages}</p>
+          {loading ? (
+            <div className="loading-message">Loading research data...</div>
+          ) : error ? (
+            <div className="error-message">Error: {error}</div>
+          ) : (
+            <div className="research-container">
+              {researchData.map((researcher) => (
+                <div key={researcher.id} className="researcher-profile">
+                  <h3>{researcher.title}</h3>
+                  <div className="row">
+                    {/* Left side - PDFs */}
+                    <div className="col-md-3">
+                      <div className="pdf-container">
+                        {researcher.module.map((item, itemIndex) => {
+                          const pdfUrl = getPdfUrl(item[0]);
+                          return (
+                            <div key={itemIndex} className="pdf-item mb-3">
+                              <h5>Research {itemIndex + 1}</h5>
+                              {item[0] && (
+                                <div className="pdf-viewer">
+                                  {/* Using object tag for better PDF display */}
+                                  <object
+                                    data={pdfUrl}
+                                    type="application/pdf"
+                                    width="100%"
+                                    height="200px"
+                                    title={`PDF ${itemIndex + 1}`}
+                                  >
+                                    <p>PDF cannot be displayed. 
+                                      <a href={pdfUrl} target="_blank" rel="noopener noreferrer">Click here to download</a>
+                                    </p>
+                                  </object>
+                                  <div className="pdf-download">
+                                    <a href={pdfUrl} target="_blank" rel="noopener noreferrer" className="btn btn-sm btn-primary">
+                                      View PDF
+                                    </a>
+                                    <a href={pdfUrl} download className="btn btn-sm btn-secondary ml-2">
+                                      Download PDF
+                                    </a>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                    
+                    {/* Right side - Descriptions */}
+                    <div className="col-md-9">
+                      <div className="description-container">
+                        {researcher.module.map((item, itemIndex) => (
+                          <div key={itemIndex} className="description-item mb-4">
+                            <h5>Research {itemIndex + 1}</h5>
+                            <div className="description-content">
+                              {item[1] && (
+                                <p dangerouslySetInnerHTML={{ __html: item[1] }}></p>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>
-          </div>
-
-          <div className="researcher-profile">
-            <h3>Prof.(Dr.) Bhavna Singh</h3>
-            <div className="research-list">
-              {bhavnaSinghResearch.map((research, index) => (
-                <div key={index} className="research-item">
-                  <h4>{research.title}</h4>
-                  <p><strong>Authors:</strong> {research.authors}</p>
-                  <p><strong>Year:</strong> {research.year}</p>
-                  <p><strong>Journal:</strong> {research.journal}</p>
-                  <p><strong>Pages:</strong> {research.pages}</p>
-                </div>
-              ))}
-            </div>
-          </div>
+          )}
         </div>
       </div>
     </div>

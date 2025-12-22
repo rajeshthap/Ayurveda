@@ -40,10 +40,9 @@ const ManageFAQ = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [currentEditItem, setCurrentEditItem] = useState(null);
 
-  // Pagination and search state
+  // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(6);
-  const [searchTerm, setSearchTerm] = useState('');
 
   // Check device width
   useEffect(() => {
@@ -437,7 +436,7 @@ const ManageFAQ = () => {
 
       // SUCCESS PATH
       const faqCount = formData.module.length;
-      setMessage(`✅ Success! ${faqCount} FAQ item${faqCount > 1 ? 's have' : ' has'} been added successfully.`);
+      setMessage(`Success! ${faqCount} FAQ item${faqCount > 1 ? 's have' : ' has'} been added successfully.`);
       setVariant("success");
       setShowAlert(true);
       resetForm();
@@ -460,7 +459,7 @@ const ManageFAQ = () => {
         errorMessage = error.message;
       }
 
-      setMessage(`❌ Error: ${errorMessage}`);
+      setMessage(` Error: ${errorMessage}`);
       setVariant("danger");
       setShowAlert(true);
 
@@ -471,25 +470,11 @@ const ManageFAQ = () => {
     }
   };
 
-  // Filter FAQ items based on search term
-  const filteredFaqItems = searchTerm.trim() === '' 
-    ? faqItems 
-    : faqItems.filter((item) => {
-        const lowerSearch = searchTerm.toLowerCase();
-        return (
-          item.id?.toString().includes(lowerSearch) ||
-          (item.module && item.module.some(faq => 
-            faq.question?.toLowerCase().includes(lowerSearch) ||
-            faq.answer?.toLowerCase().includes(lowerSearch)
-          ))
-        );
-      });
-  
   // Pagination calculations
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredFaqItems.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.ceil(filteredFaqItems.length / itemsPerPage);
+  const currentItems = faqItems.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(faqItems.length / itemsPerPage);
   
   const handlePageChange = (pageNumber) => setCurrentPage(pageNumber);
 
@@ -511,18 +496,6 @@ const ManageFAQ = () => {
           <Container fluid className="dashboard-body dashboard-main-container">
             <div className="d-flex justify-content-between align-items-center mb-4">
               <h1 className="page-title mb-0">Manage FAQ Items</h1>
-              <div style={{ width: '300px' }}>
-                <input
-                  type="text"
-                  placeholder="Search by ID, question, or answer..."
-                  className="form-control"
-                  value={searchTerm}
-                  onChange={(e) => {
-                    setSearchTerm(e.target.value);
-                    setCurrentPage(1);
-                  }}
-                />
-              </div>
             </div>
 
             {/* Alert for success/error messages */}
@@ -549,7 +522,7 @@ const ManageFAQ = () => {
                 <Row>
                   {currentItems.length === 0 ? (
                     <Col xs={12} className="text-center my-5">
-                      <p>{searchTerm ? 'No FAQ items match your search.' : 'No FAQ items found.'}</p>
+                      <p>No FAQ items found.</p>
                     </Col>
                   ) : (
                     currentItems.map((item) => (
@@ -557,24 +530,6 @@ const ManageFAQ = () => {
                         <Card className="h-100">
                           <Card.Header className="d-flex justify-content-between align-items-center">
                             <Card.Title className="mb-0">FAQ Item #{item.id}</Card.Title>
-                            <div>
-                              <Button
-                                variant="outline-primary"
-                                size="sm"
-                                className="me-2"
-                                onClick={() => startEditing(item)}
-                              >
-                                <FaEdit /> Edit
-                              </Button>
-                              <Button
-                                variant="outline-danger"
-                                size="sm"
-                                onClick={() => deleteFaqItem(item.id)}
-                                disabled={isSubmitting}
-                              >
-                                <FaTrash /> Delete
-                              </Button>
-                            </div>
                           </Card.Header>
                           <Card.Body>
                             {item.module && item.module.length > 0 ? (
@@ -593,6 +548,24 @@ const ManageFAQ = () => {
                               <small className="text-muted">Created: {item.formatted_created_at}</small>
                             </div>
                           </Card.Body>
+                          <div className="d-flex justify-content-between p-3">
+                            <Button
+                              variant="outline-primary"
+                              size="sm"
+                              className="me-2"
+                              onClick={() => startEditing(item)}
+                            >
+                              <FaEdit /> Edit
+                            </Button>
+                            <Button
+                              variant="outline-danger"
+                              size="sm"
+                              onClick={() => deleteFaqItem(item.id)}
+                              disabled={isSubmitting}
+                            >
+                              <FaTrash /> Delete
+                            </Button>
+                          </div>
                         </Card>
                       </Col>
                     ))
@@ -626,105 +599,7 @@ const ManageFAQ = () => {
               </>
             )}
 
-            {/* Add New FAQ Item Form */}
-            <Row className="mt-4">
-              <Col>
-                <h2>Add New FAQ Item</h2>
-                <Form onSubmit={handleSubmit}>
-                  {/* FAQ Items Section */}
-                  <Form.Group className="mb-3">
-                    <Form.Label>Questions & Answers</Form.Label>
-
-                    <div className="faq-container">
-                      {formData.module.map((faq, index) => (
-                        <div
-                          key={index}
-                          className="faq-item mb-3 p-3 border rounded"
-                        >
-                          <div className="d-flex justify-content-between align-items-center mb-2">
-                            <h5>Question {index + 1}</h5>
-
-                            {formData.module.length > 1 && (
-                              <Button
-                                variant="outline-danger"
-                                size="sm"
-                                onClick={() => removeFAQItem(index)}
-                              >
-                                <FaTrash /> Remove
-                              </Button>
-                            )}
-                          </div>
-
-                          {/* Question */}
-                          <Form.Group className="mb-2">
-                            <Form.Label>Question</Form.Label>
-                            <Form.Control
-                              type="text"
-                              placeholder={`Enter question ${index + 1}`}
-                              value={faq.question || ""}
-                              onChange={(e) =>
-                                handleFAQChange(
-                                  index,
-                                  "question",
-                                  e.target.value
-                                )
-                              }
-                              required
-                            />
-                          </Form.Group>
-
-                          {/* Answer */}
-                          <Form.Group className="mb-2">
-                            <Form.Label>Answer</Form.Label>
-                            <Form.Control
-                              as="textarea"
-                              rows={3}
-                              placeholder={`Enter answer for question ${
-                                index + 1
-                              }`}
-                              value={faq.answer || ""}
-                              onChange={(e) =>
-                                handleFAQChange(
-                                  index,
-                                  "answer",
-                                  e.target.value
-                                )
-                              }
-                              required
-                            />
-                          </Form.Group>
-                        </div>
-                      ))}
-
-                      <Button
-                        variant="outline-primary"
-                        onClick={addFAQItem}
-                        className="mt-2"
-                      >
-                        <FaPlus /> Add Another Question
-                      </Button>
-                    </div>
-                  </Form.Group>
-
-                  <div className="d-flex gap-2 mt-3">
-                    <Button
-                      variant="primary"
-                      type="submit"
-                      disabled={isSubmitting}
-                    >
-                      {isSubmitting ? "Submitting..." : "Submit FAQ Item"}
-                    </Button>
-                    <Button
-                      variant="secondary"
-                      onClick={resetForm}
-                      type="button"
-                    >
-                      Clear
-                    </Button>
-                  </div>
-                </Form>
-              </Col>
-            </Row>
+          
           </Container>
         </div>
       </div>

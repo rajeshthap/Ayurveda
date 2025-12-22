@@ -7,7 +7,7 @@ import { useAuthFetch } from "../../context/AuthFetch";
 import LeftNav from "../LeftNav";
 import DashBoardHeader from "../DashBoardHeader";
 import "../../../assets/css/dashboardcard.css";
-import { FaPlus, FaTrash, FaEdit, FaSave, FaTimes, FaSearch, FaCalendarAlt, FaImage } from "react-icons/fa";
+import { FaPlus, FaTrash, FaEdit, FaSave, FaTimes, FaCalendarAlt, FaImage } from "react-icons/fa";
 
 const ManageMediaGallery = () => {
   const { auth, logout, refreshAccessToken } = useAuth();
@@ -50,12 +50,9 @@ const ManageMediaGallery = () => {
   const [imagePreviews, setImagePreviews] = useState({});
   const [imageLoadErrors, setImageLoadErrors] = useState({});
 
-  // Pagination and search state
+  // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(6);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [sortBy, setSortBy] = useState('id'); // 'id', 'title', 'date'
-  const [sortOrder, setSortOrder] = useState('desc'); // 'asc', 'desc'
 
   // Base URL for API
   const API_BASE_URL = "https://mahadevaaya.com/trilokayurveda/trilokabackend";
@@ -585,65 +582,13 @@ const ManageMediaGallery = () => {
     }
   };
 
-  // Sort items
-  const sortItems = useCallback((itemsToSort) => {
-    return [...itemsToSort].sort((a, b) => {
-      let aValue, bValue;
-      
-      switch (sortBy) {
-        case 'title':
-          aValue = a.title?.toLowerCase() || '';
-          bValue = b.title?.toLowerCase() || '';
-          break;
-        case 'date':
-          aValue = new Date(a.date || 0);
-          bValue = new Date(b.date || 0);
-          break;
-        case 'id':
-        default:
-          aValue = a.id || 0;
-          bValue = b.id || 0;
-          break;
-      }
-      
-      if (sortOrder === 'asc') {
-        return aValue > bValue ? 1 : -1;
-      } else {
-        return aValue < bValue ? 1 : -1;
-      }
-    });
-  }, [sortBy, sortOrder]);
-
-  // Filter and sort items
-  const filteredItems = searchTerm.trim() === '' 
-    ? items 
-    : items.filter((item) => {
-        const lowerSearch = searchTerm.toLowerCase();
-        return (
-          item.id?.toString().includes(lowerSearch) ||
-          item.title?.toLowerCase().includes(lowerSearch) ||
-          item.date?.includes(lowerSearch)
-        );
-      });
-    
-  const sortedItems = sortItems(filteredItems);
-  
   // Pagination calculations
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = sortedItems.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.ceil(sortedItems.length / itemsPerPage);
+  const currentItems = items.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(items.length / itemsPerPage);
   
   const handlePageChange = (pageNumber) => setCurrentPage(pageNumber);
-  
-  const handleSort = (field) => {
-    if (sortBy === field) {
-      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
-    } else {
-      setSortBy(field);
-      setSortOrder('asc');
-    }
-  };
 
   // Handle image load error
   const handleImageError = (itemId) => {
@@ -671,33 +616,6 @@ const ManageMediaGallery = () => {
           <Container fluid className="dashboard-body dashboard-main-container">
             <div className="d-flex justify-content-between align-items-center mb-4">
               <h1 className="page-title mb-0">Manage Media Gallery Items</h1>
-              <div className="d-flex gap-2">
-                <div style={{ width: '300px' }}>
-                  <div className="input-group">
-                    <span className="input-group-text"><FaSearch /></span>
-                    <input
-                      type="text"
-                      placeholder="Search by ID, title, or date..."
-                      className="form-control"
-                      value={searchTerm}
-                      onChange={(e) => {
-                        setSearchTerm(e.target.value);
-                        setCurrentPage(1);
-                      }}
-                    />
-                  </div>
-                </div>
-                <Button 
-                  variant="outline-secondary" 
-                  onClick={() => {
-                    setSearchTerm('');
-                    setCurrentPage(1);
-                  }}
-                  disabled={!searchTerm}
-                >
-                  Clear
-                </Button>
-              </div>
             </div>
 
             {/* Alert for success/error messages */}
@@ -729,12 +647,10 @@ const ManageMediaGallery = () => {
                   </div>
                 )}
                 
-              
-                
                 <Row>
                   {currentItems.length === 0 ? (
                     <Col xs={12} className="text-center my-5">
-                      <p>{searchTerm ? 'No media gallery items match your search.' : 'No media gallery items found.'}</p>
+                      <p>No media gallery items found.</p>
                     </Col>
                   ) : (
                     currentItems.map((item) => (
@@ -759,9 +675,7 @@ const ManageMediaGallery = () => {
                             )}
                             
                             {/* Item ID badge */}
-                            <Badge bg="primary" className="position-absolute top-0 start-0 m-2">
-                              ID: {item.id}
-                            </Badge>
+                         
                           </div>
                           
                           <Card.Body className="d-flex flex-column">
@@ -776,7 +690,7 @@ const ManageMediaGallery = () => {
                           </Card.Body>
                           
                           {/* Action buttons at the bottom of the card */}
-                          <div className="card-footer d-flex justify-content-between align-items-center p-2">
+                          <div className="card-footer d-flex justify-content-between align-items-center p-3">
                             <Button
                               variant="outline-primary"
                               size="sm"
@@ -829,141 +743,7 @@ const ManageMediaGallery = () => {
             )}
 
             {/* Add New Media Gallery Item Form */}
-            <Row className="mt-4">
-              <Col>
-                <h2>Add New Media Gallery Item</h2>
-                <Form onSubmit={handleSubmit}>
-                  {/* Items Section */}
-                  <Form.Group className="mb-3">
-                    <Form.Label>Media Gallery Items</Form.Label>
-
-                    <div className="media-container">
-                      {formData.items.map((item, index) => (
-                        <div
-                          key={index}
-                          className="media-item mb-3 p-3 border rounded"
-                        >
-                          <div className="d-flex justify-content-between align-items-center mb-2">
-                            <h5>Media Item {index + 1}</h5>
-
-                            {formData.items.length > 1 && (
-                              <Button
-                                variant="outline-danger"
-                                size="sm"
-                                onClick={() => removeItem(index)}
-                              >
-                                <FaTrash /> Remove
-                              </Button>
-                            )}
-                          </div>
-
-                          {/* Title */}
-                          <Form.Group className="mb-2">
-                            <Form.Label>Title</Form.Label>
-                            <Form.Control
-                              type="text"
-                              placeholder={`Enter title ${index + 1}`}
-                              value={item.title || ""}
-                              onChange={(e) =>
-                                handleItemChange(
-                                  index,
-                                  "title",
-                                  e.target.value
-                                )
-                              }
-                              required
-                            />
-                          </Form.Group>
-
-                          {/* Date */}
-                          <Form.Group className="mb-2">
-                            <Form.Label>Date</Form.Label>
-                            <Form.Control
-                              type="date"
-                              value={item.date || ""}
-                              onChange={(e) =>
-                                handleItemChange(
-                                  index,
-                                  "date",
-                                  e.target.value
-                                )
-                              }
-                              required
-                            />
-                          </Form.Group>
-
-                          {/* Image */}
-                          <Form.Group className="mb-2">
-                            <Form.Label>Image</Form.Label>
-                            <Form.Control
-                              type="file"
-                              accept="image/*"
-                              onChange={(e) =>
-                                handleImageChange(
-                                  index,
-                                  e.target.files[0]
-                                )
-                              }
-                            />
-                            {item.image && (
-                              <div className="mt-2">
-                                {item.image instanceof File ? (
-                                  <div>
-                                    <small className="text-muted">
-                                      Selected: {item.image.name}
-                                    </small>
-                                    {imagePreviews[`form-${index}`] && (
-                                      <div className="mt-2">
-                                        <Image 
-                                          src={imagePreviews[`form-${index}`]} 
-                                          alt="Preview" 
-                                          fluid 
-                                          style={{ maxHeight: '150px' }}
-                                          thumbnail
-                                        />
-                                      </div>
-                                    )}
-                                  </div>
-                                ) : (
-                                  <small className="text-muted">
-                                    Current: {item.image}
-                                  </small>
-                                )}
-                              </div>
-                            )}
-                          </Form.Group>
-                        </div>
-                      ))}
-
-                      <Button
-                        variant="outline-primary"
-                        onClick={addItem}
-                        className="mt-2"
-                      >
-                        <FaPlus /> Add Another Media Item
-                      </Button>
-                    </div>
-                  </Form.Group>
-
-                  <div className="d-flex gap-2 mt-3">
-                    <Button
-                      variant="primary"
-                      type="submit"
-                      disabled={isSubmitting}
-                    >
-                      {isSubmitting ? "Submitting..." : "Submit Media Items"}
-                    </Button>
-                    <Button
-                      variant="secondary"
-                      onClick={resetForm}
-                      type="button"
-                    >
-                      Clear
-                    </Button>
-                  </div>
-                </Form>
-              </Col>
-            </Row>
+           
           </Container>
         </div>
       </div>
@@ -971,14 +751,14 @@ const ManageMediaGallery = () => {
       {/* Edit Modal */}
       <Modal show={showEditModal} onHide={cancelEditing} size="lg">
         <Modal.Header closeButton>
-          <Modal.Title>Edit Media Gallery Item #{currentEditItem?.id}</Modal.Title>
+          <Modal.Title>Edit Media Gallery {currentEditItem?.id}</Modal.Title>
         </Modal.Header>
         <Form onSubmit={saveEditedItem}>
           <Modal.Body>
             <Row>
               <Col md={6}>
                 {editingItemData?.existing_image && (
-                  <div className="mb-3 text-center">
+                  <div className="mb-3">
                     <h5>Current Image</h5>
                     {imageLoadErrors[`edit-${editingItemData.id}`] ? (
                       <div className="text-center p-3 bg-light rounded">

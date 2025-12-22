@@ -670,19 +670,7 @@ const ManagePresentationAwards = () => {
           <Container fluid className="dashboard-body dashboard-main-container">
             <div className="d-flex justify-content-between align-items-center mb-4">
               <h1 className="page-title mb-0">Manage Presentation & Award Items</h1>
-              <div className="d-flex gap-2">
-               
-                <Button 
-                  variant="outline-secondary" 
-                  onClick={() => {
-                    setSearchTerm('');
-                    setCurrentPage(1);
-                  }}
-                  disabled={!searchTerm}
-                >
-                  Clear
-                </Button>
-              </div>
+             
             </div>
 
             {/* Alert for success/error messages */}
@@ -727,10 +715,7 @@ const ManagePresentationAwards = () => {
                     currentItems.map((item) => (
                       <Col lg={4} md={6} sm={12} className="mb-4" key={item.id}>
                         <Card className="h-100">
-                          <Card.Header className="d-flex justify-content-between align-items-center">
-                            <Card.Title className="mb-0">Item #{item.id}</Card.Title>
-                           
-                          </Card.Header>
+                         
                           <Card.Body>
                             {item.image && (
                               <div className="mb-3 text-center">
@@ -758,7 +743,7 @@ const ManagePresentationAwards = () => {
                               <small className="text-muted">Created: {item.formatted_created_at}</small>
                             </div>
                           </Card.Body>
-                           <div>
+                           <div className="d-flex justify-content-between p-3">
                               <Button
                                 variant="outline-primary"
                                 size="sm"
@@ -811,141 +796,7 @@ const ManagePresentationAwards = () => {
             )}
 
             {/* Add New Presentation & Award Item Form */}
-            <Row className="mt-4">
-              <Col>
-                <h2>Add New Presentation & Award Item</h2>
-                <Form onSubmit={handleSubmit}>
-                  {/* Items Section */}
-                  <Form.Group className="mb-3">
-                    <Form.Label>Presentation & Award Items</Form.Label>
-
-                    <div className="item-container">
-                      {formData.items.map((item, index) => (
-                        <div
-                          key={index}
-                          className="item mb-3 p-3 border rounded"
-                        >
-                          <div className="d-flex justify-content-between align-items-center mb-2">
-                            <h5>Item {index + 1}</h5>
-
-                            {formData.items.length > 1 && (
-                              <Button
-                                variant="outline-danger"
-                                size="sm"
-                                onClick={() => removeItem(index)}
-                              >
-                                <FaTrash /> Remove
-                              </Button>
-                            )}
-                          </div>
-
-                          {/* Title */}
-                          <Form.Group className="mb-2">
-                            <Form.Label>Title</Form.Label>
-                            <Form.Control
-                              type="text"
-                              placeholder={`Enter title ${index + 1}`}
-                              value={item.title || ""}
-                              onChange={(e) =>
-                                handleItemChange(
-                                  index,
-                                  "title",
-                                  e.target.value
-                                )
-                              }
-                              required
-                            />
-                          </Form.Group>
-
-                          {/* Date */}
-                          <Form.Group className="mb-2">
-                            <Form.Label>Date</Form.Label>
-                            <Form.Control
-                              type="date"
-                              value={item.date || ""}
-                              onChange={(e) =>
-                                handleItemChange(
-                                  index,
-                                  "date",
-                                  e.target.value
-                                )
-                              }
-                              required
-                            />
-                          </Form.Group>
-
-                          {/* Image */}
-                          <Form.Group className="mb-2">
-                            <Form.Label>Image</Form.Label>
-                            <Form.Control
-                              type="file"
-                              accept="image/*"
-                              onChange={(e) =>
-                                handleImageChange(
-                                  index,
-                                  e.target.files[0]
-                                )
-                              }
-                            />
-                            {item.image && (
-                              <div className="mt-2">
-                                {item.image instanceof File ? (
-                                  <div>
-                                    <small className="text-muted">
-                                      Selected: {item.image.name}
-                                    </small>
-                                    {imagePreviews[`form-${index}`] && (
-                                      <div className="mt-2">
-                                        <Image 
-                                          src={imagePreviews[`form-${index}`]} 
-                                          alt="Preview" 
-                                          fluid 
-                                          style={{ maxHeight: '150px' }}
-                                          thumbnail
-                                        />
-                                      </div>
-                                    )}
-                                  </div>
-                                ) : (
-                                  <small className="text-muted">
-                                    Current: {item.image}
-                                  </small>
-                                )}
-                              </div>
-                            )}
-                          </Form.Group>
-                        </div>
-                      ))}
-
-                      <Button
-                        variant="outline-primary"
-                        onClick={addItem}
-                        className="mt-2"
-                      >
-                        <FaPlus /> Add Another Item
-                      </Button>
-                    </div>
-                  </Form.Group>
-
-                  <div className="d-flex gap-2 mt-3">
-                    <Button
-                      variant="primary"
-                      type="submit"
-                      disabled={isSubmitting}
-                    >
-                      {isSubmitting ? "Submitting..." : "Submit Item"}
-                    </Button>
-                    <Button
-                      variant="secondary"
-                      onClick={resetForm}
-                      type="button"
-                    >
-                      Clear
-                    </Button>
-                  </div>
-                </Form>
-              </Col>
-            </Row>
+          
           </Container>
         </div>
       </div>

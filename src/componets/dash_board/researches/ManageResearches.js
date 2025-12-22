@@ -6,7 +6,7 @@ import { useAuth } from "../../context/AuthContext";
 import { useAuthFetch } from "../../context/AuthFetch";
 import LeftNav from "../LeftNav";
 import DashBoardHeader from "../DashBoardHeader";
-import { FaPlus, FaTrash, FaEdit, FaSave, FaTimes, FaSearch, FaCalendarAlt, FaImage } from "react-icons/fa";
+import { FaPlus, FaTrash, FaEdit, FaSave, FaTimes, FaCalendarAlt, FaImage, FaFilePdf } from "react-icons/fa";
 
 const ManageResearches = () => {
   const { auth, logout, refreshAccessToken } = useAuth();
@@ -19,12 +19,7 @@ const ManageResearches = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [isTablet, setIsTablet] = useState(false);
 
-  // Form state for presentation and award items
-  const [formData, setFormData] = useState({
-    items: [{ title: "", image: null, date: "" }], // Initialize with one empty item
-  });
-
-  // State for presentation and award items from API
+  // State for research items
   const [items, setItems] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isFetching, setIsFetching] = useState(false);
@@ -49,12 +44,9 @@ const ManageResearches = () => {
   const [imagePreviews, setImagePreviews] = useState({});
   const [imageLoadErrors, setImageLoadErrors] = useState({});
 
-  // Pagination and search state
+  // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(6);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [sortBy, setSortBy] = useState('id'); // 'id', 'title', 'date'
-  const [sortOrder, setSortOrder] = useState('desc'); // 'asc', 'desc'
 
   // Base URL for API
   const API_BASE_URL = "https://mahadevaaya.com/trilokayurveda/trilokabackend";
@@ -90,50 +82,14 @@ const ManageResearches = () => {
     return () => window.removeEventListener("resize", checkDevice);
   }, []);
 
-  // Fetch presentation and award items on component mount
-  useEffect(() => {
-    fetchItems();
-  }, []);
-
-  // Create image preview when a new image is selected
-  useEffect(() => {
-    const previews = {};
-    
-    // Create previews for form data images
-    formData.items.forEach((item, index) => {
-      if (item.image && item.image instanceof File) {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          setImagePreviews(prev => ({
-            ...prev,
-            [`form-${index}`]: reader.result
-          }));
-        };
-        reader.readAsDataURL(item.image);
-      }
-    });
-    
-    // Create preview for editing image
-    if (editingItemData?.image && editingItemData.image instanceof File) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreviews(prev => ({
-          ...prev,
-          'edit': reader.result
-        }));
-      };
-      reader.readAsDataURL(editingItemData.image);
-    }
-  }, [formData, editingItemData]);
-
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
-  // Fetch presentation and award items from API
+  // Fetch research items from API
   const fetchItems = async () => {
     setIsLoading(true);
     setIsFetching(true);
     try {
-      const url = `${API_BASE_URL}/api/presentationandaward-items/`;
+      const url = `${API_BASE_URL}/api/researches-items/`;
       let response = await fetch(url, {
         method: "GET",
         headers: {
@@ -154,14 +110,14 @@ const ManageResearches = () => {
       }
 
       if (!response.ok) {
-        throw new Error("Failed to fetch presentation and award items");
+        throw new Error("Failed to fetch research items");
       }
 
       const result = await response.json();
       console.log("GET API Response:", result);
 
       if (result.success && result.data) {
-        // Process data to format dates
+        // Process data to format dates and image URLs
         const processedItems = result.data.map(item => {
           const processedItem = { ...item };
           
@@ -175,19 +131,19 @@ const ManageResearches = () => {
             });
           }
           
-          // Format date field
-          if (item.date) {
-            const itemDate = new Date(item.date);
-            processedItem.formatted_date = itemDate.toLocaleDateString('en-US', {
+          // Format updated_at date
+          if (item.updated_at) {
+            const updatedDate = new Date(item.updated_at);
+            processedItem.formatted_updated_at = updatedDate.toLocaleDateString('en-US', {
               year: 'numeric',
               month: 'short',
               day: 'numeric'
             });
           }
           
-          // Add full image URL
-          if (item.image) {
-            processedItem.fullImageUrl = getImageUrl(item.image);
+          // Add full image URL for the first image in module
+          if (item.module && item.module.length > 0 && item.module[0] && item.module[0][0]) {
+            processedItem.firstImageUrl = getImageUrl(item.module[0][0]);
           }
           
           return processedItem;
@@ -195,11 +151,11 @@ const ManageResearches = () => {
 
         setItems(processedItems);
       } else {
-        throw new Error("No presentation and award items found");
+        throw new Error("No research items found");
       }
     } catch (error) {
-      console.error("Error fetching presentation and award items:", error);
-      setMessage(error.message || "An error occurred while fetching presentation and award items");
+      console.error("Error fetching research items:", error);
+      setMessage(error.message || "An error occurred while fetching research items");
       setVariant("danger");
       setShowAlert(true);
     } finally {
@@ -208,107 +164,35 @@ const ManageResearches = () => {
     }
   };
 
+  // Fetch research items on component mount
+  useEffect(() => {
+    fetchItems();
+  }, []);
+
   // Handle item changes
   const handleItemChange = (index, field, value) => {
-    setFormData((prev) => {
-      const newItems = [...prev.items];
-      // Ensure the item at index exists and is an object
-      if (!newItems[index] || typeof newItems[index] !== "object") {
-        newItems[index] = { title: "", image: null, date: "" };
-      }
-      // Update the specific field
-      newItems[index] = {
-        ...newItems[index],
-        [field]: value,
-      };
-
-      return {
-        ...prev,
-        items: newItems,
-      };
-    });
-  };
-
-  // Handle image file change
-  const handleImageChange = (index, file) => {
-    setFormData((prev) => {
-      const newItems = [...prev.items];
-      // Ensure the item at index exists and is an object
-      if (!newItems[index] || typeof newItems[index] !== "object") {
-        newItems[index] = { title: "", image: null, date: "" };
-      }
-      // Update the image field
-      newItems[index] = {
-        ...newItems[index],
-        image: file,
-      };
-
-      return {
-        ...prev,
-        items: newItems,
-      };
-    });
-  };
-
-  // Handle editing item changes
-  const handleEditingItemChange = (field, value) => {
     setEditingItemData((prev) => ({
       ...prev,
       [field]: value,
     }));
   };
 
-  // Handle editing image file change
-  const handleEditingImageChange = (file) => {
+  // Handle image file change
+  const handleImageChange = (file) => {
     setEditingItemData((prev) => ({
       ...prev,
       image: file,
     }));
   };
 
-  // Add a new item
-  const addItem = () => {
-    setFormData((prev) => ({
-      ...prev,
-      items: [...prev.items, { title: "", image: null, date: "" }],
-    }));
-  };
-
-  // Remove an item
-  const removeItem = (index) => {
-    setFormData((prev) => ({
-      ...prev,
-      items: prev.items.filter((_, i) => i !== index),
-    }));
-    
-    // Clean up image preview
-    setImagePreviews(prev => {
-      const newPreviews = { ...prev };
-      delete newPreviews[`form-${index}`];
-      return newPreviews;
-    });
-  };
-
-  // Reset form
-  const resetForm = () => {
-    setFormData({
-      items: [{ title: "", image: null, date: "" }],
-    });
-    setImagePreviews({});
-    setShowAlert(false);
-  };
-
   // Start editing an item
   const startEditing = (item) => {
     setCurrentEditItem(item);
-    setEditingItemId(item.id);
     setEditingItemData({
       id: item.id,
       title: item.title,
-      image: null, // We'll use null initially and update if a new image is selected
-      date: item.date,
-      existing_image: item.image, // Keep track of the existing image
-      existing_image_url: getImageUrl(item.image) // Store the full URL
+      module: item.module ? [...item.module] : [],
+      existing_images: item.module ? item.module.map(m => m[0]) : []
     });
     setShowEditModal(true);
   };
@@ -335,20 +219,20 @@ const ManageResearches = () => {
       const dataToSend = new FormData();
       dataToSend.append("id", editingItemData.id);
       dataToSend.append("title", editingItemData.title);
-      dataToSend.append("date", editingItemData.date);
       
-      // Only append image if a new one is selected
-      if (editingItemData.image) {
-        dataToSend.append("image", editingItemData.image);
-      }
-
-      const url = `${API_BASE_URL}/api/presentationandaward-items/`;
+      // Add each module to FormData
+      editingItemData.module.forEach((module, index) => {
+        if (module[0]) dataToSend.append(`module[${index}][0]`, module[0]);
+        if (module[1]) dataToSend.append(`module[${index}][1]`, module[1]);
+      });
+      
+      const url = `${API_BASE_URL}/api/researches-items/`;
       let response = await fetch(url, {
         method: "PUT",
-        body: dataToSend,
         headers: {
           Authorization: `Bearer ${auth?.access}`,
         },
+        body: dataToSend,
       });
 
       // If unauthorized, try refreshing token and retry once
@@ -357,10 +241,10 @@ const ManageResearches = () => {
         if (!newAccess) throw new Error("Session expired");
         response = await fetch(url, {
           method: "PUT",
-          body: dataToSend,
           headers: {
             Authorization: `Bearer ${newAccess}`,
           },
+          body: dataToSend,
         });
       }
 
@@ -373,13 +257,15 @@ const ManageResearches = () => {
           /* not JSON */
         }
         throw new Error(
-          (errorData && errorData.message) || "Failed to update presentation and award item"
+          (errorData && errorData.message) || "Failed to update research item"
         );
       }
 
       const result = await response.json();
+      console.log("Response data:", result);
+      
       if (result.success) {
-        setMessage("Presentation and award item updated successfully!");
+        setMessage("Research item updated successfully!");
         setVariant("success");
         setShowAlert(true);
         setEditingItemId(null);
@@ -390,18 +276,18 @@ const ManageResearches = () => {
           delete newPreviews['edit'];
           return newPreviews;
         });
-        fetchItems(); // Refresh the items list
+        fetchItems(); // Refresh items list
         setTimeout(() => setShowAlert(false), 3000);
       } else {
-        throw new Error(result.message || "Failed to update presentation and award item");
+        throw new Error(result.message || "Failed to update research item");
       }
     } catch (error) {
-      console.error("Error updating presentation and award item:", error);
+      console.error("Error updating research item:", error);
       let errorMessage = "An unexpected error occurred. Please try again.";
       if (error.message) {
         errorMessage = error.message;
       }
-      setMessage(errorMessage);
+      setMessage(`Error: ${errorMessage}`);
       setVariant("danger");
       setShowAlert(true);
       setTimeout(() => setShowAlert(false), 5000);
@@ -422,17 +308,16 @@ const ManageResearches = () => {
 
     setIsSubmitting(true);
     try {
-      // Create FormData for the request
       const dataToSend = new FormData();
       dataToSend.append("id", itemToDelete);
       
-      const url = `${API_BASE_URL}/api/presentationandaward-items/`;
+      const url = `${API_BASE_URL}/api/researches-items/`;
       let response = await fetch(url, {
         method: "DELETE",
-        body: dataToSend,
         headers: {
           Authorization: `Bearer ${auth?.access}`,
         },
+        body: dataToSend,
       });
 
       // If unauthorized, try refreshing token and retry once
@@ -441,10 +326,10 @@ const ManageResearches = () => {
         if (!newAccess) throw new Error("Session expired");
         response = await fetch(url, {
           method: "DELETE",
-          body: dataToSend,
           headers: {
             Authorization: `Bearer ${newAccess}`,
           },
+          body: dataToSend,
         });
       }
 
@@ -457,29 +342,31 @@ const ManageResearches = () => {
           /* not JSON */
         }
         throw new Error(
-          (errorData && errorData.message) || "Failed to delete presentation and award item"
+          (errorData && errorData.message) || "Failed to delete research item"
         );
       }
 
       const result = await response.json();
+      console.log("Response data:", result);
+      
       if (result.success) {
-        setMessage("Presentation and award item deleted successfully!");
+        setMessage("Research item deleted successfully!");
         setVariant("success");
         setShowAlert(true);
-        setShowDeleteModal(false);
         setItemToDelete(null);
-        fetchItems(); // Refresh the items list
+        setShowDeleteModal(false);
+        fetchItems(); // Refresh items list
         setTimeout(() => setShowAlert(false), 3000);
       } else {
-        throw new Error(result.message || "Failed to delete presentation and award item");
+        throw new Error(result.message || "Failed to delete research item");
       }
     } catch (error) {
-      console.error("Error deleting presentation and award item:", error);
+      console.error("Error deleting research item:", error);
       let errorMessage = "An unexpected error occurred. Please try again.";
       if (error.message) {
         errorMessage = error.message;
       }
-      setMessage(errorMessage);
+      setMessage(`Error: ${errorMessage}`);
       setVariant("danger");
       setShowAlert(true);
       setTimeout(() => setShowAlert(false), 5000);
@@ -488,161 +375,13 @@ const ManageResearches = () => {
     }
   };
 
-  // Handle form submission (POST request)
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setShowAlert(false);
-
-    try {
-      // Create FormData for the API
-      const dataToSend = new FormData();
-      
-      // Add admin_id
-      dataToSend.append("admin_id", admin_id);
-      
-      // Add each item to the FormData
-      formData.items.forEach((item, index) => {
-        if (item.title) dataToSend.append(`title`, item.title);
-        if (item.image) dataToSend.append(`image`, item.image);
-        if (item.date) dataToSend.append(`date`, item.date);
-      });
-      
-      // Log the FormData content for debugging
-      console.log("Submitting FormData:");
-      for (let pair of dataToSend.entries()) {
-        console.log(pair[0] + ": " + pair[1]);
-      }
-      
-      // Send the data as FormData
-      const url = `${API_BASE_URL}/api/presentationandaward-items/`;
-      let response = await fetch(url, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${auth?.access}`,
-        },
-        body: dataToSend,
-      });
-
-      // If unauthorized, try refreshing token and retry once
-      if (response.status === 401) {
-        const newAccess = await refreshAccessToken();
-        if (!newAccess) throw new Error("Session expired");
-        response = await fetch(url, {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${newAccess}`,
-          },
-          body: dataToSend,
-        });
-      }
-
-      console.log("Response status:", response.status);
-      
-      // Parse the response
-      const responseData = await response.json();
-      console.log("Response data:", responseData);
-      
-      // Check if the API call was successful
-      if (!response.ok || !responseData.success) {
-        throw new Error(responseData.message || "Failed to save presentation and award items");
-      }
-
-      // SUCCESS PATH
-      const itemCount = formData.items.length;
-      setMessage(`✅ Success! ${itemCount} presentation and award item${itemCount > 1 ? 's have' : ' has'} been added successfully.`);
-      setVariant("success");
-      setShowAlert(true);
-      resetForm();
-      fetchItems(); // Refresh the items list
-
-      // Hide success alert after 5 seconds
-      setTimeout(() => setShowAlert(false), 5000);
-    } catch (error) {
-      // FAILURE PATH
-      console.error("Error adding presentation and award items:", error);
-      let errorMessage = "An unexpected error occurred. Please try again.";
-
-      if (
-        error instanceof TypeError &&
-        error.message.includes("Failed to fetch")
-      ) {
-        errorMessage =
-          "Network error: Could not connect to the server. Please check the API endpoint.";
-      } else if (error.message) {
-        errorMessage = error.message;
-      }
-
-      setMessage(`❌ Error: ${errorMessage}`);
-      setVariant("danger");
-      setShowAlert(true);
-
-      // Hide error alert after 5 seconds
-      setTimeout(() => setShowAlert(false), 5000);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  // Sort items
-  const sortItems = useCallback((itemsToSort) => {
-    return [...itemsToSort].sort((a, b) => {
-      let aValue, bValue;
-      
-      switch (sortBy) {
-        case 'title':
-          aValue = a.title?.toLowerCase() || '';
-          bValue = b.title?.toLowerCase() || '';
-          break;
-        case 'date':
-          aValue = new Date(a.date || 0);
-          bValue = new Date(b.date || 0);
-          break;
-        case 'id':
-        default:
-          aValue = a.id || 0;
-          bValue = b.id || 0;
-          break;
-      }
-      
-      if (sortOrder === 'asc') {
-        return aValue > bValue ? 1 : -1;
-      } else {
-        return aValue < bValue ? 1 : -1;
-      }
-    });
-  }, [sortBy, sortOrder]);
-
-  // Filter and sort items
-  const filteredItems = searchTerm.trim() === '' 
-    ? items 
-    : items.filter((item) => {
-        const lowerSearch = searchTerm.toLowerCase();
-        return (
-          item.id?.toString().includes(lowerSearch) ||
-          item.title?.toLowerCase().includes(lowerSearch) ||
-          item.date?.includes(lowerSearch)
-        );
-      });
-    
-  const sortedItems = sortItems(filteredItems);
-  
   // Pagination calculations
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = sortedItems.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.ceil(sortedItems.length / itemsPerPage);
+  const currentItems = items.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(items.length / itemsPerPage);
   
   const handlePageChange = (pageNumber) => setCurrentPage(pageNumber);
-  
-  const handleSort = (field) => {
-    if (sortBy === field) {
-      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
-    } else {
-      setSortBy(field);
-      setSortOrder('asc');
-    }
-  };
 
   // Handle image load error
   const handleImageError = (itemId) => {
@@ -669,20 +408,7 @@ const ManageResearches = () => {
 
           <Container fluid className="dashboard-body dashboard-main-container">
             <div className="d-flex justify-content-between align-items-center mb-4">
-              <h1 className="page-title mb-0">Manage Presentation & Award Items</h1>
-              <div className="d-flex gap-2">
-               
-                <Button 
-                  variant="outline-secondary" 
-                  onClick={() => {
-                    setSearchTerm('');
-                    setCurrentPage(1);
-                  }}
-                  disabled={!searchTerm}
-                >
-                  Clear
-                </Button>
-              </div>
+              <h1 className="page-title mb-0">Manage Research Items</h1>
             </div>
 
             {/* Alert for success/error messages */}
@@ -697,7 +423,7 @@ const ManageResearches = () => {
               </Alert>
             )}
 
-            {/* Presentation & Award Items Cards */}
+            {/* Research Items Cards */}
             {isLoading ? (
               <div className="text-center my-5">
                 <Spinner animation="border" role="status">
@@ -714,69 +440,110 @@ const ManageResearches = () => {
                   </div>
                 )}
                 
-                <div className="d-flex justify-content-end mb-3">
-                 
-                </div>
-                
                 <Row>
                   {currentItems.length === 0 ? (
                     <Col xs={12} className="text-center my-5">
-                      <p>{searchTerm ? 'No presentation and award items match your search.' : 'No presentation and award items found.'}</p>
+                      <p>No research items found.</p>
                     </Col>
                   ) : (
                     currentItems.map((item) => (
-                      <Col lg={4} md={6} sm={12} className="mb-4" key={item.id}>
+                      <Col lg={12} md={12} sm={12} className="mb-4" key={item.id}>
                         <Card className="h-100">
-                          <Card.Header className="d-flex justify-content-between align-items-center">
-                            <Card.Title className="mb-0">Item #{item.id}</Card.Title>
-                           
-                          </Card.Header>
+                         
                           <Card.Body>
-                            {item.image && (
-                              <div className="mb-3 text-center">
-                                {imageLoadErrors[item.id] ? (
-                                  <div className="text-center p-3 bg-light rounded">
-                                    <FaImage className="mb-2" size={32} />
-                                    <p className="mb-0 text-muted">Image not available</p>
-                                  </div>
-                                ) : (
+                            {/* {item.firstImageUrl && (
+                                <div className="mb-3 text-center">
                                   <Image 
-                                    src={item.fullImageUrl || getImageUrl(item.image)} 
+                                    src={item.firstImageUrl} 
                                     alt={item.title} 
                                     fluid 
                                     style={{ maxHeight: '200px' }}
                                     thumbnail
-                                    onError={() => handleImageError(item.id)}
                                   />
-                                )}
-                                
-                              </div>
-                            )}
+                                </div>
+                            )} */}
                             <h5>{item.title}</h5>
-                            <p><FaCalendarAlt className="me-2" />{item.formatted_date}</p>
+                            <p><FaCalendarAlt className="me-2" />{item.formatted_created_at}</p>
                             <div className="mt-2">
                               <small className="text-muted">Created: {item.formatted_created_at}</small>
+                              {item.updated_at !== item.created_at && (
+                                <small className="text-muted">Updated: {item.formatted_updated_at}</small>
+                              )}
                             </div>
+                            
+                            {/* Display Modules */}
+                            {item.module && item.module.length > 0 && (
+                              <div className="mt-3">
+                                <h6>Research Modules:</h6>
+                                <Accordion defaultActiveKey="0">
+                                  {item.module.map((module, index) => (
+                                    <Accordion.Item eventKey={index.toString()} key={index}>
+                                      <Accordion.Header>
+                                        <div className="d-flex justify-content-between align-items-center">
+                                          <span>
+                                            {module[0] && (
+                                              <>
+                                                <FaFilePdf className="me-2" />
+                                                {module[0].split('/').pop()}
+                                              </>
+                                            )}
+                                            {!module[0] && (
+                                              <span>No file</span>
+                                            )}
+                                          </span>
+                                          <span className="text-muted">
+                                            {module[1] || 'No description'}
+                                          </span>
+                                        </div>
+                                      </Accordion.Header>
+                                      <Accordion.Body>
+                                        <div className="d-flex">
+                                          <div className="me-3">
+                                            <strong>File:</strong>
+                                            <div>
+                                              {module[0] ? (
+                                                <Badge bg="success" className="me-2">
+                                                  Available
+                                                </Badge>
+                                              ) : (
+                                                <Badge bg="secondary" className="me-2">
+                                                  Not Available
+                                                </Badge>
+                                              )}
+                                            </div>
+                                          </div>
+                                          <div>
+                                            <strong>Description:</strong>
+                                            <div>{module[1] || 'No description'}</div>
+                                          </div>
+                                        </div>
+                                      </Accordion.Body>
+                                    </Accordion.Item>
+                                  ))}
+                                </Accordion>
+                              </div>
+                            )}
                           </Card.Body>
-                           <div>
-                              <Button
-                                variant="outline-primary"
-                                size="sm"
-                                className="me-2"
-                                onClick={() => startEditing(item)}
-                                disabled={isSubmitting}
-                              >
-                                <FaEdit /> Edit
-                              </Button>
-                              <Button
-                                variant="outline-danger"
-                                size="sm"
-                                onClick={() => confirmDelete(item.id)}
-                                disabled={isSubmitting}
-                              >
-                                <FaTrash /> Delete
-                              </Button>
-                            </div>
+                          
+                          {/* Edit and Delete Buttons */}
+                          <div className="d-flex justify-content-between p-4 mt-3">
+                            <Button
+                              variant="outline-primary"
+                              size="sm"
+                              onClick={() => startEditing(item)}
+                              disabled={isSubmitting}
+                            >
+                              <FaEdit /> Edit
+                            </Button>
+                            <Button
+                              variant="outline-danger"
+                              size="sm"
+                              onClick={() => confirmDelete(item.id)}
+                              disabled={isSubmitting}
+                            >
+                              <FaTrash /> Delete
+                            </Button>
+                          </div>
                         </Card>
                       </Col>
                     ))
@@ -809,143 +576,6 @@ const ManageResearches = () => {
                 )}
               </>
             )}
-
-            {/* Add New Presentation & Award Item Form */}
-            <Row className="mt-4">
-              <Col>
-                <h2>Add New Presentation & Award Item</h2>
-                <Form onSubmit={handleSubmit}>
-                  {/* Items Section */}
-                  <Form.Group className="mb-3">
-                    <Form.Label>Presentation & Award Items</Form.Label>
-
-                    <div className="item-container">
-                      {formData.items.map((item, index) => (
-                        <div
-                          key={index}
-                          className="item mb-3 p-3 border rounded"
-                        >
-                          <div className="d-flex justify-content-between align-items-center mb-2">
-                            <h5>Item {index + 1}</h5>
-
-                            {formData.items.length > 1 && (
-                              <Button
-                                variant="outline-danger"
-                                size="sm"
-                                onClick={() => removeItem(index)}
-                              >
-                                <FaTrash /> Remove
-                              </Button>
-                            )}
-                          </div>
-
-                          {/* Title */}
-                          <Form.Group className="mb-2">
-                            <Form.Label>Title</Form.Label>
-                            <Form.Control
-                              type="text"
-                              placeholder={`Enter title ${index + 1}`}
-                              value={item.title || ""}
-                              onChange={(e) =>
-                                handleItemChange(
-                                  index,
-                                  "title",
-                                  e.target.value
-                                )
-                              }
-                              required
-                            />
-                          </Form.Group>
-
-                          {/* Date */}
-                          <Form.Group className="mb-2">
-                            <Form.Label>Date</Form.Label>
-                            <Form.Control
-                              type="date"
-                              value={item.date || ""}
-                              onChange={(e) =>
-                                handleItemChange(
-                                  index,
-                                  "date",
-                                  e.target.value
-                                )
-                              }
-                              required
-                            />
-                          </Form.Group>
-
-                          {/* Image */}
-                          <Form.Group className="mb-2">
-                            <Form.Label>Image</Form.Label>
-                            <Form.Control
-                              type="file"
-                              accept="image/*"
-                              onChange={(e) =>
-                                handleImageChange(
-                                  index,
-                                  e.target.files[0]
-                                )
-                              }
-                            />
-                            {item.image && (
-                              <div className="mt-2">
-                                {item.image instanceof File ? (
-                                  <div>
-                                    <small className="text-muted">
-                                      Selected: {item.image.name}
-                                    </small>
-                                    {imagePreviews[`form-${index}`] && (
-                                      <div className="mt-2">
-                                        <Image 
-                                          src={imagePreviews[`form-${index}`]} 
-                                          alt="Preview" 
-                                          fluid 
-                                          style={{ maxHeight: '150px' }}
-                                          thumbnail
-                                        />
-                                      </div>
-                                    )}
-                                  </div>
-                                ) : (
-                                  <small className="text-muted">
-                                    Current: {item.image}
-                                  </small>
-                                )}
-                              </div>
-                            )}
-                          </Form.Group>
-                        </div>
-                      ))}
-
-                      <Button
-                        variant="outline-primary"
-                        onClick={addItem}
-                        className="mt-2"
-                      >
-                        <FaPlus /> Add Another Item
-                      </Button>
-                    </div>
-                  </Form.Group>
-
-                  <div className="d-flex gap-2 mt-3">
-                    <Button
-                      variant="primary"
-                      type="submit"
-                      disabled={isSubmitting}
-                    >
-                      {isSubmitting ? "Submitting..." : "Submit Item"}
-                    </Button>
-                    <Button
-                      variant="secondary"
-                      onClick={resetForm}
-                      type="button"
-                    >
-                      Clear
-                    </Button>
-                  </div>
-                </Form>
-              </Col>
-            </Row>
           </Container>
         </div>
       </div>
@@ -953,103 +583,74 @@ const ManageResearches = () => {
       {/* Edit Modal */}
       <Modal show={showEditModal} onHide={cancelEditing} size="lg">
         <Modal.Header closeButton>
-          <Modal.Title>Edit Presentation & Award Item #{currentEditItem?.id}</Modal.Title>
+          <Modal.Title>Edit Research Item #{currentEditItem?.id}</Modal.Title>
         </Modal.Header>
         <Form onSubmit={saveEditedItem}>
           <Modal.Body>
             <Row>
-              <Col md={6}>
-                {editingItemData?.existing_image && (
-                  <div className="mb-3 text-center">
-                    <h5>Current Image</h5>
-                    {imageLoadErrors[`edit-${editingItemData.id}`] ? (
-                      <div className="text-center p-3 bg-light rounded">
-                        <FaImage className="mb-2" size={32} />
-                        <p className="mb-0 text-muted">Image not available</p>
-                      </div>
-                    ) : (
-                      <Image 
-                        src={editingItemData.existing_image_url || getImageUrl(editingItemData.existing_image)} 
-                        alt={editingItemData.title} 
-                        fluid 
-                        style={{ maxHeight: '200px' }}
-                        thumbnail
-                        onError={() => handleImageError(`edit-${editingItemData.id}`)}
-                      />
-                    )}
-                  </div>
-                )}
-              </Col>
-              <Col md={6}>
-                {imagePreviews['edit'] && (
-                  <div className="mb-3 text-center">
-                    <h5>New Image Preview</h5>
-                    <Image 
-                      src={imagePreviews['edit']} 
-                      alt="Preview" 
-                      fluid 
-                      style={{ maxHeight: '200px' }}
-                      thumbnail
-                    />
-                  </div>
-                )}
+              <Col md={12}>
+                <Form.Group className="mb-3">
+                  <Form.Label>Title</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Enter title"
+                    value={editingItemData?.title || ""}
+                    onChange={(e) => handleItemChange("title", e.target.value)}
+                    required
+                  />
+                </Form.Group>
               </Col>
             </Row>
             
-            {/* Title */}
-            <Form.Group className="mb-3">
-              <Form.Label>Title</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Enter title"
-                value={editingItemData?.title || ""}
-                onChange={(e) =>
-                  handleEditingItemChange(
-                    "title",
-                    e.target.value
-                  )
-                }
-                required
-              />
-            </Form.Group>
-
-            {/* Date */}
-            <Form.Group className="mb-3">
-              <Form.Label>Date</Form.Label>
-              <Form.Control
-                type="date"
-                value={editingItemData?.date || ""}
-                onChange={(e) =>
-                  handleEditingItemChange(
-                    "date",
-                    e.target.value
-                  )
-                }
-                required
-              />
-            </Form.Group>
-
-            {/* Image */}
-            <Form.Group className="mb-3">
-              <Form.Label>Image</Form.Label>
-              <Form.Control
-                type="file"
-                accept="image/*"
-                onChange={(e) =>
-                  handleEditingImageChange(e.target.files[0])
-                }
-              />
-              {editingItemData?.image && (
-                <div className="mt-2">
-                  <small className="text-muted">
-                    Selected: {editingItemData.image.name}
-                  </small>
-                </div>
-              )}
-              <Form.Text className="text-muted">
-                Leave this field empty to keep the current image.
-              </Form.Text>
-            </Form.Group>
+            <Row>
+              <Col md={12}>
+                <h5 className="mb-3">Research Modules</h5>
+                
+                {editingItemData?.module && editingItemData.module.map((module, index) => (
+                  <div key={index} className="border rounded p-3 mb-3">
+                    <Row>
+                      <Col md={6}>
+                        <Form.Group className="mb-3">
+                          <Form.Label>PDF File</Form.Label>
+                          <Form.Control
+                            type="file"
+                            accept=".pdf"
+                            onChange={(e) => {
+                              const newModules = [...editingItemData.module];
+                              newModules[index] = [e.target.files[0], module[1]];
+                              handleItemChange("module", newModules);
+                            }}
+                          />
+                          {module[0] && (
+                            <div className="mt-2">
+                              <small className="text-muted">
+                                Current: {module[0].split('/').pop()}
+                              </small>
+                            </div>
+                          )}
+                        </Form.Group>
+                      </Col>
+                      <Col md={6}>
+                        <Form.Group className="mb-3">
+                          <Form.Label>Description</Form.Label>
+                          <Form.Control
+                            as="textarea"
+                            rows={3}
+                            placeholder="Enter description"
+                            value={module[1] || ""}
+                            onChange={(e) => {
+                              const newModules = [...editingItemData.module];
+                              newModules[index] = [module[0], e.target.value];
+                              handleItemChange("module", newModules);
+                            }}
+                          />
+                        </Form.Group>
+                      </Col>
+                    </Row>
+                  </div>
+                ))}
+              </Col>
+            </Row>
           </Modal.Body>
           <Modal.Footer>
             <Button
@@ -1076,7 +677,7 @@ const ManageResearches = () => {
           <Modal.Title>Confirm Delete</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          Are you sure you want to delete this presentation and award item? This action cannot be undone.
+          Are you sure you want to delete this research item? This action cannot be undone.
         </Modal.Body>
         <Modal.Footer>
           <Button

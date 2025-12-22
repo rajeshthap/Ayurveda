@@ -1338,53 +1338,7 @@ function ConsultNow() {
         </div>
       </div>
       
-      <style jsx>{`
-        .step {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          text-align: center;
-          padding: 10px;
-          position: relative;
-          flex: 1;
-        }
-        
-        .step-number {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          width: 30px;
-          height: 30px;
-          border-radius: 50%;
-          background-color: #e9ecef;
-          margin-bottom: 5px;
-          font-weight: bold;
-        }
-        
-        .step.active .step-number {
-          background-color: #0d6efd;
-          color: white;
-        }
-        
-        .step.completed .step-number {
-          background-color: #198754;
-          color: white;
-        }
-        
-        .step span {
-          font-size: 12px;
-        }
-        
-        .step.active span {
-          color: #0d6efd;
-          font-weight: bold;
-        }
-        
-        .step.completed span {
-          color: #198754;
-          font-weight: bold;
-        }
-      `}</style>
+     
     </div>
   );
 }

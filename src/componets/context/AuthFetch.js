@@ -1,7 +1,9 @@
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 export const useAuthFetch = () => {
   const { auth, refreshAccessToken } = useAuth();
+  const navigate = useNavigate();
 
   const authFetch = async (url, options = {}) => {
     let response = await fetch(url, {
@@ -13,12 +15,17 @@ export const useAuthFetch = () => {
       },
     });
 
-    //  If token expired → refresh
+    // If token expired → refresh
     if (response.status === 401) {
       const newAccess = await refreshAccessToken();
 
-      if (!newAccess) throw new Error("Session expired");
+      // If refreshing token fails (session expired), redirect to login
+      if (!newAccess) {
+        navigate('/Login'); // Redirect to the login page
+        return; // Stop further execution
+      }
 
+      // Retry the request with the new token
       response = await fetch(url, {
         ...options,
         headers: {

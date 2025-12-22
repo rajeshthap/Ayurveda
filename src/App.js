@@ -77,6 +77,8 @@ import ManageTestinomial from './componets/dash_board/Testinomials/ManageTestino
 import ConsultNow from './componets/Consult_now/ConsultNow';
 import AddResearches from './componets/dash_board/researches/AddResearches';
 import ManageResearches from './componets/dash_board/researches/ManageResearches';
+import CommingSoon from './componets/CommingSoon';
+import TotalConsultNow from './componets/dash_board/total_consult_now/TotalConsultNow';
 
 
 function App() {
@@ -120,7 +122,8 @@ function App() {
       "/AddTestinomial",
       "/ManageTestinomial",
       "/ManageResearches",
-      "/AddResearches"
+      "/AddResearches",
+      "/TotalConsultNow"
 
 
      ]);
@@ -162,7 +165,8 @@ function App() {
     "/AddTestinomial",
     "/ManageTestinomial",
     "/ManageResearches",
-    "/AddResearches"
+    "/AddResearches",
+    "/TotalConsultNow"
 
   ]);
 
@@ -241,6 +245,8 @@ function App() {
 <Route path="/ConsultNow" element={<ConsultNow />} />
 <Route path="/AddResearches" element={<AddResearches />} />
 <Route path="/ManageResearches" element={<ManageResearches />} />
+<Route path="/CommingSoon" element={<CommingSoon />} />
+<Route path="/TotalConsultNow" element={<TotalConsultNow/>} />
 
 
 {/* <Route path="*" element={<NotFound />} />  */}
