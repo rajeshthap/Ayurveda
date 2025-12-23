@@ -174,7 +174,7 @@ function OwnManufacturing() {
               <>
                 <div className="d-flex align-items-center mb-4">
                   <button 
-                    className="btn btn-link p-0 me-3 d-flex align-items-center" 
+                   className=" d-flex align-items-center ayur-btn"  
                     onClick={handleBackToList}
                   >
                     <FaArrowLeft className="me-2" /> Back to List
