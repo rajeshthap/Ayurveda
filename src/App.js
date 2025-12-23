@@ -79,6 +79,7 @@ import AddResearches from './componets/dash_board/researches/AddResearches';
 import ManageResearches from './componets/dash_board/researches/ManageResearches';
 import CommingSoon from './componets/CommingSoon';
 import TotalConsultNow from './componets/dash_board/total_consult_now/TotalConsultNow';
+import Profile from './componets/pages/about_us/Profile';
 
 
 function App() {
@@ -247,7 +248,7 @@ function App() {
 <Route path="/ManageResearches" element={<ManageResearches />} />
 <Route path="/CommingSoon" element={<CommingSoon />} />
 <Route path="/TotalConsultNow" element={<TotalConsultNow/>} />
-
+<Route path="/Profile" element={<Profile/>} />
 
 {/* <Route path="*" element={<NotFound />} />  */}
 </Routes>
