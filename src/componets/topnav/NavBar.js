@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react"; // <-- IMPORT useState and useEffect
 
 // ---- IMPORT ALL IMAGES HERE ----
 import LogoFinal from "../../assets/images/logo-final.jpg";
@@ -10,9 +9,6 @@ import { Link } from "react-router-dom";
 import "../../assets/css/NavBar.css";
 
 function NavBar() {
-  // ---- NEW: Hook for navigation ----
-  const navigate = useNavigate();
-
   // ---- NEW: State to manage the mobile menu ----
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -41,14 +37,9 @@ function NavBar() {
   // ---- NEW: Function to toggle submenu ----
   const toggleSubmenu = (key, e) => {
     e.preventDefault(); // Prevent navigation on click
-    if (isMobileOrTablet) {
-      // For mobile/tablet, just toggle the submenu
-      setSubmenuStates((prev) => ({ ...prev, [key]: !prev[key] }));
-    } else {
-      // For desktop, disable hover functionality when a dropdown is clicked
-      setHoverEnabled(false);
-      setSubmenuStates((prev) => ({ ...prev, [key]: !prev[key] }));
-    }
+    // Disable hover functionality when a dropdown is clicked
+    setHoverEnabled(false);
+    setSubmenuStates((prev) => ({ ...prev, [key]: !prev[key] }));
   };
   
   // ---- NEW: Function to close all submenus ----
@@ -61,13 +52,6 @@ function NavBar() {
     });
     // Re-enable hover functionality when closing submenus
     setHoverEnabled(true);
-  };
-  
-  // ---- NEW: Function to handle navigation ----
-  const handleNavigation = (path, e) => {
-    e.preventDefault();
-    closeAllSubmenus();
-    navigate(path);
   };
   
   // ---- NEW: Function to open submenu on hover ----
@@ -103,18 +87,16 @@ function NavBar() {
 
   // ---- NEW: Effect to detect mobile/tablet devices ----
   useEffect(() => {
-    const checkDeviceType = () => {
-      setIsMobileOrTablet(window.innerWidth <= 991); // Adjust breakpoint as needed
+    const checkDevice = () => {
+      setIsMobileOrTablet(window.innerWidth <= 991); // Assuming tablets are 991px or less
     };
 
-    // Check on initial load
-    checkDeviceType();
-
-    // Add event listener for window resize
-    window.addEventListener('resize', checkDeviceType);
-
-    // Clean up
-    return () => window.removeEventListener('resize', checkDeviceType);
+    checkDevice();
+    window.addEventListener('resize', checkDevice);
+    
+    return () => {
+      window.removeEventListener('resize', checkDevice);
+    };
   }, []);
 
   useEffect(() => {
@@ -147,6 +129,10 @@ function NavBar() {
             </div>
 
             <div className="col-lg-10 col-md-8 col-sm-7 col-6">
+              {/* 
+                ---- NEW: Add a conditional class 'menu-open' to the wrapper ----
+                This class will be used in our CSS to show the mobile menu.
+              */}
               <div
                 className={`ayur-navmenu-wrapper ${
                   isMenuOpen ? "menu-open" : ""
@@ -185,19 +171,50 @@ function NavBar() {
                         onMouseLeave={() => closeSubmenu("about")}
                       >
                         <li>
-                          <Link to="/AboutUs" onClick={(e) => handleNavigation("/AboutUs", e)}>About Us</Link>
+                          <Link to="/AboutUs" onClick={(e) => {
+                            e.preventDefault();
+                            closeAllSubmenus();
+                            // Navigate after a short delay to ensure the menu closes first
+                            setTimeout(() => {
+                              window.location.href = "/AboutUs";
+                            }, 100);
+                          }}>About Us</Link>
                         </li>
                         <li>
-                          <Link to="/Profile" onClick={(e) => handleNavigation("/Profile", e)}>Profile</Link>
+                          <Link to="/Profile" onClick={(e) => {
+                            e.preventDefault();
+                            closeAllSubmenus();
+                            setTimeout(() => {
+                              window.location.href = "/Profile";
+                            }, 100);
+                          }}>Profile</Link>
                         </li>
                         <li>
-                          <Link to="/Thejourney" onClick={(e) => handleNavigation("/Thejourney", e)}>The Journey</Link>
+                          <Link to="/Thejourney" onClick={(e) => {
+                            e.preventDefault();
+                            closeAllSubmenus();
+                            setTimeout(() => {
+                              window.location.href = "/Thejourney";
+                            }, 100);
+                          }}>The Journey</Link>
                         </li>
                         <li>
-                          <Link to="/Researchers" onClick={(e) => handleNavigation("/Researchers", e)}>Researches</Link>
+                          <Link to="/Researchers" onClick={(e) => {
+                            e.preventDefault();
+                            closeAllSubmenus();
+                            setTimeout(() => {
+                              window.location.href = "/Researchers";
+                            }, 100);
+                          }}>Researches</Link>
                         </li>
                         <li>
-                          <Link to="/CommingSoon" onClick={(e) => handleNavigation("/CommingSoon", e)}>Articles</Link>
+                          <Link to="/CommingSoon" onClick={(e) => {
+                            e.preventDefault();
+                            closeAllSubmenus();
+                            setTimeout(() => {
+                              window.location.href = "/CommingSoon";
+                            }, 100);
+                          }}>Articles</Link>
                         </li>
                       </ul>
                     </li>
@@ -230,22 +247,58 @@ function NavBar() {
                         onMouseLeave={() => closeSubmenu("focus")}
                       >
                         <li>
-                          <Link to="/AutoImmune" onClick={(e) => handleNavigation("/AutoImmune", e)}>Auto-Immune Diseases</Link>
+                          <Link to="/AutoImmune" onClick={(e) => {
+                            e.preventDefault();
+                            closeAllSubmenus();
+                            setTimeout(() => {
+                              window.location.href = "/AutoImmune";
+                            }, 100);
+                          }}>Auto-Immune Diseases</Link>
                         </li>
                         <li>
-                          <Link to="/Degenerative" onClick={(e) => handleNavigation("/Degenerative", e)}>Degenerative Disorders</Link>
+                          <Link to="/Degenerative" onClick={(e) => {
+                            e.preventDefault();
+                            closeAllSubmenus();
+                            setTimeout(() => {
+                              window.location.href = "/Degenerative";
+                            }, 100);
+                          }}>Degenerative Disorders</Link>
                         </li>
                         <li>
-                          <Link to="/MetabolicDisorders" onClick={(e) => handleNavigation("/MetabolicDisorders", e)}>Metabolic Disorders</Link>
+                          <Link to="/MetabolicDisorders" onClick={(e) => {
+                            e.preventDefault();
+                            closeAllSubmenus();
+                            setTimeout(() => {
+                              window.location.href = "/MetabolicDisorders";
+                            }, 100);
+                          }}>Metabolic Disorders</Link>
                         </li>
                         <li>
-                          <Link to="/InternalOthercnds" onClick={(e) => handleNavigation("/InternalOthercnds", e)}>Other CNCD's</Link>
+                          <Link to="/InternalOthercnds" onClick={(e) => {
+                            e.preventDefault();
+                            closeAllSubmenus();
+                            setTimeout(() => {
+                              window.location.href = "/InternalOthercnds";
+                            }, 100);
+                          }}>Other CNCD's</Link>
                         </li>
                         <li>
-                          <Link to="/Internalwellnesssol" onClick={(e) => handleNavigation("/Internalwellnesssol", e)}>Wellness Solutions</Link>
+                          <Link to="/Internalwellnesssol" onClick={(e) => {
+                            e.preventDefault();
+                            closeAllSubmenus();
+                            setTimeout(() => {
+                              window.location.href = "/Internalwellnesssol";
+                            }, 100);
+                          }}>Wellness Solutions</Link>
                         </li>
                         <li>
-                          <Link to="/OwnManufacturing" onClick={(e) => handleNavigation("/OwnManufacturing", e)}>Own Manufacturing</Link>
+                          <Link to="/OwnManufacturing" onClick={(e) => {
+                            e.preventDefault();
+                            closeAllSubmenus();
+                            setTimeout(() => {
+                              window.location.href = "/OwnManufacturing";
+                            }, 100);
+                          }}>Own Manufacturing</Link>
                         </li>
                       </ul>
                     </li>
@@ -278,28 +331,76 @@ function NavBar() {
                         onMouseLeave={() => closeSubmenu("features")}
                       >
                         <li>
-                          <Link to="/Faqs" onClick={(e) => handleNavigation("/Faqs", e)}>FAQs</Link>
+                          <Link to="/Faqs" onClick={(e) => {
+                            e.preventDefault();
+                            closeAllSubmenus();
+                            setTimeout(() => {
+                              window.location.href = "/Faqs";
+                            }, 100);
+                          }}>FAQs</Link>
                         </li>
                         <li>
-                          <Link to="/PresentationAwards" onClick={(e) => handleNavigation("/PresentationAwards", e)}>Presentations & Awards</Link>
+                          <Link to="/PresentationAwards" onClick={(e) => {
+                            e.preventDefault();
+                            closeAllSubmenus();
+                            setTimeout(() => {
+                              window.location.href = "/PresentationAwards";
+                            }, 100);
+                          }}>Presentations & Awards</Link>
                         </li>
                         <li>
-                          <Link to="/MediaGallery" onClick={(e) => handleNavigation("/MediaGallery", e)}>Media Gallery</Link>
+                          <Link to="/MediaGallery" onClick={(e) => {
+                            e.preventDefault();
+                            closeAllSubmenus();
+                            setTimeout(() => {
+                              window.location.href = "/MediaGallery";
+                            }, 100);
+                          }}>Media Gallery</Link>
                         </li>
                         <li>
-                          <Link to="/CommingSoon" onClick={(e) => handleNavigation("/CommingSoon", e)}>Patient's Guide</Link>
+                          <Link to="/CommingSoon" onClick={(e) => {
+                            e.preventDefault();
+                            closeAllSubmenus();
+                            setTimeout(() => {
+                              window.location.href = "/CommingSoon";
+                            }, 100);
+                          }}>Patient's Guide</Link>
                         </li>
                         <li>
-                          <Link to="/CommingSoon" onClick={(e) => handleNavigation("/CommingSoon", e)}>Consent Form</Link>
+                          <Link to="/CommingSoon" onClick={(e) => {
+                            e.preventDefault();
+                            closeAllSubmenus();
+                            setTimeout(() => {
+                              window.location.href = "/CommingSoon";
+                            }, 100);
+                          }}>Consent Form</Link>
                         </li>
                         <li>
-                          <Link to="/CommingSoon" onClick={(e) => handleNavigation("/CommingSoon", e)}>Feedback</Link>
+                          <Link to="/CommingSoon" onClick={(e) => {
+                            e.preventDefault();
+                            closeAllSubmenus();
+                            setTimeout(() => {
+                              window.location.href = "/CommingSoon";
+                            }, 100);
+                          }}>Feedback</Link>
                         </li>
                         <li>
-                          <Link to="/CommingSoon" onClick={(e) => handleNavigation("/CommingSoon", e)}>External Links</Link>
+                          <Link to="/CommingSoon" onClick={(e) => {
+                            e.preventDefault();
+                            closeAllSubmenus();
+                            setTimeout(() => {
+                              window.location.href = "/CommingSoon";
+                            }, 100);
+                          }}>External Links</Link>
                         </li>
                         <li>
-                          <Link to="/Disclaimer" onClick={(e) => handleNavigation("/Disclaimer", e)}>Disclaimer</Link>
+                          <Link to="/Disclaimer" onClick={(e) => {
+                            e.preventDefault();
+                            closeAllSubmenus();
+                            setTimeout(() => {
+                              window.location.href = "/Disclaimer";
+                            }, 100);
+                          }}>Disclaimer</Link>
                         </li>
                       </ul>
                     </li>
@@ -332,16 +433,40 @@ function NavBar() {
                         onMouseLeave={() => closeSubmenu("resources")}
                       >
                         <li>
-                          <Link to="/CommingSoon" onClick={(e) => handleNavigation("/CommingSoon", e)}>Success Stories</Link>
+                          <Link to="/CommingSoon" onClick={(e) => {
+                            e.preventDefault();
+                            closeAllSubmenus();
+                            setTimeout(() => {
+                              window.location.href = "/CommingSoon";
+                            }, 100);
+                          }}>Success Stories</Link>
                         </li>
                         <li>
-                          <Link to="/CommingSoon" onClick={(e) => handleNavigation("/CommingSoon", e)}>Testimonials</Link>
+                          <Link to="/CommingSoon" onClick={(e) => {
+                            e.preventDefault();
+                            closeAllSubmenus();
+                            setTimeout(() => {
+                              window.location.href = "/CommingSoon";
+                            }, 100);
+                          }}>Testimonials</Link>
                         </li>
                         <li>
-                          <Link to="/CommingSoon" onClick={(e) => handleNavigation("/CommingSoon", e)}>Webinars</Link>
+                          <Link to="/CommingSoon" onClick={(e) => {
+                            e.preventDefault();
+                            closeAllSubmenus();
+                            setTimeout(() => {
+                              window.location.href = "/CommingSoon";
+                            }, 100);
+                          }}>Webinars</Link>
                         </li>
                         <li>
-                          <Link to="/CommingSoon" onClick={(e) => handleNavigation("/CommingSoon", e)}>Videos</Link>
+                          <Link to="/CommingSoon" onClick={(e) => {
+                            e.preventDefault();
+                            closeAllSubmenus();
+                            setTimeout(() => {
+                              window.location.href = "/CommingSoon";
+                            }, 100);
+                          }}>Videos</Link>
                         </li>
                       </ul>
                     </li>
@@ -360,6 +485,10 @@ function NavBar() {
                   </ul>
                 </div>
 
+                {/* 
+                  ---- NEW: Add onClick handler and conditional 'active' class ----
+                  The 'active' class is for styling the hamburger into an 'X'.
+                */}
                 <div
                   className={`ayur-toggle-btn ${isMenuOpen ? "active" : ""}`}
                   onClick={handleMenuToggle}
