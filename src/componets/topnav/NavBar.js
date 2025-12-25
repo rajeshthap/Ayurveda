@@ -221,6 +221,9 @@ function NavBar() {
                         <li>
                           <Link to="/CommingSoon">Success Stories</Link>
                         </li>
+                         <li>
+                      <Link to="/CommingSoon">Testimonials</Link>
+                    </li>
                         <li>
                           <Link to="/CommingSoon">Webinars</Link>
                         </li>
@@ -230,9 +233,7 @@ function NavBar() {
                          </ul>
                     </li>
                   
-                        <li>
-                      <Link to="/CommingSoon">Testimonials</Link>
-                    </li>
+                       
                     <li>
                       <Link to="/Blogs">Blogs</Link>
                     </li>

@@ -309,7 +309,7 @@ input.ayur-btn {
 }
 
 .ayur-bgcover {
-  position: relative;
+ 
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
@@ -353,7 +353,7 @@ p {
   right: 0;
   top: 0px;
   box-shadow: none;
-  background-color: var(--ayur-white-color);
+  background-color:#fdfcf4;
   padding: 6px 15px 9px;
   margin: auto;
   max-width: 1170px;
