@@ -164,7 +164,9 @@ a {
   .br-login {
     margin: var(--gov-space-200) var(--gov-space-0) var(--gov-space-0) var(--gov-space-0) !important;
   }
-
+.ayur-nav-menu ul li a:hover svg {
+margin-left: 10px;
+}
   /* .ayur-menu-wrapper {
   margin-top: 100px !important;
 } */

@@ -419,13 +419,19 @@ ul.ayur-submenu li {
   display: block;
 }
 
-.ayur-has-menu ul.ayur-submenu.ayur-submenu-open,
-.ayur-nav-menu ul li.ayur-has-menu:hover ul.ayur-submenu {
-  opacity: 1;
-  visibility: visible;
-  transform: translateX(-10px);
+.ayur-nav-menu ul li.ayur-has-menu.no-hover:hover ul.ayur-submenu {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    /* Add any other properties you use to hide the submenu */
 }
 
+/* This rule ensures the submenu is still visible when opened by CLICK, even with .no-hover class */
+.ayur-nav-menu ul li.ayur-has-menu ul.ayur-submenu.ayur-submenu-open {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
 li.ayur-has-menu a {
   display: flex;
   gap: 5px;
