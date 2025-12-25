@@ -309,7 +309,7 @@ input.ayur-btn {
 }
 
 .ayur-bgcover {
- 
+
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
@@ -353,7 +353,7 @@ p {
   right: 0;
   top: 0px;
   box-shadow: none;
-  background-color:#fdfcf4;
+  background-color: #fdfcf4;
   padding: 6px 15px 9px;
   margin: auto;
   max-width: 1170px;
@@ -668,7 +668,7 @@ li.ayur-has-menu a svg {
   object-fit: cover;
 }
 
-.ayur-ban-leaf img {
+/* .ayur-ban-leaf img {
   position: absolute;
 }
 
@@ -681,7 +681,7 @@ li.ayur-has-menu a svg {
 .ayur-ban-leaf img:nth-child(2) {
   right: 0;
   bottom: 0;
-}
+} */
 
 @keyframes jumpThree {
   0% {
@@ -1573,7 +1573,7 @@ a.likeproduct img.like {
   transform: translateY(0);
 }
 
-.ayur-team-bgshape img:nth-child(1) {
+/* .ayur-team-bgshape img:nth-child(1) {
   left: 0;
   top: 20px;
 }
@@ -1582,7 +1582,7 @@ a.likeproduct img.like {
   right: 0;
   top: 9%;
   animation: jumpThree 5s infinite linear;
-}
+} */
 
 /* team sectiom reann css End */
 /* Blog section css Start */

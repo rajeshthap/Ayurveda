@@ -21,7 +21,7 @@ function BannerSection() {
       try {
         const response = await fetch('https://mahadevaaya.com/trilokayurveda/trilokabackend/api/carousel-items/');
         const result = await response.json();
-        
+
         if (result.success) {
           setCarouselData(result.data);
         }
@@ -84,9 +84,9 @@ function BannerSection() {
                 {carouselData.map((item) => (
                   <SwiperSlide key={item.id}>
                     <div className="ayur-ban-slide">
-                      <img 
-                        src={`${baseURL}${item.image}`} 
-                        alt={item.title} 
+                      <img
+                        src={`${baseURL}${item.image}`}
+                        alt={item.title}
                       />
                       <h1 className="ayur-ban-title">{item.title}</h1>
                       <p className="ayur-ban-desc">{item.description}</p>
@@ -119,12 +119,12 @@ function BannerSection() {
       </div>
 
       {/* Leaf Images */}
-      <div className="ayur-ban-leaf">
+      {/* <div className="ayur-ban-leaf">
         <img src={BanLeafLeft} alt="leaf-image" />
         <img src={BanLeafRight} alt="leaf-image" />
-      </div>
+      </div> */}
 
-     
+
     </div>
   );
 }

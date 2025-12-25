@@ -160,10 +160,10 @@ function Profile() {
       </div>
 
       {/* Background Shapes */}
-      <div className="ayur-bgshape ayur-team-bgshape">
+      {/* <div className="ayur-bgshape ayur-team-bgshape">
         <img src={bgShape5} alt="bg shape" />
         <img src={bgLeaf5} alt="bg leaf" />
-      </div>
+      </div> */}
     </div>
   );
 }
