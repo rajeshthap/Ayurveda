@@ -8,6 +8,7 @@ import {  useNavigate } from 'react-router-dom';
 import { FaHeartbeat, FaNotesMedical } from 'react-icons/fa';
 import '../../../assets/css/autoimmune.css'
 import { MdOutlineSick } from 'react-icons/md';
+import { Link } from 'react-router-dom';
 
 
 function Diseases() {
@@ -60,7 +61,7 @@ function Diseases() {
 
           <div class="ayur-bread-list">
             <span>
-              <a href="index.html">Home </a>
+                <Link to="/" >Home</Link>
             </span>
             <span class="ayur-active-page">/Ankylosing Spondylosis (AS)</span>
           </div>

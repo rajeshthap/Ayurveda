@@ -3,6 +3,8 @@ import '../../assets/css/research.css';
 import { Link } from 'react-router-dom';
 import BgShape2 from '../../assets/images/bg-shape2.png';
 import BgLeaf2 from '../../assets/images/bg-leaf2.png';
+import { IoEye } from "react-icons/io5";
+import { FaDownload } from "react-icons/fa";
 
 const Researchers = () => {
   const [researchData, setResearchData] = useState([]);
@@ -81,7 +83,7 @@ const Researchers = () => {
                                 <h3>{researcher.title}</h3>
                                 <div className="row">
                                   {/* Left side - PDF Info and Buttons */}
-                                  <div className="col-md-3">
+                                  <div className="col-md-4">
                                     <div className="pdf-container">
                                       <div className="pdf-item mb-3">
                                         <h5>Research Document</h5>
@@ -94,6 +96,7 @@ const Researchers = () => {
                                                 rel="noopener noreferrer" 
                                                 className="pdf-button view"
                                               >
+                                              <i className='research-icon'><IoEye  /> </i>   
                                                 View PDF
                                               </a>
                                               <a 
@@ -102,6 +105,7 @@ const Researchers = () => {
                                                 rel="noopener noreferrer" 
                                                 className="pdf-button download"
                                               >
+                                                <i className='research-icon'>  <FaDownload /></i>
                                                 Download PDF
                                               </a>
                                             </div>
@@ -112,7 +116,7 @@ const Researchers = () => {
                                   </div>
                                   
                                   {/* Right side - Description */}
-                                  <div className="col-md-9">
+                                  <div className="col-md-8">
                                     <div className="description-container">
                                       <div className="description-item mb-4">
                                         <h5>Research Description</h5>

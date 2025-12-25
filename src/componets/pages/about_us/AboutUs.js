@@ -78,7 +78,7 @@ function AboutUs() {
           <h2 style={{ fontWeight: 'bold' }}>About Us</h2>
           <div className="ayur-bread-list">
             <span>
-              <a href="index.html">Home </a>
+                <Link to="/" >Home</Link>
             </span>
             <span className="ayur-active-page">/ About Us</span>
           </div>

@@ -40,6 +40,17 @@ function Profile() {
   if (loading) {
     return (
       <div className="ayur-bgcover ayur-team-sec">
+        <div className='about-bg'>
+          <div className='ayur-bread-content'>
+            <h2 style={{ fontWeight: 'bold' }}>Our Team</h2>
+            <div className="ayur-bread-list">
+              <span>
+                  <Link to="/" >Home</Link>
+              </span>
+              <span className="ayur-active-page">/ Our Team</span>
+            </div>
+          </div>
+        </div>
         <div className="container">
           <div className="row">
             <div className="col-lg-12 col-md-12 col-sm-12 text-center">
@@ -59,6 +70,19 @@ function Profile() {
 
   return (
     <div className="ayur-bgcover ayur-team-sec">
+      {/* Breadcrumb Section */}
+      <div className='about-bg'>
+        <div className='ayur-bread-content'>
+          <h2 style={{ fontWeight: 'bold' }}>Profile</h2>
+          <div className="ayur-bread-list">
+            <span>
+              <Link to="/" >Home</Link>
+            </span>
+            <span className="ayur-active-page">/ Profile</span>
+          </div>
+        </div>
+      </div>
+
       <div className="container">
         <div className="row">
           <div className="col-lg-12 col-md-12 col-sm-12">

@@ -46,7 +46,7 @@ const PresentationAwards = ({ showBanner = true, showAboutUsClass = true }) => {
             <h2 style={{ fontWeight: "bold" }}>Presentations & Awards</h2>
             <div className="ayur-bread-list">
               <span>
-                <a href="index.html">Home </a>
+                  <Link to="/" >Home</Link>
               </span>
               <span className="ayur-active-page">/ Presentations & Awards</span>
             </div>

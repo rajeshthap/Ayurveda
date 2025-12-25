@@ -1,4 +1,5 @@
-import React, { useState } from "react"; // <-- IMPORT useState
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 // ---- IMPORT ALL IMAGES HERE ----
 import LogoFinal from "../../assets/images/logo-final.jpg";
@@ -9,6 +10,9 @@ import { Link } from "react-router-dom";
 import "../../assets/css/NavBar.css";
 
 function NavBar() {
+  // ---- NEW: Hook for navigation ----
+  const navigate = useNavigate();
+
   // ---- NEW: State to manage the mobile menu ----
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -22,13 +26,111 @@ function NavBar() {
     about: false,
     focus: false,
     features: false,
+    resources: false, // Added for the Resources menu
   });
+
+  // ---- NEW: State to manage hover delays ----
+  const [hoverTimeout, setHoverTimeout] = useState(null);
+  
+  // ---- NEW: State to track if hover functionality is enabled ----
+  const [hoverEnabled, setHoverEnabled] = useState(true);
+  
+  // ---- NEW: State to detect if device is mobile or tablet ----
+  const [isMobileOrTablet, setIsMobileOrTablet] = useState(false);
 
   // ---- NEW: Function to toggle submenu ----
   const toggleSubmenu = (key, e) => {
     e.preventDefault(); // Prevent navigation on click
-    setSubmenuStates((prev) => ({ ...prev, [key]: !prev[key] }));
+    if (isMobileOrTablet) {
+      // For mobile/tablet, just toggle the submenu
+      setSubmenuStates((prev) => ({ ...prev, [key]: !prev[key] }));
+    } else {
+      // For desktop, disable hover functionality when a dropdown is clicked
+      setHoverEnabled(false);
+      setSubmenuStates((prev) => ({ ...prev, [key]: !prev[key] }));
+    }
   };
+  
+  // ---- NEW: Function to close all submenus ----
+  const closeAllSubmenus = () => {
+    setSubmenuStates({
+      about: false,
+      focus: false,
+      features: false,
+      resources: false,
+    });
+    // Re-enable hover functionality when closing submenus
+    setHoverEnabled(true);
+  };
+  
+  // ---- NEW: Function to handle navigation ----
+  const handleNavigation = (path, e) => {
+    e.preventDefault();
+    closeAllSubmenus();
+    navigate(path);
+  };
+  
+  // ---- NEW: Function to open submenu on hover ----
+  const openSubmenu = (key) => {
+    // Only open submenu if hover is enabled and not on mobile/tablet
+    if (!hoverEnabled || isMobileOrTablet) return;
+    
+    // Clear any existing timeout
+    if (hoverTimeout) {
+      clearTimeout(hoverTimeout);
+      setHoverTimeout(null);
+    }
+    setSubmenuStates((prev) => ({ ...prev, [key]: true }));
+  };
+  
+  // ---- NEW: Function to close submenu on hover out with delay ----
+  const closeSubmenu = (key) => {
+    // Only close submenu if hover is enabled and not on mobile/tablet
+    if (!hoverEnabled || isMobileOrTablet) return;
+    
+    // Set a timeout to close the submenu after a short delay
+    const timeout = setTimeout(() => {
+      setSubmenuStates((prev) => ({ ...prev, [key]: false }));
+    }, 100); // 100ms delay
+    setHoverTimeout(timeout);
+  };
+  
+  // ---- NEW: Function to re-enable hover functionality ----
+  const reenableHover = () => {
+    setHoverEnabled(true);
+    closeAllSubmenus();
+  };
+
+  // ---- NEW: Effect to detect mobile/tablet devices ----
+  useEffect(() => {
+    const checkDeviceType = () => {
+      setIsMobileOrTablet(window.innerWidth <= 991); // Adjust breakpoint as needed
+    };
+
+    // Check on initial load
+    checkDeviceType();
+
+    // Add event listener for window resize
+    window.addEventListener('resize', checkDeviceType);
+
+    // Clean up
+    return () => window.removeEventListener('resize', checkDeviceType);
+  }, []);
+
+  useEffect(() => {
+    if (isMenuOpen) {
+      document.body.classList.add("ayur-mobile-menu");
+    } else {
+      document.body.classList.remove("ayur-mobile-menu");
+    }
+    
+    // Clean up timeout on unmount
+    return () => {
+      if (hoverTimeout) {
+        clearTimeout(hoverTimeout);
+      }
+    };
+  }, [isMenuOpen, hoverTimeout]);
 
   return (
     <>
@@ -38,17 +140,13 @@ function NavBar() {
           <div className="row align-items-center">
             <div className="col-lg-2 col-md-4 col-sm-5 col-6">
               <div className="ayur-menu-logo">
-                <Link to="/">
+                <Link to="/" onClick={reenableHover}>
                   <img src={LogoFinal} alt="logo" />
                 </Link>
               </div>
             </div>
 
             <div className="col-lg-10 col-md-8 col-sm-7 col-6">
-              {/* 
-                ---- NEW: Add a conditional class 'menu-open' to the wrapper ----
-                This class will be used in our CSS to show the mobile menu.
-              */}
               <div
                 className={`ayur-navmenu-wrapper ${
                   isMenuOpen ? "menu-open" : ""
@@ -57,10 +155,14 @@ function NavBar() {
                 <div className="ayur-nav-menu">
                   <ul>
                     <li className="active">
-                      <Link to="/">Home</Link>
+                      <Link to="/" onClick={reenableHover}>Home</Link>
                     </li>
 
-                    <li className="ayur-has-menu">
+                    <li 
+                      className="ayur-has-menu"
+                      onMouseEnter={() => openSubmenu("about")}
+                      onMouseLeave={() => closeSubmenu("about")}
+                    >
                       <Link to="/" onClick={(e) => toggleSubmenu("about", e)}>
                         About Us
                         <svg
@@ -79,29 +181,33 @@ function NavBar() {
                         className={`ayur-submenu ${
                           submenuStates.about ? "ayur-submenu-open" : ""
                         }`}
+                        onMouseEnter={() => openSubmenu("about")}
+                        onMouseLeave={() => closeSubmenu("about")}
                       >
                         <li>
-                          <Link to="/AboutUs">About Us</Link>
+                          <Link to="/AboutUs" onClick={(e) => handleNavigation("/AboutUs", e)}>About Us</Link>
                         </li>
                         <li>
-                          <Link to="/Profile">Profile</Link>
+                          <Link to="/Profile" onClick={(e) => handleNavigation("/Profile", e)}>Profile</Link>
                         </li>
                         <li>
-                          <Link to="/Thejourney">The Journey</Link>
+                          <Link to="/Thejourney" onClick={(e) => handleNavigation("/Thejourney", e)}>The Journey</Link>
                         </li>
-
-                          <li>
-                      <Link to="/Researchers">Researches</Link>
-                    </li>
-
-                       <li>
-                      <Link to="/CommingSoon">Articles</Link>
-                    </li>
-                                              </ul>
+                        <li>
+                          <Link to="/Researchers" onClick={(e) => handleNavigation("/Researchers", e)}>Researches</Link>
+                        </li>
+                        <li>
+                          <Link to="/CommingSoon" onClick={(e) => handleNavigation("/CommingSoon", e)}>Articles</Link>
+                        </li>
+                      </ul>
                     </li>
 
                     {/* -------- OUR FOCUS ---------- */}
-                    <li className="ayur-has-menu">
+                    <li 
+                      className="ayur-has-menu"
+                      onMouseEnter={() => openSubmenu("focus")}
+                      onMouseLeave={() => closeSubmenu("focus")}
+                    >
                       <Link to="" onClick={(e) => toggleSubmenu("focus", e)}>
                         Our Focus
                         <svg
@@ -120,34 +226,36 @@ function NavBar() {
                         className={`ayur-submenu ${
                           submenuStates.focus ? "ayur-submenu-open" : ""
                         }`}
+                        onMouseEnter={() => openSubmenu("focus")}
+                        onMouseLeave={() => closeSubmenu("focus")}
                       >
                         <li>
-                          <Link to="/AutoImmune">Auto-Immune Diseases</Link>
+                          <Link to="/AutoImmune" onClick={(e) => handleNavigation("/AutoImmune", e)}>Auto-Immune Diseases</Link>
                         </li>
                         <li>
-                          <Link to="/Degenerative">Degenerative Disorders</Link>
+                          <Link to="/Degenerative" onClick={(e) => handleNavigation("/Degenerative", e)}>Degenerative Disorders</Link>
                         </li>
                         <li>
-                          <Link to="/MetabolicDisorders">
-                            Metabolic Disorders
-                          </Link>
+                          <Link to="/MetabolicDisorders" onClick={(e) => handleNavigation("/MetabolicDisorders", e)}>Metabolic Disorders</Link>
                         </li>
                         <li>
-                          <Link to="InternalOthercnds">Other CNCD's</Link>
+                          <Link to="/InternalOthercnds" onClick={(e) => handleNavigation("/InternalOthercnds", e)}>Other CNCD's</Link>
                         </li>
                         <li>
-                          <Link to="/Internalwellnesssol">
-                            Wellness Solutions
-                          </Link>
+                          <Link to="/Internalwellnesssol" onClick={(e) => handleNavigation("/Internalwellnesssol", e)}>Wellness Solutions</Link>
                         </li>
                         <li>
-                          <Link to="/OwnManufacturing">Own Manufacturing</Link>
+                          <Link to="/OwnManufacturing" onClick={(e) => handleNavigation("/OwnManufacturing", e)}>Own Manufacturing</Link>
                         </li>
                       </ul>
                     </li>
 
                     {/* -------- FEATURES ---------- */}
-                    <li className="ayur-has-menu">
+                    <li 
+                      className="ayur-has-menu"
+                      onMouseEnter={() => openSubmenu("features")}
+                      onMouseLeave={() => closeSubmenu("features")}
+                    >
                       <Link to="" onClick={(e) => toggleSubmenu("features", e)}>
                         Features
                         <svg
@@ -166,40 +274,43 @@ function NavBar() {
                         className={`ayur-submenu ${
                           submenuStates.features ? "ayur-submenu-open" : ""
                         }`}
+                        onMouseEnter={() => openSubmenu("features")}
+                        onMouseLeave={() => closeSubmenu("features")}
                       >
                         <li>
-                          <Link to="/Faqs">FAQs</Link>
+                          <Link to="/Faqs" onClick={(e) => handleNavigation("/Faqs", e)}>FAQs</Link>
                         </li>
                         <li>
-                          <Link to="/PresentationAwards">
-                            Presentations & Awards
-                          </Link>
+                          <Link to="/PresentationAwards" onClick={(e) => handleNavigation("/PresentationAwards", e)}>Presentations & Awards</Link>
                         </li>
                         <li>
-                          <Link to="/MediaGallery">Media Gallery</Link>
+                          <Link to="/MediaGallery" onClick={(e) => handleNavigation("/MediaGallery", e)}>Media Gallery</Link>
                         </li>
                         <li>
-                          <Link to="/CommingSoon">Patient's Guide</Link>
-                        </li>
-                         <li>
-                          <Link to="/CommingSoon">Consent Form</Link>
+                          <Link to="/CommingSoon" onClick={(e) => handleNavigation("/CommingSoon", e)}>Patient's Guide</Link>
                         </li>
                         <li>
-                          <Link to="/CommingSoon">Feedback</Link>
+                          <Link to="/CommingSoon" onClick={(e) => handleNavigation("/CommingSoon", e)}>Consent Form</Link>
                         </li>
                         <li>
-                          <Link to="/CommingSoon">External Links</Link>
+                          <Link to="/CommingSoon" onClick={(e) => handleNavigation("/CommingSoon", e)}>Feedback</Link>
                         </li>
                         <li>
-                          <Link to="/Disclaimer">Disclaimer</Link>
+                          <Link to="/CommingSoon" onClick={(e) => handleNavigation("/CommingSoon", e)}>External Links</Link>
+                        </li>
+                        <li>
+                          <Link to="/Disclaimer" onClick={(e) => handleNavigation("/Disclaimer", e)}>Disclaimer</Link>
                         </li>
                       </ul>
                     </li>
-                          
 
-
-                           <li className="ayur-has-menu">
-                      <Link to="" onClick={(e) => toggleSubmenu("features", e)}>
+                    {/* -------- RESOURCES ---------- */}
+                    <li 
+                      className="ayur-has-menu"
+                      onMouseEnter={() => openSubmenu("resources")}
+                      onMouseLeave={() => closeSubmenu("resources")}
+                    >
+                      <Link to="" onClick={(e) => toggleSubmenu("resources", e)}>
                         Resources
                         <svg
                           version="1.1"
@@ -215,43 +326,40 @@ function NavBar() {
 
                       <ul
                         className={`ayur-submenu ${
-                          submenuStates.features ? "ayur-submenu-open" : ""
+                          submenuStates.resources ? "ayur-submenu-open" : ""
                         }`}
+                        onMouseEnter={() => openSubmenu("resources")}
+                        onMouseLeave={() => closeSubmenu("resources")}
                       >
                         <li>
-                          <Link to="/CommingSoon">Success Stories</Link>
+                          <Link to="/CommingSoon" onClick={(e) => handleNavigation("/CommingSoon", e)}>Success Stories</Link>
                         </li>
-                         <li>
-                      <Link to="/CommingSoon">Testimonials</Link>
-                    </li>
                         <li>
-                          <Link to="/CommingSoon">Webinars</Link>
+                          <Link to="/CommingSoon" onClick={(e) => handleNavigation("/CommingSoon", e)}>Testimonials</Link>
                         </li>
-                          <li>
-                          <Link to="/CommingSoon">Videos</Link>
+                        <li>
+                          <Link to="/CommingSoon" onClick={(e) => handleNavigation("/CommingSoon", e)}>Webinars</Link>
                         </li>
-                         </ul>
+                        <li>
+                          <Link to="/CommingSoon" onClick={(e) => handleNavigation("/CommingSoon", e)}>Videos</Link>
+                        </li>
+                      </ul>
                     </li>
                   
-                       
                     <li>
-                      <Link to="/Blogs">Blogs</Link>
+                      <Link to="/Blogs" onClick={reenableHover}>Blogs</Link>
                     </li>
                     <li>
-                      <Link to="/ContactUs">Contact Us</Link>
+                      <Link to="/ContactUs" onClick={reenableHover}>Contact Us</Link>
                     </li>
                     <li>
-                      <Link className="ayur-btn-consult" to="/ConsultNow">
+                      <Link className="ayur-btn-consult" to="/ConsultNow" onClick={reenableHover}>
                         Consult Now
                       </Link>
                     </li>
                   </ul>
                 </div>
 
-                {/* 
-                  ---- NEW: Add onClick handler and conditional 'active' class ----
-                  The 'active' class is for styling the hamburger into an 'X'.
-                */}
                 <div
                   className={`ayur-toggle-btn ${isMenuOpen ? "active" : ""}`}
                   onClick={handleMenuToggle}

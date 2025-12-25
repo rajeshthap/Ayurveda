@@ -40,7 +40,7 @@ const MediaGallery = ({ showBannerOnly = false }) => {
             <h2 style={{ fontWeight: 'bold' }}>Media Gallery</h2>
             <div className="ayur-bread-list">
               <span>
-                <a href="index.html">Home </a>
+                  <Link to="/" >Home</Link>
               </span>
               <span className="ayur-active-page">/ Media Gallery</span>
             </div>

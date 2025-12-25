@@ -16,7 +16,7 @@ const Feedback = () => {
           <h2>Feedback</h2>
           <div class="ayur-bread-list">
             <span>
-              <a href="index.html">Home </a>
+                <Link to="/" >Home</Link>
             </span>
             <span class="ayur-active-page">/ Feedback</span>
           </div>

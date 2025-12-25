@@ -93,7 +93,7 @@ function Thejourney() {
           <h2 style={{ fontWeight: 'bold' }}>The Journey</h2>
           <div className="ayur-bread-list">
             <span>
-              <a href="index.html">Home </a>
+                <Link to="/" >Home</Link>
             </span>
             <span className="ayur-active-page">/ The Journey</span>
           </div>
