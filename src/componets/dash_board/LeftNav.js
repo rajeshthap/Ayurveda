@@ -221,6 +221,28 @@ const menuItems = [
       path: "/ManageClinic",
       active: true,
     },
+
+     {
+      icon: <FaTachometerAlt />,
+      label: "Manage Care",
+      path: "/ManageCare",
+      active: true,
+    },
+
+     {
+      icon: <FaTachometerAlt />,
+      label: "Manage Aim",
+      path: "/ManageAim",
+      active: true,
+    },
+
+    {
+      icon: <FaTachometerAlt />,
+      label: "Manage Safety",
+      path: "/ManageSafety",
+      active: true,
+    },
+    
     
   
   {
