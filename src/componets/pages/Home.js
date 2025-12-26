@@ -21,6 +21,7 @@ import OurTeam from "./OurTeam";
 import BannerSection from "./BannerSection";
 import MediaGallery from "./Features/MediaGallery";
 import PresentationAwards from "./Features/PresentationAwards";
+import ClinicHome from "./Homepages/ClinicHome";
 
 function Home() {
   return (
@@ -28,9 +29,12 @@ function Home() {
       <BannerSection />
       <OurExpertise />
       <PresentationAwards showBanner={false} showAboutUsClass={false} />
+      <ClinicHome />
 
       {/* <MediaGallery showBannerOnly={true} /> */}
       <OurTestimonial />
+
+      
       <About />
       {/* <Achievment />
      <PureAyurveda />

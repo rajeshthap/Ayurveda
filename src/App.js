@@ -87,6 +87,7 @@ import ManageSafety from './componets/dash_board/Safety/ManageSafety';
 import CalltoAction from './componets/dash_board/CalltoAction/CalltoAction';
 import ManageHeroSection from './componets/dash_board/HeroSection/ManageHeroSection';
 import HeroContent from './componets/pages/Herosection/HeroContent';
+import Clinic from './componets/pages/Homepages/Clinic';
 
 
 function App() {
@@ -275,6 +276,7 @@ function App() {
 <Route path="/CalltoAction" element={<CalltoAction />} />
 <Route path="/ManageHeroSection" element={<ManageHeroSection />} />
 <Route path="/HeroContent" element={<HeroContent />} />
+<Route path="/Clinic" element={<Clinic />} />
 
 {/* <Route path="*" element={<NotFound />} />  */}
 </Routes>
