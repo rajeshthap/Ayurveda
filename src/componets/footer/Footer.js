@@ -139,7 +139,7 @@ function Footer() {
         <div className="row">
           <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
             <div className="ayur-copyright-para">
-              <p>© 2026 TrilokAyurveda. All Rights Reserved | Design by &nbsp;Brainrock</p>
+              <p>© 2019 - 2026 TrilokAyurveda. All Rights Reserved | Design by &nbsp;Brainrock</p>
             </div>
           </div>
         </div>
