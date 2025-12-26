@@ -81,6 +81,9 @@ import CommingSoon from './componets/CommingSoon';
 import TotalConsultNow from './componets/dash_board/total_consult_now/TotalConsultNow';
 import Profile from './componets/pages/about_us/Profile';
 import ManageClinic from './componets/dash_board/Clinic/ManageClinic';
+import ManageCare from './componets/dash_board/Care/ManageCare';
+import ManageAim from './componets/dash_board/OurAim/ManageAim';
+import ManageSafety from './componets/dash_board/Safety/ManageSafety';
 
 
 function App() {
@@ -126,7 +129,10 @@ function App() {
       "/ManageResearches",
       "/AddResearches",
       "/TotalConsultNow",
-      "/ManageClinic"
+      "/ManageClinic",
+      "/ManageCare",
+      "/ManageAim",
+      "/ManageSafety"
 
 
      ]);
@@ -170,7 +176,10 @@ function App() {
     "/ManageResearches",
     "/AddResearches",
     "/TotalConsultNow",
-    "/ManageClinic"
+    "/ManageClinic",
+    "/ManageCare",
+    "/ManageAim",
+    "/ManageSafety"
 
   ]);
 
@@ -253,7 +262,9 @@ function App() {
 <Route path="/TotalConsultNow" element={<TotalConsultNow/>} />
 <Route path="/Profile" element={<Profile/>} />
 <Route path="/ManageClinic" element={<ManageClinic />} />
-
+<Route path="/ManageCare" element={<ManageCare />} />
+<Route path="/ManageAim" element={<ManageAim />} />
+<Route path="/ManageSafety" element={<ManageSafety />} />
 {/* <Route path="*" element={<NotFound />} />  */}
 </Routes>
 
