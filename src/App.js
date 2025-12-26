@@ -80,6 +80,7 @@ import ManageResearches from './componets/dash_board/researches/ManageResearches
 import CommingSoon from './componets/CommingSoon';
 import TotalConsultNow from './componets/dash_board/total_consult_now/TotalConsultNow';
 import Profile from './componets/pages/about_us/Profile';
+import ManageClinic from './componets/dash_board/Clinic/ManageClinic';
 
 
 function App() {
@@ -124,7 +125,8 @@ function App() {
       "/ManageTestinomial",
       "/ManageResearches",
       "/AddResearches",
-      "/TotalConsultNow"
+      "/TotalConsultNow",
+      "/ManageClinic"
 
 
      ]);
@@ -167,7 +169,8 @@ function App() {
     "/ManageTestinomial",
     "/ManageResearches",
     "/AddResearches",
-    "/TotalConsultNow"
+    "/TotalConsultNow",
+    "/ManageClinic"
 
   ]);
 
@@ -249,6 +252,7 @@ function App() {
 <Route path="/CommingSoon" element={<CommingSoon />} />
 <Route path="/TotalConsultNow" element={<TotalConsultNow/>} />
 <Route path="/Profile" element={<Profile/>} />
+<Route path="/ManageClinic" element={<ManageClinic />} />
 
 {/* <Route path="*" element={<NotFound />} />  */}
 </Routes>

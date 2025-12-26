@@ -214,6 +214,14 @@ const menuItems = [
       path: "/ManageFooter",
       active: true,
     },
+
+    {
+      icon: <FaTachometerAlt />,
+      label: "Manage Clinic",
+      path: "/ManageClinic",
+      active: true,
+    },
+    
   
   {
       icon: <FaImages />,
