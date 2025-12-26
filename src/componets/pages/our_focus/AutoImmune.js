@@ -174,7 +174,7 @@ function AutoImmune() {
               <>
                 <div className="d-flex align-items-center mb-4">
                   <button 
-                    className=" d-flex align-items-center ayur-btn" 
+                    className=" d-flex align-items-center ayur-back-btn" 
                     onClick={handleBackToList}
                   >
                     <FaArrowLeft className="me-2" /> Back to List

@@ -39,13 +39,13 @@ function InternalOthercnds() {
         const response = await fetch(
           'https://mahadevaaya.com/trilokayurveda/trilokabackend/api/ourfocus-othercndns-items/'
         );
-        
+
         if (!response.ok) {
           throw new Error('Failed to fetch data');
         }
-        
+
         const result = await response.json();
-        
+
         if (result.success && result.data) {
           setFocusItems(result.data);
         } else {
@@ -84,7 +84,7 @@ function InternalOthercnds() {
             </div>
           </div>
         </div>
-        
+
         <div className="container fluid about-us ann-heading">
           <div className="text-center py-5">
             <Spinner animation="border" variant="primary" />
@@ -108,7 +108,7 @@ function InternalOthercnds() {
             </div>
           </div>
         </div>
-        
+
         <div className="container fluid about-us ann-heading">
           <Alert variant="danger" className="mt-4">
             {error}
@@ -140,11 +140,11 @@ function InternalOthercnds() {
                 <h5>Wellness Center and Speciality Clinic for Chronic Disorders</h5>
                 <Row className="ayur-cards-row">
                   {focusItems.map((item) => (
-                    <Col 
-                      lg={3} 
-                      md={6} 
-                      sm={12} 
-                      key={item.id} 
+                    <Col
+                      lg={3}
+                      md={6}
+                      sm={12}
+                      key={item.id}
                       className="mb-4"
                       onClick={() => handleCardClick(item)}
                       style={{ cursor: "pointer" }}
@@ -152,9 +152,9 @@ function InternalOthercnds() {
                       <div className="ayur-card">
                         <div className="ayur-card-icon">
                           {item.icon ? (
-                            <img 
-                              src={`https://mahadevaaya.com/trilokayurveda/trilokabackend${item.icon}`} 
-                              alt={item.title} 
+                            <img
+                              src={`https://mahadevaaya.com/trilokayurveda/trilokabackend${item.icon}`}
+                              alt={item.title}
                               style={{ width: '40px', height: '40px' }}
                             />
                           ) : (
@@ -173,27 +173,27 @@ function InternalOthercnds() {
               // Detail View - Show selected item details
               <>
                 <div className="d-flex align-items-center mb-4">
-                  <button 
-                    className=" d-flex align-items-center ayur-btn"  
+                  <button
+                    className=" d-flex align-items-center ayur-back-btn"
                     onClick={handleBackToList}
                   >
                     <FaArrowLeft className="me-2" /> Back to List
                   </button>
                 </div>
-                
+
                 <div className="row align-items-center">
                   {/* Image */}
                   <div className="col-lg-6 col-md-12 mb-4">
                     <div className="ayur-about-img ayur-img-hover">
                       {selectedItem.image ? (
-                        <img 
-                          src={`https://mahadevaaya.com/trilokayurveda/trilokabackend${selectedItem.image}`} 
-                          alt={selectedItem.title} 
+                        <img
+                          src={`https://mahadevaaya.com/trilokayurveda/trilokabackend${selectedItem.image}`}
+                          alt={selectedItem.title}
                           className="img-fluid rounded"
                         />
                       ) : (
-                        <div className="bg-light d-flex align-items-center justify-content-center rounded" 
-                             style={{ height: '300px' }}>
+                        <div className="bg-light d-flex align-items-center justify-content-center rounded"
+                          style={{ height: '300px' }}>
                           <p className="text-muted">No image available</p>
                         </div>
                       )}
@@ -208,7 +208,7 @@ function InternalOthercnds() {
                         <FaHeartbeat className="me-2 text-success" />
                         {selectedItem.title}
                       </h3>
-                      
+
                       {selectedItem.module && selectedItem.module.length > 0 ? (
                         selectedItem.module.map((module, index) => (
                           <div key={index} className="ayur-info-card mb-4">
@@ -234,7 +234,7 @@ function InternalOthercnds() {
               </>
             )}
           </div>
-          
+
           <div className="ayur-bgshape ayur-about-bgshape">
             <img src={BgShape2} alt="img" />
             <img src={BgLeaf2} alt="img" />

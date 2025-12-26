@@ -420,18 +420,19 @@ ul.ayur-submenu li {
 }
 
 .ayur-nav-menu ul li.ayur-has-menu.no-hover:hover ul.ayur-submenu {
-    display: none !important;
-    opacity: 0 !important;
-    visibility: hidden !important;
-    /* Add any other properties you use to hide the submenu */
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  /* Add any other properties you use to hide the submenu */
 }
 
 /* This rule ensures the submenu is still visible when opened by CLICK, even with .no-hover class */
 .ayur-nav-menu ul li.ayur-has-menu ul.ayur-submenu.ayur-submenu-open {
-    display: block !important;
-    opacity: 1 !important;
-    visibility: visible !important;
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
 }
+
 li.ayur-has-menu a {
   display: flex;
   gap: 5px;
@@ -3005,4 +3006,21 @@ span {
   transition: all .3s linear;
   -webkit-transition: all .3s linear;
   -moz-transition: all .3s linear;
+}
+
+.ayur-back-btn {
+  font-size: 12px;
+  border: 1px solid #28a745 !important;
+  display: inline-block;
+  padding: 4px 10px;
+  background-color: #fff;
+  color: #28a745 !important;
+  border-radius: 4px;
+  text-decoration: none;
+  /* transition: background-color 0.3s ease; */
+}
+
+.ayur-back-btn:hover {
+  background-color: #28a745 !important;
+  color: #fff !important;
 }
