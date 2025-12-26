@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Link } from 'react-router-dom';
 
 // Import leaf images
 import BanLeafLeft from "../../assets/images/ban-leafleft.png";
@@ -15,6 +16,8 @@ import "swiper/css/effect-coverflow";
 function BannerSection() {
   const [carouselData, setCarouselData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [heroData, setHeroData] = useState(null);
+  const [heroLoading, setHeroLoading] = useState(true);
 
   useEffect(() => {
     const fetchCarouselData = async () => {
@@ -33,7 +36,28 @@ function BannerSection() {
     };
 
     fetchCarouselData();
+    // Fetch hero component data for banner heading
+    const fetchHero = async () => {
+      try {
+        const res = await fetch('https://mahadevaaya.com/trilokayurveda/trilokabackend/api/hero-component-item/');
+        const json = await res.json();
+        setHeroData(json.data && json.data.length > 0 ? json.data[0] : null);
+      } catch (error) {
+        console.error('Error fetching hero data:', error);
+      } finally {
+        setHeroLoading(false);
+      }
+    };
+
+    fetchHero();
   }, []);
+
+  const truncateWords = (text, limit) => {
+    if (!text) return '';
+    const cleaned = String(text).replace(/\s+/g, ' ').trim();
+    const words = cleaned.split(' ');
+    return words.length <= limit ? cleaned : words.slice(0, limit).join(' ') + '...';
+  };
 
   if (loading) {
     return <div className="ayur-banner-section">Loading banner...</div>;
@@ -47,14 +71,28 @@ function BannerSection() {
         <div className="row">
           <div className="col-lg-12 col-md-12 col-sm-12">
             <div className="ayur-banner-heading">
-              <h1>Trilok Ayurveda </h1>
-              <br />
-              <h2>Wellness Center and Speciality Clinic for Chronic Disorders</h2>
-              <p>
-                Two decades of rich clinical experience and expertise in treating
-                Degenerative, Auto-immune, Metabolic and other Chronic Non-Communicable
-                Disorders (CNCD's) through herbs based Internal Medicines.
-              </p>
+              {heroLoading ? (
+                <div>Loading...</div>
+              ) : heroData ? (
+                <>
+                  <h1>{heroData.title}</h1>
+                  <br />
+                  <h2>{heroData.sub_title}</h2>
+                  <p>{truncateWords(heroData.description, 20)}</p>
+                  <Link to="/HeroContent" className="ayur-btn">Read More</Link>
+                </>
+              ) : (
+                <>
+                  <h1>Trilok Ayurveda </h1>
+                  <br />
+                  <h2>Wellness Center and Speciality Clinic for Chronic Disorders</h2>
+                  <p>
+                    Two decades of rich clinical experience and expertise in treating
+                    Degenerative, Auto-immune, Metabolic and other Chronic Non-Communicable
+                    Disorders (CNCD's) through herbs based Internal Medicines.
+                  </p>
+                </>
+              )}
             </div>
           </div>
         </div>
