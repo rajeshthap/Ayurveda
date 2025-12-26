@@ -5,22 +5,22 @@ import { Link } from 'react-router-dom'
 
 const API_BASE = 'https://mahadevaaya.com/trilokayurveda/trilokabackend'
 
-const ClinicHome = () => {
-  const [clinicData, setClinicData] = useState(null)
+const CareHome = () => {
+  const [careData, setCareData] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(null)
 
   useEffect(() => {
-    const fetchClinicData = async () => {
+    const fetchCareData = async () => {
       setIsLoading(true)
       try {
-        const response = await fetch(`${API_BASE}/api/our-clinic-item/`, { method: 'GET' })
-        if (!response.ok) throw new Error('Failed to fetch Clinic data')
+        const response = await fetch(`${API_BASE}/api/who-care-item/`, { method: 'GET' })
+        if (!response.ok) throw new Error('Failed to fetch Care data')
         const result = await response.json()
         if (result.success && result.data && result.data.length > 0) {
-          setClinicData(result.data[0])
+          setCareData(result.data[0])
         } else {
-          throw new Error('No Clinic data found')
+          throw new Error('No Care data found')
         }
       } catch (err) {
         setError(err.message || 'Error fetching data')
@@ -29,7 +29,7 @@ const ClinicHome = () => {
       }
     }
 
-    fetchClinicData()
+    fetchCareData()
   }, [])
 
    const scrollToTop = () => {
@@ -55,16 +55,20 @@ const ClinicHome = () => {
             <div className="ayur-about-img">
               {isLoading ? (
                 <div style={{height: '300px', background: '#f4f4f4'}} />
-              ) : clinicData ? (
-                <img
-                  src={`${API_BASE}${clinicData.image}`}
-                  alt={clinicData.title}
-                  data-tilt=""
-                  data-tilt-max="10"
-                  data-tilt-speed="1000"
-                  data-tilt-perspective="1000"
-                  style={{ willChange: 'transform' }}
-                />
+              ) : careData ? (
+                careData.image ? (
+                  <img
+                    src={`${API_BASE}${careData.image}`}
+                    alt={careData.title}
+                    data-tilt=""
+                    data-tilt-max="10"
+                    data-tilt-speed="1000"
+                    data-tilt-perspective="1000"
+                    style={{ willChange: 'transform' }}
+                  />
+                ) : (
+                  <div style={{height: '300px', background: '#f4f4f4'}} />
+                )
               ) : (
                 <div style={{height: '300px', background: '#f4f4f4'}} />
               )}
@@ -73,7 +77,7 @@ const ClinicHome = () => {
           </div>
           <div className="col-lg-8 col-md-12 col-sm-12">
             <div className="ayur-heading-wrap ayur-about-head">
-              <h3>{clinicData ? clinicData.title : 'Our Clinic'}</h3>
+              <h3>{careData ? careData.title : 'Who This Care Is For'}</h3>
               {isLoading ? (
                 <p>Loading...</p>
               ) : error ? (
@@ -83,16 +87,16 @@ const ClinicHome = () => {
                   <div
                     className="mb-3"
                     dangerouslySetInnerHTML={{
-                      __html: clinicData.description
-                        ? clinicData.description.replace(/\r\n\r\n/g, '<br /><br />').replace(/\r\n/g, '<br />')
+                      __html: careData.description
+                        ? careData.description.replace(/\r\n\r\n/g, '<br /><br />').replace(/\r\n/g, '<br />')
                         : '',
                     }}
                   />
 
                   {/* Modules: show truncated 20 words per module */}
-                  {clinicData && clinicData.module && clinicData.module.length > 0 && (
+                  {careData && careData.module && careData.module.length > 0 && (
                     <div className="mt-3">
-                      {clinicData.module.map((module, idx) => {
+                      {careData.module.map((module, idx) => {
                         const moduleTitle = module[0]
                         const moduleDescription = module[1]
                         return (
@@ -105,7 +109,7 @@ const ClinicHome = () => {
                     </div>
                   )}
 
-                  <Link to="/Clinic" className="ayur-btn" onClick={scrollToTop}>
+                  <Link to="/Care" className="ayur-btn" onClick={scrollToTop}>
                     Know More
                   </Link>
                 </>
@@ -122,4 +126,4 @@ const ClinicHome = () => {
   )
 }
 
-export default ClinicHome
+export default CareHome

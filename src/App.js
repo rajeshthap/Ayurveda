@@ -88,6 +88,10 @@ import CalltoAction from './componets/dash_board/CalltoAction/CalltoAction';
 import ManageHeroSection from './componets/dash_board/HeroSection/ManageHeroSection';
 import HeroContent from './componets/pages/Herosection/HeroContent';
 import Clinic from './componets/pages/Homepages/Clinic';
+import Care from './componets/pages/Homepages/Care';
+import Aim from './componets/pages/Homepages/Aim';
+import Call from './componets/pages/Homepages/Call';
+import Safety from './componets/pages/Homepages/Safety';
 
 
 function App() {
@@ -277,6 +281,10 @@ function App() {
 <Route path="/ManageHeroSection" element={<ManageHeroSection />} />
 <Route path="/HeroContent" element={<HeroContent />} />
 <Route path="/Clinic" element={<Clinic />} />
+<Route path="/Care" element={<Care />} />
+<Route path="/Aim" element={<Aim />} />
+<Route path="/Call" element={<Call />} />
+<Route path="/Safety" element={<Safety />} />
 
 {/* <Route path="*" element={<NotFound />} />  */}
 </Routes>

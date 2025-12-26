@@ -22,6 +22,11 @@ import BannerSection from "./BannerSection";
 import MediaGallery from "./Features/MediaGallery";
 import PresentationAwards from "./Features/PresentationAwards";
 import ClinicHome from "./Homepages/ClinicHome";
+import CareHome from "./Homepages/CareHome";
+import AimHome from "./Homepages/AimHome";
+import CallHome from "./Homepages/CallHome";
+import SafetyHome from "./Homepages/SafetyHome";
+
 
 function Home() {
   return (
@@ -30,6 +35,10 @@ function Home() {
       <OurExpertise />
       <PresentationAwards showBanner={false} showAboutUsClass={false} />
       <ClinicHome />
+      <CareHome />
+      <AimHome />
+      <CallHome/>
+      <SafetyHome/>
 
       {/* <MediaGallery showBannerOnly={true} /> */}
       <OurTestimonial />
