@@ -172,9 +172,9 @@ function OwnManufacturing() {
             ) : (
               // Detail View - Show selected item details
               <>
-                <div className="d-flex align-items-center mb-4">
+                <div className="d-flex mb-4">
                   <button
-                    className=" d-flex align-items-center ayur-back-btn"
+                    className=" d-flex  ayur-back-btn"
                     onClick={handleBackToList}
                   >
                     <FaArrowLeft className="me-2" /> Back to List

@@ -172,7 +172,7 @@ function MetabolicDisorders() {
             ) : (
               // Detail View - Show selected item details
               <>
-                <div className="d-flex align-items-center mb-4">
+                <div className="d-flex  mb-4">
                   <button
                     className=" d-flex align-items-center ayur-back-btn"
                     onClick={handleBackToList}
@@ -181,7 +181,7 @@ function MetabolicDisorders() {
                   </button>
                 </div>
 
-                <div className="row align-items-center">
+                <div className="row ">
                   {/* Image */}
                   <div className="col-lg-6 col-md-12 mb-4">
                     <div className="ayur-about-img ayur-img-hover">
