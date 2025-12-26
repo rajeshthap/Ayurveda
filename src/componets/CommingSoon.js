@@ -19,7 +19,7 @@ function CommingSoon() {
     <div className="ayur-bgcover ayur-about-sec">
       <div className='about-bg'>
         <div className='ayur-bread-content'>
-          <h2 style={{ fontWeight: 'bold' }}>COMING SOON</h2>
+          <h2 style={{ fontWeight: 'bold' }}>Coming Soon</h2>
           <div className="ayur-bread-list">
             <span>
               <a href="/">Home </a>
