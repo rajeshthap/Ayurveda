@@ -27,7 +27,7 @@ const PresentationAwards = ({ showBanner = true, showAboutUsClass = true }) => {
     fetch(`${API_BASE}/api/presentationandaward-items/`)
       .then((res) => res.json())
       .then((data) => {
-        // ✅ IMPORTANT FIX
+        //  IMPORTANT FIX
         setItems(data.data || []);
         setLoading(false);
       })

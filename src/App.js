@@ -84,6 +84,8 @@ import ManageClinic from './componets/dash_board/Clinic/ManageClinic';
 import ManageCare from './componets/dash_board/Care/ManageCare';
 import ManageAim from './componets/dash_board/OurAim/ManageAim';
 import ManageSafety from './componets/dash_board/Safety/ManageSafety';
+import CalltoAction from './componets/dash_board/CalltoAction/CalltoAction';
+import ManageHeroSection from './componets/dash_board/HeroSection/ManageHeroSection';
 
 
 function App() {
@@ -132,7 +134,9 @@ function App() {
       "/ManageClinic",
       "/ManageCare",
       "/ManageAim",
-      "/ManageSafety"
+      "/ManageSafety",
+      "/CalltoAction",
+      "/ManageHeroSection"
 
 
      ]);
@@ -179,7 +183,9 @@ function App() {
     "/ManageClinic",
     "/ManageCare",
     "/ManageAim",
-    "/ManageSafety"
+    "/ManageSafety",
+    "/CalltoAction",
+    "/ManageHeroSection"
 
   ]);
 
@@ -265,6 +271,8 @@ function App() {
 <Route path="/ManageCare" element={<ManageCare />} />
 <Route path="/ManageAim" element={<ManageAim />} />
 <Route path="/ManageSafety" element={<ManageSafety />} />
+<Route path="/CalltoAction" element={<CalltoAction />} />
+<Route path="/ManageHeroSection" element={<ManageHeroSection />} />
 {/* <Route path="*" element={<NotFound />} />  */}
 </Routes>
 

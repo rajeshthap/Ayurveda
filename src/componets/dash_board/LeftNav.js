@@ -242,6 +242,20 @@ const menuItems = [
       path: "/ManageSafety",
       active: true,
     },
+
+    {
+      icon: <FaTachometerAlt />,
+      label: "Call to Action",
+      path: "/CalltoAction",
+      active: true,
+    },
+
+     {
+      icon: <FaTachometerAlt />,
+      label: "Manage Hero Section",
+      path: "/ManageHeroSection",
+      active: true,
+    },
     
     
   
