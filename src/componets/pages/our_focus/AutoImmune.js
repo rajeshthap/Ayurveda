@@ -174,14 +174,14 @@ function AutoImmune() {
               <>
                 <div className="d-flex mb-4">
                   <button
-                    className=" d-flex align-items-center ayur-back-btn"
+                    className=" d-flex  ayur-back-btn"
                     onClick={handleBackToList}
                   >
                     <FaArrowLeft className="me-2" /> Back to List
                   </button>
                 </div>
 
-                <div className="row align-items-center">
+                <div className="row ">
                   {/* Image */}
                   <div className="col-lg-6 col-md-12 mb-4">
                     <div className="ayur-about-img ayur-img-hover">
