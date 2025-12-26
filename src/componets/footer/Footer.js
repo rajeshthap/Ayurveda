@@ -15,7 +15,7 @@ function Footer() {
       try {
         const response = await fetch('https://mahadevaaya.com/trilokayurveda/trilokabackend/api/footer-items/');
         const result = await response.json();
-        
+
         if (result.success && result.data.length > 0) {
           setFooterData(result.data[0]);
         }
@@ -139,7 +139,7 @@ function Footer() {
         <div className="row">
           <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
             <div className="ayur-copyright-para">
-              <p>© 2025 TrilokAyurveda. All Rights Reserved | Design by &nbsp;Brainrock</p>
+              <p>© 2026 TrilokAyurveda. All Rights Reserved | Design by &nbsp;Brainrock</p>
             </div>
           </div>
         </div>
