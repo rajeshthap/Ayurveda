@@ -33,12 +33,12 @@ function Home() {
     <>
       <BannerSection />
       <OurExpertise />
-      <PresentationAwards showBanner={false} showAboutUsClass={false} />
-      <ClinicHome />
+     <ClinicHome />
       <CareHome />
       <AimHome />
       <CallHome/>
       <SafetyHome/>
+       <PresentationAwards showBanner={false} showAboutUsClass={false} />
 
       {/* <MediaGallery showBannerOnly={true} /> */}
       <OurTestimonial />
