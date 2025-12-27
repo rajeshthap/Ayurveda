@@ -1013,6 +1013,10 @@ a.likeproduct img.like {
   position: relative;
 }
 
+.ayur-about-img img {
+  border-radius: 12px;
+}
+
 .ayur-about-exp {
   position: absolute;
   bottom: 26px;
