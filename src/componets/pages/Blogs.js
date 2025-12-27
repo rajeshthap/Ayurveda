@@ -16,17 +16,17 @@ const Blogs = () => {
   // Function to get the full image URL
   const getImageUrl = (imagePath) => {
     if (!imagePath) return null;
-    
+
     // If the image path already includes the full URL, return as is
     if (imagePath.startsWith('http')) {
       return imagePath;
     }
-    
+
     // If the image path starts with a slash, prepend the base URL
     if (imagePath.startsWith('/')) {
       return `${API_BASE_URL}${imagePath}`;
     }
-    
+
     // Otherwise, prepend the base URL with a slash
     return `${API_BASE_URL}/${imagePath}`;
   };
@@ -34,10 +34,10 @@ const Blogs = () => {
   // Function to limit text to 30 words
   const limitTo30Words = (text) => {
     if (!text) return '';
-    
+
     const words = text.split(' ');
     if (words.length <= 30) return text;
-    
+
     return words.slice(0, 30).join(' ') + '...';
   };
 
@@ -47,19 +47,19 @@ const Blogs = () => {
       try {
         const url = `${API_BASE_URL}/api/blog-items/`;
         const response = await fetch(url);
-        
+
         if (!response.ok) {
           throw new Error("Failed to fetch blog posts");
         }
-        
+
         const result = await response.json();
         console.log("GET API Response:", result);
-        
+
         if (result.success && result.data) {
           // Process data to format dates
           const processedPosts = result.data.map(post => {
             const processedPost = { ...post };
-            
+
             // Format date field
             if (post.date) {
               const postDate = new Date(post.date);
@@ -69,15 +69,15 @@ const Blogs = () => {
                 day: 'numeric'
               });
             }
-            
+
             // Add full image URL
             if (post.image) {
               processedPost.fullImageUrl = getImageUrl(post.image);
             }
-            
+
             return processedPost;
           });
-          
+
           setBlogPosts(processedPosts);
         } else {
           throw new Error("No blog posts found");
@@ -89,7 +89,7 @@ const Blogs = () => {
         setIsLoading(false);
       }
     };
-    
+
     fetchBlogPosts();
   }, []);
 
@@ -115,10 +115,10 @@ const Blogs = () => {
               <div className="col-lg-12 col-md-12 col-sm-12">
                 <div className="ayur-heading-wrap ayur-about-head">
                   <div className="blogs-header">
-                    <h1 style={{ fontWeight: 'bold', fontSize: '2rem' }}>Blog</h1>
-                    <h2>Wellness Center and Speciality Clinic for Chronic Disorders</h2>
+                    <h4 style={{ fontWeight: 'bold', fontSize: '2rem' }}>Blog</h4>
+                    <div className='about-description'>Wellness Center and Speciality Clinic for Chronic Disorders</div>
                   </div>
-                  
+
                   {isLoading ? (
                     <div className="text-center py-5">
                       <div className="spinner-border text-primary" role="status">
@@ -142,9 +142,9 @@ const Blogs = () => {
                             <div className="blog-image">
                               {post.image ? (
 
-                                <img 
-                                  src={post.fullImageUrl || getImageUrl(post.image)} 
-                                  alt={post.title} 
+                                <img
+                                  src={post.fullImageUrl || getImageUrl(post.image)}
+                                  alt={post.title}
                                   onError={(e) => {
                                     // Fallback to a default image if the image fails to load
                                     e.target.src = '/path/to/default/image.jpg';
@@ -162,14 +162,14 @@ const Blogs = () => {
                                 {post.formatted_date || post.date}
                               </div>
                               <div className='ayur-tpro-text'>
-                              <h3 className="">{post.title}</h3>
+                                <h3 className="">{post.title}</h3>
                               </div>
                               <p className="blog-description">
                                 {limitTo30Words(post.description)}
                               </p>
-                              <Link 
-                                to="/BlogsDetails" 
-                                state={{ id: post.id }} 
+                              <Link
+                                to="/BlogsDetails"
+                                state={{ id: post.id }}
                                 className="read-more-btn"
                               >
                                 Read More

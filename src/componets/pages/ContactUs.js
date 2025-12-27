@@ -144,8 +144,11 @@ const ContactUs = () => {
       <div className="trilok-contact-page">
         <div className="trilok-contact-container">
           <div className="trilok-contact-header">
-            <h1>Contact Us</h1>
-            <h2>Wellness Center and Speciality Clinic for Chronic Disorders</h2>
+      
+            <h4 style={{ fontWeight: 'bold', fontSize: '2rem' }}>Contact Us</h4>
+            
+            <div className='about-description'>Wellness Center and Speciality Clinic for Chronic Disorders</div>
+                  
           </div>
           
           <div className="trilok-contact-content">

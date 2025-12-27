@@ -3047,3 +3047,13 @@ span {
   background-color: #28a745 !important;
   color: #fff !important;
 }
+
+.ayur-testimonial-slider {
+  position: relative;
+}
+
+.swiper-button-prev,
+.swiper-button-next {
+  top: 50%;
+  transform: translateY(-50%);
+}
