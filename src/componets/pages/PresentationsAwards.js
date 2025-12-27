@@ -39,6 +39,7 @@ function PresentationsAwards() {
             <div className="col-lg-12 col-md-12 col-sm-12">
               <div className="ayur-heading-wrap">
                 <h3>Presentations & Awards</h3>
+                <h5>"Recognitions and Achievements in Ayurvedic Excellence"</h5>
               </div>
             </div>
           </div>

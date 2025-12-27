@@ -39,7 +39,6 @@ const SafetyHome = () => {
     });
   };
 
-
   const truncateWords = (text, limit) => {
     if (!text) return ''
     const words = text.replace(/\s+/g, ' ').trim().split(' ')
@@ -47,9 +46,33 @@ const SafetyHome = () => {
     return words.slice(0, limit).join(' ') + '...'
   }
 
+  // Function to strip HTML tags for subtitle
+  const stripHtml = (html) => {
+    if (!html) return ''
+    const tmp = document.createElement('div')
+    tmp.innerHTML = html
+    return tmp.textContent || tmp.innerText || ''
+  }
+
+  // Get first 15 words of description for subtitle
+  const getDescriptionSubtitle = (description) => {
+    const plainText = stripHtml(description)
+    return truncateWords(plainText, 15)
+  }
+
   return (
     <div className="ayur-bgcover ayur-about-sec">
       <div className="container">
+        {/* Title and subtitle section - moved above and centered like OurExpertise */}
+        <div className="row">
+          <div className="col-lg-12 col-md-12 col-sm-12">
+            <div className="ayur-heading-wrap">
+              <h3>{safetyData ? safetyData.title : 'Safety & Transparency'}</h3>
+              <h5>{safetyData ? getDescriptionSubtitle(safetyData.description) : 'Loading...'}</h5>
+            </div>
+          </div>
+        </div>
+
         <div className="row">
           <div className="col-lg-4 col-md-12 col-sm-12">
             <div className="ayur-about-img">
@@ -72,47 +95,34 @@ const SafetyHome = () => {
               ) : (
                 <div style={{height: '300px', background: '#f4f4f4'}} />
               )}
-             
             </div>
           </div>
+          
           <div className="col-lg-8 col-md-12 col-sm-12">
-            <div className="ayur-heading-wrap ayur-about-head">
-              <h3>{safetyData ? safetyData.title : 'Safety & Transparency'}</h3>
-              {isLoading ? (
-                <p>Loading...</p>
-              ) : error ? (
-                <p className="text-danger">Error: {error}</p>
-              ) : (
-                <>
-                  <div
-                    className="mb-3"
-                    dangerouslySetInnerHTML={{
-                      __html: safetyData.description
-                        ? safetyData.description.replace(/\r\n\r\n/g, '<br /><br />').replace(/\r\n/g, '<br />')
-                        : '',
-                    }}
-                  />
+            {isLoading ? (
+              <p>Loading...</p>
+            ) : error ? (
+              <p className="text-danger">Error: {error}</p>
+            ) : (
+              <>
+                {/* Modules: show all modules as bullet points without word limit */}
+                {safetyData && safetyData.module && safetyData.module.length > 0 && (
+                  <div className="ayur-about-head">
+                    <ul className="safety-module-list" style={{ paddingLeft: '20px' }}>
+                      {safetyData.module.map((moduleItem, idx) => (
+                        <li key={idx} style={{ marginBottom: '15px', lineHeight: '1.6' }}>
+                          {moduleItem}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
 
-                  {/* Modules: show truncated 20 words per module */}
-                  {safetyData && safetyData.module && safetyData.module.length > 0 && (
-                    <div className="mt-3">
-                      {safetyData.module.map((moduleItem, idx) => {
-                        // For this API, module is an array of strings, not arrays of [title, description]
-                        return (
-                          <div key={idx} className="mb-2">
-                            <p>{truncateWords(moduleItem, 20)}</p>
-                          </div>
-                        )
-                      })}
-                    </div>
-                  )}
-
-                  <Link to="/Safety" className="ayur-btn" onClick={scrollToTop}>
-                    Know More
-                  </Link>
-                </>
-              )}
-            </div>
+                <Link to="/Safety" className="ayur-btn" onClick={scrollToTop}>
+                  Know More
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </div>
