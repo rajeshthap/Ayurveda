@@ -46,7 +46,7 @@ const PresentationAwards = ({ showBanner = true, showAboutUsClass = true }) => {
             <h2 style={{ fontWeight: "bold" }}>Presentations & Awards</h2>
             <div className="ayur-bread-list">
               <span>
-                  <Link to="/" >Home</Link>
+                <Link to="/" >Home</Link>
               </span>
               <span className="ayur-active-page">/ Presentations & Awards</span>
             </div>
@@ -83,17 +83,14 @@ const PresentationAwards = ({ showBanner = true, showAboutUsClass = true }) => {
                     <>
                       {/* Content Header */}
                       <h3
-                        style={{
-                          fontWeight: "bold",
-                          fontSize: "2rem",
-                          marginBottom: "2rem",
-                        }}
+
                       >
                         Presentations & Awards
                       </h3>
+                      <h5>Recognized for Excellence in Care and Research</h5>
 
                       {/* Presentation Items Grid */}
-                      <div className="row">
+                      <div className="row mt-4">
                         {items.map((item, index) => (
                           <div
                             className="col-lg-4 col-md-6 col-sm-6"

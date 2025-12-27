@@ -61,7 +61,7 @@ const SafetyHome = () => {
   }
 
   return (
-    <div className="ayur-bgcover ayur-about-sec">
+    <div className="ayur-bgcover ayur-about-sec safety-and-transparency">
       <div className="container">
         {/* Title and subtitle section - moved above and centered like OurExpertise */}
         <div className="row">

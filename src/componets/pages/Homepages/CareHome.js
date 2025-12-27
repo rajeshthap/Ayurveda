@@ -32,7 +32,7 @@ const CareHome = () => {
     fetchCareData()
   }, [])
 
-   const scrollToTop = () => {
+  const scrollToTop = () => {
     window.scrollTo({
       top: 0,
       behavior: 'smooth'
@@ -61,12 +61,13 @@ const CareHome = () => {
   }
 
   return (
-    <div className="ayur-bgcover ayur-about-sec">
+    <div className="ayur-bgcover ayur-about-sec whoisfor-care">
       <div className="container">
         {/* Title and subtitle section - moved above and centered like OurExpertise */}
         <div className="row">
           <div className="col-lg-12 col-md-12 col-sm-12">
             <div className="ayur-heading-wrap">
+              <p></p>
               <h3>{careData ? careData.title : 'Who This Care Is For'}</h3>
               <h5>{careData ? getDescriptionSubtitle(careData.description) : 'Loading...'}</h5>
             </div>
@@ -77,7 +78,7 @@ const CareHome = () => {
           <div className="col-lg-4 col-md-12 col-sm-12">
             <div className="ayur-about-img">
               {isLoading ? (
-                <div style={{height: '300px', background: '#f4f4f4'}} />
+                <div style={{ height: '300px', background: '#f4f4f4' }} />
               ) : careData ? (
                 careData.image ? (
                   <img
@@ -90,14 +91,14 @@ const CareHome = () => {
                     style={{ willChange: 'transform' }}
                   />
                 ) : (
-                  <div style={{height: '300px', background: '#f4f4f4'}} />
+                  <div style={{ height: '300px', background: '#f4f4f4' }} />
                 )
               ) : (
-                <div style={{height: '300px', background: '#f4f4f4'}} />
+                <div style={{ height: '300px', background: '#f4f4f4' }} />
               )}
             </div>
           </div>
-          
+
           <div className="col-lg-8 col-md-12 col-sm-12">
             {isLoading ? (
               <p>Loading...</p>
@@ -118,7 +119,7 @@ const CareHome = () => {
                         </div>
                       )
                     })}
-                    
+
                     {/* Show ... if there are more than 2 modules */}
                     {careData.module.length > 2 && <p>...</p>}
                   </div>

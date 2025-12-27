@@ -64,6 +64,7 @@ function OurTeam() {
           <div className="col-lg-12 col-md-12 col-sm-12">
             <div className="ayur-heading-wrap">
               <h3>Trusted &amp; Certificated Team</h3>
+              <h5>Meet Our Expert Professionals</h5>
             </div>
           </div>
         </div>

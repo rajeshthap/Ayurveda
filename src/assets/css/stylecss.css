@@ -712,6 +712,7 @@ li.ayur-has-menu a svg {
   margin: 0 auto;
   text-align: center;
   position: relative;
+  margin-bottom: 30px;
 }
 
 .ayur-careslide-box {
@@ -986,7 +987,18 @@ a.likeproduct img.like {
 /* Top-product section css End */
 /* About section css Start */
 .ayur-about-sec {
-  padding: 13px 0 81px;
+  padding: 13px 0 20px;
+  padding-top: 37px;
+}
+
+.call-to-action {
+  background-color: #f1f5e9;
+  padding-top: 37px;
+}
+
+.safety-and-transparency {
+  background-color: #fdfcf4;
+  padding-top: 37px;
 }
 
 .ayur-about-head {
@@ -1923,6 +1935,17 @@ ul.ayur-links li a:hover::before {
 .ayur-about-sec.ayur-inner-about {
   padding: 90px 0 90px;
   overflow: hidden;
+}
+
+.whoisfor-care {
+  background-color: #fdfcf4;
+  padding-top: 37px;
+
+}
+
+.Our-Clinic {
+  background-color: #f1f5e9;
+  padding-top: 37px;
 }
 
 .ayur-whycho-box {

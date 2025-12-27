@@ -61,7 +61,7 @@ const CallHome = () => {
   }
 
   return (
-    <div className="ayur-bgcover ayur-about-sec">
+    <div className="ayur-bgcover ayur-about-sec call-to-action">
       <div className="container">
         {/* Title and subtitle section - moved above and centered like OurExpertise */}
         <div className="row">

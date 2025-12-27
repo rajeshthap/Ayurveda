@@ -19,7 +19,7 @@ function OurTestimonial() {
       try {
         const response = await fetch('https://mahadevaaya.com/trilokayurveda/trilokabackend/api/testimonials-items/');
         const result = await response.json();
-        
+
         if (result.success) {
           setTestimonials(result.data);
         }
@@ -53,7 +53,7 @@ function OurTestimonial() {
     );
   }
 
- const baseURL = 'https://mahadevaaya.com/trilokayurveda/trilokabackend';
+  const baseURL = 'https://mahadevaaya.com/trilokayurveda/trilokabackend';
 
   return (
     <div className="ayur-bgcover ayur-testimonial-sec">
@@ -61,8 +61,8 @@ function OurTestimonial() {
         <div className="row">
           <div className="col-lg-12 col-md-12 col-sm-12">
             <div className="ayur-heading-wrap ayur-test-head">
-              <h5>Our Testimonial</h5>
-              <h3>What Our&nbsp;Client’s&nbsp;Say</h3>
+              <h3>Our Testimonial</h3>
+              <h5>What Our&nbsp;Client’s&nbsp;Say</h5>
             </div>
           </div>
         </div>
@@ -98,9 +98,9 @@ function OurTestimonial() {
 
                   <div className="ayur-test-namesec">
                     <div className="ayur-testname">
-                      <img 
-                        src={`${baseURL}${testimonial.image}`} 
-                        alt={`${testimonial.full_name}-photo`} 
+                      <img
+                        src={`${baseURL}${testimonial.image}`}
+                        alt={`${testimonial.full_name}-photo`}
                       />
                       <h3>{testimonial.full_name}</h3>
                     </div>
