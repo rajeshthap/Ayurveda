@@ -7,8 +7,12 @@ import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from './componets/context/AuthContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
+
+
+
+
 root.render(
-  <BrowserRouter >
+  <BrowserRouter basename="/trilokayurveda"  >
    <AuthProvider>
     <App />
     </AuthProvider>
