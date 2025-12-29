@@ -8,7 +8,7 @@
   color: #e4d4cf;
 }
 
-.ayur-btn-login{
+.ayur-btn-login {
   min-width: 80px;
   max-width: 100%;
   border-radius: 8px;
@@ -31,11 +31,12 @@
   transition: all .3s linear;
 }
 
-.ayur-btn-login:hover{
-    color: white;
-    background-color: #157347 !important;
-    border-color: #157347 !important ;
+.ayur-btn-login:hover {
+  color: white;
+  background-color: #157347 !important;
+  border-color: #157347 !important;
 }
+
 .top-nav .container {
   gap: 15px;
 }
@@ -200,5 +201,9 @@
   .ayur-social-link a {
     width: 28px;
     height: 28px;
+  }
+
+  .ayur-btn-login {
+    margin-left: 12px;
   }
 }

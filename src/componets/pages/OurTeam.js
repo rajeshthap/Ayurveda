@@ -70,13 +70,13 @@ function OurTeam() {
         </div>
         <div className="row">
           {sortedTeamMembers.map((member) => (
-            <div key={member.id} className="col-lg-4 col-md-6 col-sm-6">
+            <div key={member.id} className="col-lg-4 col-md-6 col-sm-6 mb-4">
               <Link
                 to={getMemberPath(member.id)}
                 className="team-card-link"
                 onClick={handleCardClick}
               >
-                <div className="ayur-team-box">
+                <div className="ayur-team-box h-100 d-flex flex-column">
                   <div className="ayur-team-img-wrapper">
                     <div className="ayur-team-img">
                       <img
@@ -124,10 +124,10 @@ function OurTeam() {
                       </div>
                     </div>
                   </div>
-                  <div className="ayur-team-name">
-                    <h3>{member.full_name}</h3>
-                    <p>{member.title}</p>
-                    <p>{member.designation}</p>
+                  <div className="ayur-team-name flex-grow-1 d-flex flex-column justify-content-center text-center p-3">
+                    <h3 className="mb-2">{member.full_name}</h3>
+                    <p className="mb-1">{member.title}</p>
+                    <p className="mb-0">{member.designation}</p>
                   </div>
                 </div>
               </Link>
