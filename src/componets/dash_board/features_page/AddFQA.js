@@ -156,7 +156,7 @@ const AddFAQ = () => {
 
       // SUCCESS PATH
       const faqCount = formData.module.length;
-      setMessage(`✅ Success! ${faqCount} FAQ item${faqCount > 1 ? 's have' : ' has'} been added successfully.`);
+      setMessage(`  Success! ${faqCount} FAQ item${faqCount > 1 ? 's have' : ' has'} been added successfully.`);
       setVariant("success");
       setShowAlert(true);
       resetForm();

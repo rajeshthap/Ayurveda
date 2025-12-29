@@ -182,6 +182,11 @@ a {
   white-space: "pre-line"
 }
 
+.ayur-inneraboutimg{
+   will-change: transform;
+  transform: perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1);
+}
+
 @media only screen and (max-width: 568px) {
   .br-login {
     margin: var(--gov-space-200) var(--gov-space-0) var(--gov-space-0) var(--gov-space-0) !important;

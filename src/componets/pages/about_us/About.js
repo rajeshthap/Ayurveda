@@ -21,11 +21,8 @@ function MediaGallery() {
                 data-tilt-max="10"
                 data-tilt-speed="1000"
                 data-tilt-perspective="1000"
-                style={{
-                  willChange: 'transform',
-                  transform:
-                    'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)',
-                }}
+                className='ayur-inneraboutimg'
+               
               />
               <div className="ayur-about-exp">
                 <p>10</p>

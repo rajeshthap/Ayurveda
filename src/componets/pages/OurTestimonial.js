@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper/modules';
+import '../../assets/css/testinomials.css';
 
 // Import Swiper styles
 import 'swiper/css';
@@ -14,7 +15,7 @@ function OurTestimonial() {
   const [testimonials, setTestimonials] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // ✅ refs for navigation
+  //   refs for navigation
   const prevRef = useRef(null);
   const nextRef = useRef(null);
 
@@ -103,7 +104,8 @@ function OurTestimonial() {
                       <BiSolidQuoteRight
                         size={74}
                         color="#CD8973"
-                        style={{ opacity: 0.1 }}
+                        className='ayur-testquoteright'
+                        
                       />
                     </div>
                   </div>
@@ -111,7 +113,7 @@ function OurTestimonial() {
               </SwiperSlide>
             ))}
 
-            {/* ✅ Navigation buttons INSIDE swiper */}
+            {/*Navigation buttons INSIDE swiper */}
             <div ref={prevRef} className="swiper-button-prev">
               <IoIosArrowBack size={34} color="#797979" />
             </div>

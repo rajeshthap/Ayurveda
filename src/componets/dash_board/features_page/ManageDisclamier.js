@@ -606,7 +606,7 @@ const ManageDisclaimer = () => {
 
       // SUCCESS PATH
       const itemCount = formData.items.length;
-      setMessage(`✅ Success! ${itemCount} disclaimer item${itemCount > 1 ? 's have' : ' has'} been added successfully.`);
+      setMessage(`  Success! ${itemCount} disclaimer item${itemCount > 1 ? 's have' : ' has'} been added successfully.`);
       setVariant("success");
       setShowAlert(true);
       resetForm();

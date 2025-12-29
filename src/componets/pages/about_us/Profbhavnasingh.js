@@ -5,6 +5,7 @@ import BgLeaf2 from "../../../assets/images/bg-leaf2.png";
 import { Link } from "react-router-dom";
 import team3 from '../../../assets/images/team-3.png'
 import { Row } from "react-bootstrap";
+import '../../../assets/css/Profile.css';
 
 function Profbhavnasingh() {
   const [profileData, setProfileData] = useState(null);
@@ -88,7 +89,7 @@ function Profbhavnasingh() {
         return (
           <p key={index}>
             {qualificationWithoutYear}
-            <span className="year-txt" style={{ color: 'green' }}>{year}</span>
+            <span className="year-txt" >{year}</span>
           </p>
         );
       }

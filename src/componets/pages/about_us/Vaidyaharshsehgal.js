@@ -6,6 +6,7 @@ import { FaAward } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import team1 from "../../../assets/images/team-1.png";
 import { Row } from "react-bootstrap";
+import '../../../assets/css/Profile.css';
 
 function Vaidyaharshsehgal() {
   const [profileData, setProfileData] = useState(null);
@@ -153,7 +154,7 @@ function Vaidyaharshsehgal() {
       return (
         <p>
           {mdWithoutYear}
-          <span className="year-txt" style={{ color: "green" }}>
+          <span className="year-txt" >
             {mdYear}
           </span>
         </p>
@@ -179,7 +180,7 @@ function Vaidyaharshsehgal() {
         return (
           <p>
             {bamsWithoutYear}
-            <span className="year-txt" style={{ color: "green" }}>
+            <span className="year-txt" >
               {bamsYear}
             </span>
           </p>

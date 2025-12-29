@@ -153,7 +153,7 @@ const AddBlog = () => {
       }
 
       // SUCCESS PATH
-      setMessage(`✅ Success! Blog item has been added successfully.`);
+      setMessage(`  Success! Blog item has been added successfully.`);
       setVariant("success");
       setShowAlert(true);
       resetForm();

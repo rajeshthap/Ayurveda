@@ -548,7 +548,7 @@ const ManageMediaGallery = () => {
 
       // SUCCESS PATH
       const itemCount = formData.items.length;
-      setMessage(`✅ Success! ${itemCount} media gallery item${itemCount > 1 ? 's have' : ' has'} been added successfully.`);
+      setMessage(`  Success! ${itemCount} media gallery item${itemCount > 1 ? 's have' : ' has'} been added successfully.`);
       setVariant("success");
       setShowAlert(true);
       resetForm();

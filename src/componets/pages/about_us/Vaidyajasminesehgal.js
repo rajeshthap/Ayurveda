@@ -6,6 +6,7 @@ import { FaAward } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import team2 from '../../../assets/images/team-2.png'
 import { Row } from "react-bootstrap";
+import '../../../assets/css/Profile.css';
 
 function Vaidyajasminesehgal() {
   const [profileData, setProfileData] = useState(null);
@@ -101,7 +102,7 @@ function Vaidyajasminesehgal() {
       return (
         <p>
           {bamsWithoutYear}
-          <span className="year-txt" style={{ color: 'green' }}>{bamsYear}</span>
+          <span className="year-txt" >{bamsYear}</span>
         </p>
       );
     }
