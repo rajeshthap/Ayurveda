@@ -509,7 +509,8 @@ const ManageAboutUs = () => {
                             <img
                               src={imagePreview}
                               alt="Image Preview"
-                              style={{ maxWidth: "200px", maxHeight: "200px" }}
+                              className="img-wrapper"
+                             
                             />
                           </div>
                         ) : (
@@ -519,10 +520,8 @@ const ManageAboutUs = () => {
                               <img
                                 src={`https://mahadevaaya.com/trilokayurveda/trilokabackend${existingImage}`}
                                 alt="Current About Us"
-                                style={{
-                                  maxWidth: "200px",
-                                  maxHeight: "200px",
-                                }}
+                                className="img-wrapper"
+                               
                               />
                             </div>
                           )
@@ -534,7 +533,8 @@ const ManageAboutUs = () => {
                           <img
                             src={`https://mahadevaaya.com/trilokayurveda/trilokabackend${existingImage}`}
                             alt="Current About Us"
-                            style={{ maxWidth: "200px", maxHeight: "200px" }}
+                            className="img-wrapper"
+              
                           />
                         </div>
                       )

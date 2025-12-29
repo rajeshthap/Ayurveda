@@ -106,7 +106,7 @@ const handleSubmit = async (e) => {
                     <Form.Label className="br-label">
                       Password <span className="br-span-star">*</span>
                     </Form.Label>
-                    <div className="password-wrapper" style={{ position: "relative" }}>
+                    <div className="password-wrapper" >
                       <Form.Control
                         type={showPassword ? "text" : "password"}
                         name="password"
@@ -115,13 +115,8 @@ const handleSubmit = async (e) => {
                       />
                       <span
                         onClick={() => !isLoading && setShowPassword(!showPassword)}
-                        style={{
-                          position: "absolute",
-                          right: "10px",
-                          top: "50%",
-                          transform: "translateY(-50%)",
-                          cursor: isLoading ? "not-allowed" : "pointer",
-                        }}
+                        className="ShowPassword-wrapper"
+                       
                       >
                         {showPassword ? <FaEyeSlash /> : <FaEye />}
                       </span>

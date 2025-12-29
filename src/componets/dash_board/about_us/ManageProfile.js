@@ -536,7 +536,7 @@ const ManageProfile = () => {
                                 <Card 
                                   className="h-100 profile-card" 
                                   onClick={() => handleProfileClick(profile.id)}
-                                  style={{ cursor: 'pointer' }}
+                               
                                 >
                                   <Card.Body>
                                     <div className="d-flex align-items-center mb-3">
@@ -544,12 +544,11 @@ const ManageProfile = () => {
                                         <img
                                           src={`https://mahadevaaya.com/trilokayurveda/trilokabackend${profile.image}`}
                                           alt={profile.full_name}
-                                          className="rounded-circle me-3"
-                                          style={{ width: '50px', height: '50px', objectFit: 'cover' }}
+                                          className="rounded-circle me-3 img-profile"
+                                         
                                         />
                                       ) : (
-                                        <div className="bg-secondary rounded-circle d-flex align-items-center justify-content-center me-3" 
-                                             style={{ width: '50px', height: '50px' }}>
+                                        <div className="bg-secondary rounded-circle d-flex align-items-center justify-content-center me-3 profile-name" >
                                           <span className="text-white">
                                             {profile.full_name ? profile.full_name.charAt(0) : 'P'}
                                           </span>
@@ -658,7 +657,7 @@ const ManageProfile = () => {
                                 <img
                                   src={imagePreview}
                                   alt="Image Preview"
-                                  style={{ maxWidth: "200px", maxHeight: "200px" }}
+                                  className="img-wrapper"
                                 />
                               </div>
                             ) : (
@@ -668,10 +667,7 @@ const ManageProfile = () => {
                                   <img
                                     src={`https://mahadevaaya.com/trilokayurveda/trilokabackend${existingImage}`}
                                     alt="Current Profile"
-                                    style={{
-                                      maxWidth: "200px",
-                                      maxHeight: "200px",
-                                    }}
+                                    className="img-wrapper"
                                   />
                                 </div>
                               )
@@ -683,7 +679,7 @@ const ManageProfile = () => {
                               <img
                                 src={`https://mahadevaaya.com/trilokayurveda/trilokabackend${existingImage}`}
                                 alt="Current Profile"
-                                style={{ maxWidth: "200px", maxHeight: "200px" }}
+                               className="img-wrapper"
                               />
                             </div>
                           )

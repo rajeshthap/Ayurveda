@@ -116,7 +116,7 @@ const PresentationAwards = ({ showBanner = true, showAboutUsClass = true }) => {
                                     style={{
                                       backgroundColor:
                                         dateColors[index % dateColors.length],
-                                      color: "#fff", // Added white color for text readability
+                                      color: "#fff",
                                     }}
                                   >
                                     {new Date(item.date).toLocaleDateString(

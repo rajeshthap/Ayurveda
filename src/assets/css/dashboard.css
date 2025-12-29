@@ -22,6 +22,31 @@
     line-height: 8px !important;
 }
 
+.img-wrapper{
+  max-width: 200px;
+  max-height: 200px;
+}
+
+.profile-card{
+    cursor: pointer;
+}
+
+.img-profile{
+    width: 50px;
+     height: 50px; 
+   object-fit: cover;
+}
+
+.card-img-top{
+    height: 200px;
+   object-fit: cover;
+}
+
+.profile-name{
+    width: 50px;
+     height: 50px; 
+}
+
 .sidebar-closed {
     width: 70px;
 }

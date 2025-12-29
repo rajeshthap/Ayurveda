@@ -662,7 +662,6 @@ const ManageMediaGallery = () => {
                                 src={item.fullImageUrl || getImageUrl(item.image)} 
                                 alt={item.title} 
                                 className="card-img-top"
-                                style={{ height: '200px', objectFit: 'cover' }}
                                 onError={() => handleImageError(item.id)}
                               />
                             ) : (
@@ -770,7 +769,7 @@ const ManageMediaGallery = () => {
                         src={editingItemData.existing_image_url || getImageUrl(editingItemData.existing_image)} 
                         alt={editingItemData.title} 
                         fluid 
-                        style={{ maxHeight: '200px' }}
+                        className="img-wrapper"
                         thumbnail
                         onError={() => handleImageError(`edit-${editingItemData.id}`)}
                       />
@@ -780,14 +779,13 @@ const ManageMediaGallery = () => {
               </Col>
               <Col md={6}>
                 {imagePreviews['edit'] && (
-                  <div className="mb-3 text-center">
+                  <div className="mb-3 text-center img-wrapper">
                     <h5>New Image Preview</h5>
                     <Image 
                       src={imagePreviews['edit']} 
                       alt="Preview" 
                       fluid 
-                      style={{ maxHeight: '200px' }}
-                      thumbnail
+                     thumbnail
                     />
                   </div>
                 )}
