@@ -519,9 +519,9 @@ const ManageCare = () => {
                             {careItems.map((item) => (
                               <Col md={6} lg={4} className="mb-4" key={item.id}>
                                 <Card 
-                                  className="h-100 care-card" 
+                                  className="h-100 care-card profile-card" 
                                   onClick={() => handleItemClick(item.id)}
-                                  style={{ cursor: 'pointer' }}
+                              
                                 >
                                   <Card.Body>
                                     <div className="d-flex flex-column">
@@ -537,12 +537,11 @@ const ManageCare = () => {
                                         <img
                                           src={`https://mahadevaaya.com/trilokayurveda/trilokabackend${item.image}`}
                                           alt={item.title}
-                                          className="rounded mb-3"
-                                          style={{ width: '100%', height: '150px', objectFit: 'cover' }}
+                                          className="rounded mb-3 img-wrapper"
+                                        
                                         />
                                       ) : (
-                                        <div className="bg-secondary rounded d-flex align-items-center justify-content-center mb-3" 
-                                             style={{ width: '100%', height: '150px' }}>
+                                        <div className="bg-secondary rounded d-flex align-items-center justify-content-center mb-3 img-wrapper" >
                                           <span className="text-white">
                                             No Image
                                           </span>
@@ -619,7 +618,7 @@ const ManageCare = () => {
                                 <img
                                   src={imagePreview}
                                   alt="Image Preview"
-                                  style={{ maxWidth: "300px", maxHeight: "200px" }}
+                                  className="img-current"
                                 />
                               </div>
                             ) : (
@@ -629,7 +628,7 @@ const ManageCare = () => {
                                   <img
                                     src={`https://mahadevaaya.com/trilokayurveda/trilokabackend${existingImage}`}
                                     alt="Current Image"
-                                    style={{ maxWidth: "300px", maxHeight: "200px" }}
+                                   className="img-current"
                                   />
                                 </div>
                               )
@@ -641,7 +640,7 @@ const ManageCare = () => {
                               <img
                                 src={`https://mahadevaaya.com/trilokayurveda/trilokabackend${existingImage}`}
                                 alt="Current Image"
-                                style={{ maxWidth: "300px", maxHeight: "200px" }}
+                              className="img-current"
                               />
                             </div>
                           )

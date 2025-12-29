@@ -296,7 +296,9 @@ const AddAboutUs = () => {
               />
               {imagePreview && (
                 <div className="mt-3">
-                  <img src={imagePreview} alt="Image Preview" style={{ maxWidth: '200px', maxHeight: '200px' }} />
+                  <img src={imagePreview} alt="Image Preview"
+                   className="img-wrapper"
+               />
                 </div>
               )}
             </Form.Group>

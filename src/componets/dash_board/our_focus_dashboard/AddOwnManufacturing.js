@@ -321,7 +321,7 @@ const AddOwnManufacturing = () => {
                         <img
                           src={iconPreview}
                           alt="Icon Preview"
-                          style={{ maxWidth: "100px", maxHeight: "100px" }}
+                         className="img-wrapper"
                         />
                       </div>
                     )}
@@ -343,7 +343,7 @@ const AddOwnManufacturing = () => {
                         <img
                           src={imagePreview}
                           alt="Image Preview"
-                          style={{ maxWidth: "200px", maxHeight: "200px" }}
+                        className="img-wrapper"
                         />
                       </div>
                     )}
