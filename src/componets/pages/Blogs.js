@@ -98,7 +98,7 @@ const Blogs = () => {
       {/* Breadcrumb Section */}
       <div className='about-bg'>
         <div className='ayur-bread-content'>
-          <h2 style={{ fontWeight: 'bold' }}>Blog</h2>
+          <h2 className='heading-wrapper' >Blog</h2>
           <div className="ayur-bread-list">
             <span>
               <Link to="/">Home</Link>
@@ -115,7 +115,7 @@ const Blogs = () => {
               <div className="col-lg-12 col-md-12 col-sm-12">
                 <div className="ayur-heading-wrap ayur-about-head">
                   <div className="blogs-header">
-                    <h4 style={{ fontWeight: 'bold', fontSize: '2rem' }}>Blog</h4>
+                    <h4 className='heading-extend' >Blog</h4>
                     <div className='about-description'>Wellness Center and Speciality Clinic for Chronic Disorders</div>
                   </div>
 

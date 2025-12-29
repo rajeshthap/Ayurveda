@@ -75,7 +75,7 @@ const Researchers = () => {
                     ) : (
                       <>
                         <div className="researchers-section">
-                          <h2 style={{ fontWeight: 'bold', color: '#28a745' }}>Research Publications</h2>
+                          <h2 className='heading-wrapper' >Research Publications</h2>
 
                           <div className="research-container">
                             {researchData.map((researcher) => (

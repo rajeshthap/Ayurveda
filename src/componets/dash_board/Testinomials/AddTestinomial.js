@@ -257,7 +257,7 @@ const AddTestinomial = () => {
                         <img
                           src={imagePreview}
                           alt="Image Preview"
-                          style={{ maxWidth: "300px", maxHeight: "200px" }}
+                         className="img-current"
                         />
                       </div>
                     )}

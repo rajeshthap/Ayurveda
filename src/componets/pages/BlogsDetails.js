@@ -126,7 +126,7 @@ const BlogsDetails = () => {
       {/* Breadcrumb Section */}
       <div className='about-bg'>
         <div className='ayur-bread-content'>
-          <h2 style={{ fontWeight: 'bold' }}>Blog Details</h2>
+          <h2 className='heading-wrapper'>Blog Details</h2>
           <div className="ayur-bread-list">
             <span>
               <Link to="/">Home</Link>
@@ -181,7 +181,7 @@ const BlogsDetails = () => {
                         </Col>
                         <Col lg={8} md={12} sm={12} className="d-flex flex-column">
                           <div className="about-content text-start">
-                            <h3 style={{ fontWeight: 'bold', fontSize: '2rem' }}>{blogPost.title}</h3>
+                            <h3 className='heading-extend' >{blogPost.title}</h3>
                             
                             <div className="blog-detail-date mb-3">
                               <FaCalendarAlt className="me-2" />
@@ -190,7 +190,7 @@ const BlogsDetails = () => {
                             
                             <div 
                               className="about-description"
-                              style={{ fontSize: '1.2rem' }}
+                            
                               dangerouslySetInnerHTML={{ 
                                 __html: blogPost.description.replace(/\n/g, '<br />') 
                               }}

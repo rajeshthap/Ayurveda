@@ -165,6 +165,15 @@ a {
   margin-left: 11px;
 }
 
+.heading-wrapper{
+  font-weight: 'bold'
+}
+
+.heading-extend{
+  font-weight: 'bold';
+  font-size:  '2rem';
+}
+
 @media only screen and (max-width: 568px) {
   .br-login {
     margin: var(--gov-space-200) var(--gov-space-0) var(--gov-space-0) var(--gov-space-0) !important;
