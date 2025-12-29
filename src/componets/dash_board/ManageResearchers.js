@@ -744,7 +744,7 @@ const ManageResearchers = () => {
                                     src={item.fullImageUrl || getImageUrl(item.image)} 
                                     alt={item.title} 
                                     fluid 
-                                    style={{ maxHeight: '200px' }}
+                                   className="img-wrapper"
                                     thumbnail
                                     onError={() => handleImageError(item.id)}
                                   />
@@ -900,7 +900,7 @@ const ManageResearchers = () => {
                                           src={imagePreviews[`form-${index}`]} 
                                           alt="Preview" 
                                           fluid 
-                                          style={{ maxHeight: '150px' }}
+                                         className="img-wrapper"
                                           thumbnail
                                         />
                                       </div>
@@ -972,7 +972,7 @@ const ManageResearchers = () => {
                         src={editingItemData.existing_image_url || getImageUrl(editingItemData.existing_image)} 
                         alt={editingItemData.title} 
                         fluid 
-                        style={{ maxHeight: '200px' }}
+                        className="img-wrapper"
                         thumbnail
                         onError={() => handleImageError(`edit-${editingItemData.id}`)}
                       />
@@ -988,7 +988,7 @@ const ManageResearchers = () => {
                       src={imagePreviews['edit']} 
                       alt="Preview" 
                       fluid 
-                      style={{ maxHeight: '200px' }}
+                     className="img-wrapper"
                       thumbnail
                     />
                   </div>

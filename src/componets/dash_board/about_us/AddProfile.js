@@ -375,7 +375,7 @@ const AddProfile = () => {
                     <img
                       src={imagePreview}
                       alt="Image Preview"
-                      style={{ maxWidth: "200px", maxHeight: "200px" }}
+                      className="img-wrapper"
                     />
                   </div>
                 )}

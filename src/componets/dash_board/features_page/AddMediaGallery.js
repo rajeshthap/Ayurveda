@@ -466,9 +466,9 @@ const AddMediaGallery = () => {
                                     <div className="mt-2">
                                       <Image 
                                         src={imagePreviews[`form-${index}`]} 
+                                        className="img-wrapper"
                                         alt="Preview" 
                                         fluid 
-                                        style={{ maxHeight: '150px' }}
                                         thumbnail
                                       />
                                     </div>

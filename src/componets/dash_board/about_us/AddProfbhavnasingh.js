@@ -441,7 +441,8 @@ const admin_id = auth?.unique_id;
                       {imagePreview ? (
                         <div className="mt-3">
                           <p>New Image Preview:</p>
-                          <img src={imagePreview} alt="Image Preview" style={{ maxWidth: '200px', maxHeight: '200px' }} />
+                          <img src={imagePreview} alt="Image Preview"
+                           className="img-wrapper" />
                         </div>
                       ) : existingImage && (
                         <div className="mt-3">
@@ -449,7 +450,7 @@ const admin_id = auth?.unique_id;
                           <img
                             src={`https://mahadevaaya.com/trilokayurveda/trilokabackend${existingImage}`}
                             alt="Current About Us"
-                            style={{ maxWidth: '200px', maxHeight: '200px' }}
+                             className="img-wrapper"
                           />
                         </div>
                       )}
@@ -460,7 +461,7 @@ const admin_id = auth?.unique_id;
                         <img
                           src={`https://mahadevaaya.com/trilokayurveda/trilokabackend${existingImage}`}
                           alt="Current About Us"
-                          style={{ maxWidth: '200px', maxHeight: '200px' }}
+                          className="img-wrapper"
                         />
                       </div>
                     )

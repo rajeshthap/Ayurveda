@@ -337,9 +337,9 @@ const ManageHeroSection = () => {
                             {heroItems.map((item) => (
                               <Col md={6} lg={4} className="mb-4" key={item.id}>
                                 <Card 
-                                  className="h-100 hero-card" 
+                                  className="h-100 hero-card profile-card" 
                                   onClick={() => handleItemClick(item.id)}
-                                  style={{ cursor: 'pointer' }}
+                                
                                 >
                                   <Card.Body>
                                     <div className="d-flex flex-column">
