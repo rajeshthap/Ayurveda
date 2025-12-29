@@ -5,20 +5,33 @@
    DROPDOWN MENU STYLING
 ================================ */
 
-
 .ayur-submenu {
   background-color: #28a745;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  min-width: 200px;
+  z-index: 1000;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+  transition: all 0.3s ease;
 }
 
+.ayur-submenu.ayur-submenu-open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
 
 .ayur-submenu li a {
   color: #28a745 !important;
   font-weight: 500;
   padding: 10px 18px;
-
+  display: block;
   transition: all 0.3s ease;
 }
-
 
 .ayur-submenu li a:hover {
   background-color: #28a745;
@@ -29,7 +42,6 @@
 .ayur-btn-consult {
   background-color: #28a745 !important;
   color: white !important;
-
   border-radius: 8px !important;
   padding: 6px 6px !important;
   font-weight: 500 !important;
@@ -42,35 +54,66 @@
   border-color: #157347 !important;
 }
 
+/* Style for the dropdown buttons */
+.ayur-has-menu>button {
+  background: none;
+  border: none;
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 0;
+  width: 100%;
+}
+
+.ayur-has-menu>button svg {
+  width: 12px;
+  height: 12px;
+  margin-left: 5px;
+  fill: currentColor;
+  transition: transform 0.3s ease;
+}
+
+.ayur-has-menu>button svg {
+  transform: rotate(180deg);
+}
+
+.ayur-has-menu>button:not(.active) svg {
+  transform: rotate(0deg);
+}
 
 /* Remove border if any */
 .ayur-submenu {
   border: none;
 }
 
-
-
 @media (max-width: 991px) {
   .ayur-submenu {
     background-color: #28a745;
+    position: static;
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    box-shadow: none;
   }
 
   /* --- Hide the default menu on mobile --- */
   .ayur-nav-menu {
-      position: fixed;
-        top: 0;
-        left: -100%;
-        width: 391px;
-        max-width: 100%;
-        height: 100vh;
-        background-color: #fff;
-        padding-top: 100px;
-        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-        transition: left 0.4s ease-in-out;
-        z-index: 999;
-        overflow-y: auto;
+    position: fixed;
+    top: 0;
+    left: -100%;
+    width: 391px;
+    max-width: 100%;
+    height: 100vh;
+    background-color: #fff;
+    padding-top: 100px;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+    transition: left 0.4s ease-in-out;
+    z-index: 999;
+    overflow-y: auto;
   }
-
 
   .ayur-navmenu-wrapper.menu-open .ayur-nav-menu {
     left: 0;
@@ -88,14 +131,15 @@
     border-bottom: 1px solid #f0f0f0;
   }
 
-  .ayur-nav-menu ul li a {
+  .ayur-nav-menu ul li a,
+  .ayur-nav-menu ul li button {
     display: block;
     padding: 15px 0;
     color: #333;
   }
 
   /* --- Style the dropdown arrow for mobile --- */
-  .ayur-nav-menu .ayur-has-menu>a svg {
+  .ayur-nav-menu .ayur-has-menu>button svg {
     width: 12px;
     height: 12px;
     fill: #555;
@@ -103,12 +147,15 @@
 
   /* --- Show submenus by default on mobile (or you can add another toggle) --- */
   .ayur-submenu {
-    display: block;
-    position: static;
+    display: none;
     width: 100%;
     background-color: #f9f9f9;
     box-shadow: none;
     padding-left: 20px;
+  }
+
+  .ayur-submenu.ayur-submenu-open {
+    display: block;
   }
 
   .ayur-submenu li a {

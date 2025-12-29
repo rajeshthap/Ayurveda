@@ -431,6 +431,7 @@ ul.ayur-submenu li {
   display: block !important;
   opacity: 1 !important;
   visibility: visible !important;
+  text-align: left;
 }
 
 li.ayur-has-menu a {
