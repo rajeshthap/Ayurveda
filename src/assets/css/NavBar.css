@@ -89,6 +89,15 @@
   border: none;
 }
 
+@media screen and (width: 1024px) and (height: 768px) {
+  .ayur-nav-menu ul li {
+    display: inline-block;
+    position: relative;
+    padding: 0 11px;
+  }
+
+}
+
 @media (max-width: 991px) {
   .ayur-submenu {
     background-color: #28a745;
@@ -136,6 +145,7 @@
     display: block;
     padding: 15px 0;
     color: #333;
+    text-align: left;
   }
 
   /* --- Style the dropdown arrow for mobile --- */
