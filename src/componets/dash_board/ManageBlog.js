@@ -757,7 +757,7 @@ const ManageBlog = () => {
                                     src={item.fullImageUrl || getImageUrl(item.image)} 
                                     alt={item.title} 
                                     fluid 
-                                    style={{ maxHeight: '200px' }}
+                                    className="img-wrapper"
                                     thumbnail
                                     onError={() => handleImageError(item.id)}
                                   />
@@ -851,7 +851,7 @@ const ManageBlog = () => {
                         src={editingItemData.existing_image_url || getImageUrl(editingItemData.existing_image)} 
                         alt={editingItemData.title} 
                         fluid 
-                        style={{ maxHeight: '200px' }}
+                        className="img-wrapper"
                         thumbnail
                         onError={() => handleImageError(`edit-${editingItemData.id}`)}
                       />
@@ -867,7 +867,7 @@ const ManageBlog = () => {
                       src={imagePreviews['edit']} 
                       alt="Preview" 
                       fluid 
-                      style={{ maxHeight: '200px' }}
+                      className="img-wrapper"
                       thumbnail
                     />
                   </div>

@@ -27,6 +27,11 @@
   max-height: 200px;
 }
 
+.img-current{
+    max-width: 300px; 
+   max-height: 200px;
+}
+
 .profile-card{
     cursor: pointer;
 }
