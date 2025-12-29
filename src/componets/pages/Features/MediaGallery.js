@@ -37,7 +37,7 @@ const MediaGallery = ({ showBannerOnly = false }) => {
       {!showBannerOnly && (
         <div className='about-bg'>
           <div className='ayur-bread-content text-center'>
-            <h2 style={{ fontWeight: 'bold' }}>Media Gallery</h2>
+            <h2 className='heading-wrapper' >Media Gallery</h2>
             <div className="ayur-bread-list">
               <span>
                   <Link to="/" >Home</Link>
@@ -72,7 +72,7 @@ const MediaGallery = ({ showBannerOnly = false }) => {
                   ) : (
                     <>
                       {/* Content Header */}
-                      <h3 style={{ fontWeight: 'bold', fontSize: '2rem', marginBottom: '2rem' }}>Media Gallery</h3>
+                      <h3 className='heading-extend' >Media Gallery</h3>
                       
                       {/* Media Items Grid */}
                       <div className="row">

@@ -43,7 +43,7 @@ function Profile() {
       <div className="ayur-bgcover ayur-team-sec">
         <div className='about-bg'>
           <div className='ayur-bread-content'>
-            <h2 style={{ fontWeight: 'bold' }}>Our Team</h2>
+            <h2 className='heading-wrapper' >Our Team</h2>
             <div className="ayur-bread-list">
               <span>
                 <Link to="/" >Home</Link>
@@ -74,7 +74,7 @@ function Profile() {
       {/* Breadcrumb Section */}
       <div className='about-bg'>
         <div className='ayur-bread-content'>
-          <h2 style={{ fontWeight: 'bold' }}>Profile</h2>
+          <h2 className='heading-wrapper' >Profile</h2>
           <div className="ayur-bread-list">
             <span>
               <Link to="/" >Home</Link>

@@ -58,7 +58,7 @@ const Faqs = () => {
         <div className="ayur-bgcover ayur-about-sec">
             <div className="about-bg">
                 <div className="ayur-bread-content">
-                    <h2 style={{ fontWeight: 'bold' }}>FAQs</h2>
+                    <h2 className='heading-wrapper' >FAQs</h2>
                     <div className="ayur-bread-list">
                         <span>
                             <Link to="/">Home </Link>
@@ -74,10 +74,10 @@ const Faqs = () => {
                         <div className="row">
                             <div className="col-lg-12 col-md-12 col-sm-12">
                                 <div className="ayur-heading-wrap ayur-about-head">
-                                    <h3 style={{ fontWeight: 'bold', textAlign: 'center' }}>
+                                    <h3 className='ayur-about-heading-wrap' >
                                         Frequently Asked Questions:
                                     </h3>
-                                    <h4 style={{ fontWeight: 'bold', textAlign: 'center' }}>
+                                    <h4 className='ayur-about-heading-wrap'>
                                         Wellness Center and Speciality Clinic for Chronic Disorders
                                     </h4>
 
@@ -105,7 +105,7 @@ const Faqs = () => {
                                                         onClick={() => toggleFAQ(index)}
                                                     >
                                                         {/* Fixed: Access the first question in the module array */}
-                                                        <h4 style={{ fontWeight: 'bold' }}>
+                                                        <h4 className='heading-wrapper' >
                                                             {faq.module && faq.module.length > 0 ? faq.module[0].question : 'No question available'}
                                                         </h4>
                                                         <span className="faq-icon">

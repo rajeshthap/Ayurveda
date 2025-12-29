@@ -64,7 +64,7 @@ function Thejourney() {
               {moduleDescription && (
                 <p
                   className="module-description-text mt-2"
-                  style={{ whiteSpace: "pre-line" }}
+                  
                 >
                   {moduleDescription}
                 </p>
@@ -90,7 +90,7 @@ function Thejourney() {
     <div className="ayur-bgcover ayur-about-sec">
       <div className='about-bg'>
         <div className='ayur-bread-content'>
-          <h2 style={{ fontWeight: 'bold' }}>The Journey</h2>
+          <h2 className='heading-wrapper' >The Journey</h2>
           <div className="ayur-bread-list">
             <span>
                 <Link to="/" >Home</Link>
@@ -136,10 +136,10 @@ function Thejourney() {
                         </Col>
                         <Col lg={8} md={12} sm={12} className="d-flex flex-column">
                           <div className="about-content text-start">
-                            <h4 style={{ fontWeight: 'bold', fontSize: '2rem' }}>{journeyData.title}</h4>
+                            <h4 className='heading-extend' >{journeyData.title}</h4>
                             <div
                               className="about-description"
-                              style={{ fontSize: '1.2rem' }}
+                              
                               dangerouslySetInnerHTML={{
                                 __html: journeyData.description.replace(/\n/g, '<br />')
                               }}

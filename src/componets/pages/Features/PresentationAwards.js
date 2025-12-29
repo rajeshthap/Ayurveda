@@ -5,6 +5,7 @@ import Like from "../../../assets/images/like.svg";
 import LikeFill from "../../../assets/images/like-fill.svg";
 import BgShape2 from "../../../assets/images/bg-shape2.png";
 import BgLeaf2 from "../../../assets/images/bg-leaf2.png";
+import "../../../assets/css/Presentation.css";
 
 const API_BASE = "https://mahadevaaya.com/trilokayurveda/trilokabackend";
 
@@ -43,7 +44,7 @@ const PresentationAwards = ({ showBanner = true, showAboutUsClass = true }) => {
       {showBanner && (
         <div className="about-bg">
           <div className="ayur-bread-content text-center">
-            <h2 style={{ fontWeight: "bold" }}>Presentations & Awards</h2>
+            <h2 className='heading-wrapper' >Presentations & Awards</h2>
             <div className="ayur-bread-list">
               <span>
                 <Link to="/" >Home</Link>
@@ -113,11 +114,8 @@ const PresentationAwards = ({ showBanner = true, showAboutUsClass = true }) => {
                                 <div className="ayur-tpro-sale">
                                   {/* --- CHANGE IS HERE --- */}
                                   <p
-                                    style={{
-                                      backgroundColor:
-                                        dateColors[index % dateColors.length],
-                                      color: "#fff",
-                                    }}
+                                  className="para-wrap"
+                                   
                                   >
                                     {new Date(item.date).toLocaleDateString(
                                       "en-IN",

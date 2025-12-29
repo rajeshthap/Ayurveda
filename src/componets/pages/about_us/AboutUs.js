@@ -75,7 +75,7 @@ function AboutUs() {
     <div className="ayur-bgcover ayur-about-sec">
       <div className='about-bg'>
         <div className='ayur-bread-content'>
-          <h2 style={{ fontWeight: 'bold' }}>About Us</h2>
+          <h2 className='heading-wrapper' >About Us</h2>
           <div className="ayur-bread-list">
             <span>
                 <Link to="/" >Home</Link>
@@ -117,10 +117,9 @@ function AboutUs() {
                         </Col>
                         <Col lg={8} md={12} sm={12} className="d-flex flex-column">
                           <div className="about-content text-start">
-                            <h4 style={{ fontWeight: 'bold', fontSize: '2rem' }}>{aboutData.title}</h4>
+                            <h4 className='heading-extend'>{aboutData.title}</h4>
                             <div 
                               className="about-description"
-                              style={{ fontSize: '1.2rem' }}
                               dangerouslySetInnerHTML={{ 
                                 __html: aboutData.description.replace(/\n/g, '<br />') 
                               }}
