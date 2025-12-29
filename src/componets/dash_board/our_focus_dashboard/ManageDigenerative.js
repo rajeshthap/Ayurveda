@@ -649,9 +649,9 @@ const ManageDegenerative = () => {
                             {degenerativeItems.map((item) => (
                               <Col md={6} lg={4} className="mb-4" key={item.id}>
                                 <Card 
-                                  className="h-100 degenerative-card" 
+                                  className="h-100 degenerative-card profile-card" 
                                   onClick={() => handleItemClick(item.id)}
-                                  style={{ cursor: 'pointer' }}
+                            
                                 >
                                   <Card.Body>
                                     <div className="d-flex align-items-center mb-3">
@@ -659,12 +659,12 @@ const ManageDegenerative = () => {
                                         <img
                                           src={`https://mahadevaaya.com/trilokayurveda/trilokabackend${item.icon}`}
                                           alt={item.title}
-                                          className="rounded me-3"
-                                          style={{ width: '50px', height: '50px', objectFit: 'cover' }}
+                                          className="rounded me-3 img-profile"
+                                    
                                         />
                                       ) : (
-                                        <div className="bg-secondary rounded d-flex align-items-center justify-content-center me-3" 
-                                             style={{ width: '50px', height: '50px' }}>
+                                        <div className="bg-secondary rounded d-flex align-items-center justify-content-center me-3 img-profile" 
+                                             >
                                           <span className="text-white">
                                             {item.title ? item.title.charAt(0) : 'D'}
                                           </span>
@@ -737,7 +737,7 @@ const ManageDegenerative = () => {
                                 <img
                                   src={iconPreview}
                                   alt="Icon Preview"
-                                  style={{ maxWidth: "100px", maxHeight: "100px" }}
+                                 className="img-wrapper"
                                 />
                               </div>
                             ) : (
@@ -747,7 +747,7 @@ const ManageDegenerative = () => {
                                   <img
                                     src={`https://mahadevaaya.com/trilokayurveda/trilokabackend${existingIcon}`}
                                     alt="Current Icon"
-                                    style={{ maxWidth: "100px", maxHeight: "100px" }}
+                                   className="img-wrapper"
                                   />
                                 </div>
                               )
@@ -759,7 +759,7 @@ const ManageDegenerative = () => {
                               <img
                                 src={`https://mahadevaaya.com/trilokayurveda/trilokabackend${existingIcon}`}
                                 alt="Current Icon"
-                                style={{ maxWidth: "100px", maxHeight: "100px" }}
+                              className="img-wrapper"
                               />
                             </div>
                           )
@@ -782,7 +782,7 @@ const ManageDegenerative = () => {
                                 <img
                                   src={imagePreview}
                                   alt="Image Preview"
-                                  style={{ maxWidth: "200px", maxHeight: "200px" }}
+                                  className="img-wrapper"
                                 />
                               </div>
                             ) : (
@@ -792,7 +792,7 @@ const ManageDegenerative = () => {
                                   <img
                                     src={`https://mahadevaaya.com/trilokayurveda/trilokabackend${existingImage}`}
                                     alt="Current Image"
-                                    style={{ maxWidth: "200px", maxHeight: "200px" }}
+                                   className="img-wrapper"
                                   />
                                 </div>
                               )
@@ -804,7 +804,7 @@ const ManageDegenerative = () => {
                               <img
                                 src={`https://mahadevaaya.com/trilokayurveda/trilokabackend${existingImage}`}
                                 alt="Current Image"
-                                style={{ maxWidth: "200px", maxHeight: "200px" }}
+                                className="img-wrapper"
                               />
                             </div>
                           )
