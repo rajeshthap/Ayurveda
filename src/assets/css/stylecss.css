@@ -103,6 +103,7 @@ ul {
   padding-left: 32px;
   font-size: 14px;
   color: var(--ayur-para-color);
+  margin-bottom: 12px;
 }
 
 a {
@@ -908,7 +909,7 @@ li.ayur-has-menu a svg {
 }
 
 .ayur-tpro-sale p {
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 500;
   color: var(--ayur-white-color);
   min-width: 83px;
@@ -3002,7 +3003,7 @@ tr.ayur-cartsubtotal td {
 
 .year-txt {
   background-color: #28a745;
-  color: #fff;
+  color: #fff !important;
   padding: 6px;
   border-radius: 5px;
   font-size: 12px;
@@ -3168,7 +3169,6 @@ span {
   position: absolute;
   top: 10px;
   right: 10px;
-  background-color: rgba(40, 167, 69, 0.8);
   color: white;
   padding: 5px 10px;
   border-radius: 4px;

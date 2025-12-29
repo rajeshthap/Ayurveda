@@ -155,7 +155,7 @@ a {
 }
 
 .year-txt {
-  color: #fff;
+  color: #fff !important;
 }
 
 .login-btn {

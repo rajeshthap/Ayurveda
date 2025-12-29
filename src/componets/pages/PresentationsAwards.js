@@ -58,7 +58,7 @@ function PresentationsAwards() {
                     />
 
                     <div className="ayur-tpro-sale">
-                      <p>
+                 
                         {new Date(item.date).toLocaleDateString(
                           'en-IN',
                           {
@@ -67,7 +67,7 @@ function PresentationsAwards() {
                             year: 'numeric',
                           }
                         )}
-                      </p>
+                     
 
                       <div className="ayur-tpro-like">
                         <Link
