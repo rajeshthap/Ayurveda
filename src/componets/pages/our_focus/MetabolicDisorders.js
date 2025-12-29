@@ -145,9 +145,8 @@ function MetabolicDisorders() {
                       md={6}
                       sm={12}
                       key={item.id}
-                      className="mb-4"
+                      className="cards-pointer mb-4"
                       onClick={() => handleCardClick(item)}
-                      style={{ cursor: "pointer" }}
                     >
                       <div className="ayur-card">
                         <div className="ayur-card-icon">
@@ -155,7 +154,7 @@ function MetabolicDisorders() {
                             <img
                               src={`https://mahadevaaya.com/trilokayurveda/trilokabackend${item.icon}`}
                               alt={item.title}
-                              style={{ width: '40px', height: '40px' }}
+                              className='ayur-card-icons'
                             />
                           ) : (
                             <FaHeartbeat />
@@ -193,7 +192,7 @@ function MetabolicDisorders() {
                         />
                       ) : (
                         <div className="bg-light d-flex align-items-center justify-content-center rounded"
-                          style={{ height: '300px' }}>
+                        >
                           <p className="text-muted">No image available</p>
                         </div>
                       )}

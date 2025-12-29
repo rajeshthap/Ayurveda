@@ -9,6 +9,11 @@
       flex-direction: column;
     }
 
+    .media-card-heading {
+      color: '#4e7c31';
+       font-weight: '600';
+    }
+
     .media-card:hover {
       transform: translateY(-5px);
       box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);

@@ -69,7 +69,7 @@ function Safety() {
     <div className="ayur-bgcover ayur-about-sec">
       <div className='about-bg'>
         <div className='ayur-bread-content'>
-          <h2 style={{ fontWeight: 'bold' }}>Safety</h2>
+          <h2 className='heading-wrapper' >Safety</h2>
           <div className="ayur-bread-list">
             <span>
                 <Link to="/" >Home</Link>
@@ -109,7 +109,7 @@ function Safety() {
                                 className="img-fluid rounded"
                               />
                             ) : (
-                              <div className="no-image-placeholder bg-light rounded d-flex align-items-center justify-content-center" style={{height: '250px'}}>
+                              <div className="no-image-placeholder bg-light rounded d-flex align-items-center justify-content-center">
                                 <p className="text-muted">No image available</p>
                               </div>
                             )}
@@ -117,10 +117,9 @@ function Safety() {
                         </Col>
                         <Col lg={8} md={12} sm={12} className="d-flex flex-column">
                           <div className="about-content text-start">
-                            <h4 style={{ fontWeight: 'bold', fontSize: '2rem' }}>{safetyData.title}</h4>
+                            <h4 className='heading-extend' >{safetyData.title}</h4>
                             <div 
                               className="about-description"
-                              style={{ fontSize: '1.2rem' }}
                               dangerouslySetInnerHTML={{ 
                                 __html: safetyData.description.replace(/\r\n\r\n/g, '<br /><br />').replace(/\r\n/g, '<br />') 
                               }}

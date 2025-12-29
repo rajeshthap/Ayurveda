@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import BgShape2 from '../../../assets/images/bg-shape2.png'
 import BgLeaf2 from '../../../assets/images/bg-leaf2.png'
 import { Link } from 'react-router-dom'
-
+import "../../../assets/css/Aim.css"
 const API_BASE = 'https://mahadevaaya.com/trilokayurveda/trilokabackend'
 
 const SafetyHome = () => {
@@ -77,7 +77,7 @@ const SafetyHome = () => {
           <div className="col-lg-4 col-md-12 col-sm-12">
             <div className="ayur-about-img">
               {isLoading ? (
-                <div style={{height: '300px', background: '#f4f4f4'}} />
+                <div className='image-sty'/>
               ) : safetyData ? (
                 safetyData.image ? (
                   <img
@@ -87,13 +87,13 @@ const SafetyHome = () => {
                     data-tilt-max="10"
                     data-tilt-speed="1000"
                     data-tilt-perspective="1000"
-                    style={{ willChange: 'transform' }}
+              
                   />
                 ) : (
-                  <div style={{height: '300px', background: '#f4f4f4'}} />
+                  <div className='image-sty' />
                 )
               ) : (
-                <div style={{height: '300px', background: '#f4f4f4'}} />
+                <div className='image-sty'/>
               )}
             </div>
           </div>
@@ -108,9 +108,9 @@ const SafetyHome = () => {
                 {/* Modules: show all modules as bullet points without word limit */}
                 {safetyData && safetyData.module && safetyData.module.length > 0 && (
                   <div className="ayur-about-head">
-                    <ul className="safety-module-list" style={{ paddingLeft: '20px' }}>
+                    <ul className="safety-module-list" >
                       {safetyData.module.map((moduleItem, idx) => (
-                        <li key={idx} style={{ marginBottom: '15px', lineHeight: '1.6' }}>
+                        <li key={idx} >
                           {moduleItem}
                         </li>
                       ))}

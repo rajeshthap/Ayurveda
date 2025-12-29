@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import BgShape2 from '../../../assets/images/bg-shape2.png'
 import BgLeaf2 from '../../../assets/images/bg-leaf2.png'
 import { Link } from 'react-router-dom'
+import "../../../assets/css/Aim.css"
 
 const API_BASE = 'https://mahadevaaya.com/trilokayurveda/trilokabackend'
 
@@ -77,7 +78,7 @@ const CallHome = () => {
           <div className="col-lg-4 col-md-12 col-sm-12">
             <div className="ayur-about-img">
               {isLoading ? (
-                <div style={{height: '300px', background: '#f4f4f4'}} />
+                <div className='image-sty' />
               ) : callData ? (
                 callData.image ? (
                   <img
@@ -87,13 +88,13 @@ const CallHome = () => {
                     data-tilt-max="10"
                     data-tilt-speed="1000"
                     data-tilt-perspective="1000"
-                    style={{ willChange: 'transform' }}
+            
                   />
                 ) : (
-                  <div style={{height: '300px', background: '#f4f4f4'}} />
+                  <div className='image-sty' />
                 )
               ) : (
-                <div style={{height: '300px', background: '#f4f4f4'}} />
+                <div className='image-sty' />
               )}
             </div>
           </div>

@@ -98,6 +98,15 @@
     font-size: 32px;
     margin-bottom: 5PX;
 }
+
+.cards-pointer {
+  cursor: pointer;
+}
+
+.ayur-card-icons{
+  width: 40px;
+  height: 40px;
+}
 /* Mobile adjustments */
 @media (max-width: 767px) {
   .ayur-card {

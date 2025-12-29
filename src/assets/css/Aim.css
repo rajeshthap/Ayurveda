@@ -1,0 +1,13 @@
+.image-sty{
+    height: '300px';
+     background: '#f4f4f4'
+}
+
+.safety-module-list{
+    padding-left: '20px'
+}
+
+.safety-module-list li{
+    margin-bottom: '15px';
+     line-height: '1.6';
+}

@@ -38,7 +38,7 @@ const HeroContent = ({ showBannerOnly = false }) => {
       {!showBannerOnly && (
         <div className='about-bg'>
           <div className='ayur-bread-content text-center'>
-            <h2 style={{ fontWeight: 'bold' }}>Hero Content</h2>
+            <h2 className='heading-wrapper' >Hero Content</h2>
             <div className="ayur-bread-list">
               <span>
                   <Link to="/" >Home</Link>
@@ -73,7 +73,7 @@ const HeroContent = ({ showBannerOnly = false }) => {
                   ) : (
                     <>
                       {/* Content Header */}
-                      <h3 style={{ fontWeight: 'bold', fontSize: '2rem', marginBottom: '2rem' }}>
+                      <h3 className='heading-extend'>
                         {heroData.title}
                       </h3>
                       
@@ -82,7 +82,7 @@ const HeroContent = ({ showBannerOnly = false }) => {
                         <div className="col-lg-12">
                         
                             <div className="media-card-content">
-                              <h4 className="mb-3" style={{ color: '#4e7c31', fontWeight: '600' }}>
+                              <h4 className="media-card-heading mb-3">
                                 {heroData.sub_title}
                               </h4>
                               
