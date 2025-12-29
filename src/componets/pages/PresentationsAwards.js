@@ -44,13 +44,13 @@ function PresentationsAwards() {
             </div>
           </div>
 
-          <div className="row">
+          <div className="row row-eq-height">
             {items.map((item) => (
               <div
-                className="col-lg-4 col-md-6 col-sm-6"
+                className="col-lg-4 col-md-6 col-sm-6 mb-4"
                 key={item.id}
               >
-                <div className="ayur-tpro-box">
+                <div className="ayur-tpro-box card-height-fix">
                   <div className="ayur-tpro-img">
                     <img
                       src={`${API_BASE}${item.image}`}
