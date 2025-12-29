@@ -67,6 +67,7 @@ body {
   --gov-space-1100: 44px;
   --gov-space-1200: 48px;
 }
+
 a {
   text-decoration: none !important;
 }
@@ -83,76 +84,80 @@ a {
   position: relative;
   z-index: 2;
 }
- .step {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          text-align: center;
-          padding: 10px;
-          position: relative;
-          flex: 1;
-        }
-        
-        .step-number {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          width: 30px;
-          height: 30px;
-          border-radius: 50%;
-          background-color: #e9ecef;
-          margin-bottom: 5px;
-          font-weight: bold;
-        }
-        
-        .step.active .step-number {
-          background-color: #0d6efd;
-          color: white;
-        }
-        
-        .step.completed .step-number {
-          background-color: #198754;
-          color: white;
-        }
-        
-        .step span {
-          font-size: 12px;
-        }
-        
-        .step.active span {
-          color: #0d6efd;
-          font-weight: bold;
-        }
-        
-        .step.completed span {
-          color: #198754;
-          font-weight: bold;
-        }
- .module-container {
-          display: flex;
-          flex-direction: column;
-          gap: 1rem;
-        }
-        
-        .module-item {
-          background-color: #f8f9fa;
-          border: 1px solid #dee2e6;
-        }
-        
-        .file-input-container {
-          position: relative;
-        }
-        
-        .file-selected {
-          display: flex;
-          align-items: center;
-          color: #198754;
-          font-size: 0.875rem;
-          margin-top: 0.5rem;
-        }
-.year-txt{
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 10px;
+  position: relative;
+  flex: 1;
+}
+
+.step-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: #e9ecef;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.step.active .step-number {
+  background-color: #0d6efd;
+  color: white;
+}
+
+.step.completed .step-number {
+  background-color: #198754;
+  color: white;
+}
+
+.step span {
+  font-size: 12px;
+}
+
+.step.active span {
+  color: #0d6efd;
+  font-weight: bold;
+}
+
+.step.completed span {
+  color: #198754;
+  font-weight: bold;
+}
+
+.module-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.module-item {
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+}
+
+.file-input-container {
+  position: relative;
+}
+
+.file-selected {
+  display: flex;
+  align-items: center;
+  color: #198754;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+}
+
+.year-txt {
   color: #fff;
 }
+
 .login-btn {
   font-size: 12px;
   background-color: var(--gov-bg-green) !important;
@@ -164,9 +169,11 @@ a {
   .br-login {
     margin: var(--gov-space-200) var(--gov-space-0) var(--gov-space-0) var(--gov-space-0) !important;
   }
-.ayur-nav-menu ul li a:hover svg {
-margin-left: 10px;
-}
+
+  .ayur-nav-menu ul li a:hover svg {
+    margin-left: 10px;
+  }
+
   /* .ayur-menu-wrapper {
   margin-top: 100px !important;
 } */
@@ -187,4 +194,7 @@ margin-left: 10px;
     padding-top: 0px !important;
   }
 
+  .pdf-button.download-btn {
+    margin-left: 0px;
+  }
 }

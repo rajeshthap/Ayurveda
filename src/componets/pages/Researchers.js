@@ -45,7 +45,7 @@ const Researchers = () => {
         {/* Breadcrumb Section */}
         <div className='about-bg'>
           <div className='ayur-bread-content'>
-            <h2 style={{ fontWeight: 'bold', color: '#28a745' }}>Researchers</h2>
+            <h2>Researchers</h2>
             <div className="ayur-bread-list">
               <span>
                 <Link to="/">Home</Link>
@@ -76,7 +76,7 @@ const Researchers = () => {
                       <>
                         <div className="researchers-section">
                           <h2 style={{ fontWeight: 'bold', color: '#28a745' }}>Research Publications</h2>
-                          
+
                           <div className="research-container">
                             {researchData.map((researcher) => (
                               <div key={researcher.id} className="researcher-profile mb-4 p-3 bg-light rounded">
@@ -90,19 +90,19 @@ const Researchers = () => {
                                         {researcher.pdf_files && (
                                           <>
                                             <div className="pdf-button-container">
-                                              <a 
-                                                href={getPdfUrl(researcher.pdf_files)} 
-                                                target="_blank" 
-                                                rel="noopener noreferrer" 
+                                              <a
+                                                href={getPdfUrl(researcher.pdf_files)}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
                                                 className="pdf-button view"
                                               >
-                                              <i className='research-icon'><IoEye  /> </i>   
+                                                <i className='research-icon'><IoEye /> </i>
                                                 View PDF
                                               </a>
-                                              <a 
-                                                href={getPdfUrl(researcher.pdf_files)} 
-                                                target="_blank" 
-                                                rel="noopener noreferrer" 
+                                              <a
+                                                href={getPdfUrl(researcher.pdf_files)}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
                                                 className="pdf-button download"
                                               >
                                                 <i className='research-icon'>  <FaDownload /></i>
@@ -114,7 +114,7 @@ const Researchers = () => {
                                       </div>
                                     </div>
                                   </div>
-                                  
+
                                   {/* Right side - Description */}
                                   <div className="col-md-8">
                                     <div className="description-container">

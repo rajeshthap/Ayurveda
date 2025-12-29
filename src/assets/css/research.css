@@ -10,7 +10,7 @@
   margin-bottom: 40px;
 }
 
-.research-icon{
+.research-icon {
   margin-right: 8px;
   font-size: 12px;
 }
@@ -26,9 +26,11 @@
   color: #4c956c;
   font-weight: normal;
 }
-.researcher-profile h3{
+
+.researcher-profile h3 {
   font-size: 18px !important;
 }
+
 .researchers-section h2 {
   font-size: 2rem;
   color: #2c6e49;
@@ -58,7 +60,7 @@
   border-left: 4px solid #4c956c;
   padding: 15px;
   border-radius: 4px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .research-item h4 {
@@ -75,6 +77,7 @@
 .research-item strong {
   color: #2c6e49;
 }
+
 .research-container {
   margin-top: 20px;
 }
@@ -84,7 +87,7 @@
   padding: 20px;
   background-color: #f9f9f9;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .pdf-container {
@@ -119,15 +122,17 @@
   margin-top: 5px;
 }
 
-.pdf-button .btn{
+.pdf-button .btn {
   font-size: 12px;
   background-color: red !important;
 }
+
 .pdf-download .btn {
   font-size: 12px;
 
   background-color: #2c6e49;
 }
+
 /* --- Option 3: Minimalist Outline (Ghost Buttons) --- */
 
 .pdf-button {
@@ -148,7 +153,7 @@
   color: #28a745;
   border: 2px solid #28a745;
   font-size: 10px;
-  
+
 }
 
 .pdf-button.view:hover {
@@ -169,6 +174,7 @@
   background-color: #17a2b8;
   color: white;
 }
+
 .ml-2 {
   margin-left: 0.5rem;
 }
@@ -194,7 +200,8 @@
   margin-bottom: 10px;
 }
 
-.loading-message, .error-message {
+.loading-message,
+.error-message {
   padding: 20px;
   text-align: center;
   font-size: 18px;
@@ -231,28 +238,38 @@
   margin-bottom: 20px;
 }
 
-.pdf-item h5, .description-item h5 {
+.pdf-item h5,
+.description-item h5 {
   color: #3498db;
   font-size: 16px;
   margin-bottom: 10px;
 }
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .pdf-button.download {
+    margin-left: 0px !important;
+  }
+}
+
 @media (max-width: 768px) {
   .researchers-container {
     padding: 15px;
   }
-  
+
+
+
   .researchers-header h1 {
     font-size: 2rem;
   }
-  
+
   .researchers-header h2 {
     font-size: 1.2rem;
   }
-  
+
   .researchers-section h2 {
     font-size: 1.7rem;
   }
-  
+
   .researcher-profile h3 {
     font-size: 1.5rem;
   }
