@@ -1,35 +1,75 @@
- .ayur-ban-slide {
-   position: relative;
-   overflow: hidden;
- }
+.ayur-ban-slide {
+  position: relative;
+  overflow: hidden;
+}
 
- .ayur-ban-slide img {
-   width: 100%;
-   height: auto;
-   display: block;
- }
+.ayur-ban-slide img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
 
- .ayur-ban-title {
+.ayur-ban-title {
+  left: 0;
+  right: 0;
+  text-align: center;
+  color: #fff !important;
+  font-size: 18px;
+  font-weight: bold;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.9);
+  margin: 0;
+  padding: 0 10px;
+}
 
-   left: 0;
-   right: 0;
-   text-align: center;
-   color: #fff !important;
-   font-size: 18px;
-   font-weight: bold;
-   text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.9);
-   margin: 0;
-   padding: 0 10px;
- }
+.ayur-ban-desc {
+  left: 0;
+  right: 0;
+  text-align: center;
+  color: #fff;
+  font-size: 1.2rem;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+  margin: 0;
+  padding: 0 15px;
+}
 
- .ayur-ban-desc {
+@media only screen and (max-width: 767px) {
+  .ayur-ban-slide {
+    width: 100% !important;
+  }
 
-   left: 0;
-   right: 0;
-   text-align: center;
-   color: #fff;
-   font-size: 1.2rem;
-   text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
-   margin: 0;
-   padding: 0 15px;
- }
+  .ayur-ban-slide img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .ayur-ban-title {
+    font-size: 16px;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.9);
+  }
+
+  .ayur-ban-desc {
+    font-size: 14px;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+    line-height: 1.4;
+  }
+}
+
+@media only screen and (max-width: 568px) {
+  .ayur-ban-title {
+    font-size: 14px;
+  }
+
+  .ayur-ban-desc {
+    font-size: 12px;
+    line-height: 1.4;
+  }
+
+  .ayur-banner-slider::after {
+    border-radius: 22px;
+  }
+
+  .ayur-btn {
+    font-size: 12px;
+  }
+}

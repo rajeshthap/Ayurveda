@@ -117,6 +117,32 @@ function BannerSection() {
                   modifier: 1,
                   slideShadows: false,
                 }}
+                // Responsive breakpoints
+                breakpoints={{
+                  // When window width is >= 768px (tablet and desktop)
+                  768: {
+                    slidesPerView: 3,
+                    coverflowEffect: {
+                      rotate: 0,
+                      stretch: 0,
+                      depth: 100,
+                      modifier: 1,
+                      slideShadows: false,
+                    }
+                  },
+                  // When window width is < 768px (mobile)
+                  0: {
+                    slidesPerView: 1,
+                    coverflowEffect: {
+                      rotate: 0,
+                      stretch: 0,
+                      depth: 0,
+                      modifier: 0,
+                      slideShadows: false,
+                    },
+                    spaceBetween: 0
+                  }
+                }}
                 className="swiper ayur-banner-slider"
               >
                 {carouselData.map((item) => (
@@ -161,8 +187,6 @@ function BannerSection() {
         <img src={BanLeafLeft} alt="leaf-image" />
         <img src={BanLeafRight} alt="leaf-image" />
       </div> */}
-
-
     </div>
   );
 }
