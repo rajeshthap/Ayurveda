@@ -572,9 +572,9 @@ const ManageWebinars = () => {
                             {webinarItems.map((item) => (
                               <Col md={6} lg={4} className="mb-4" key={item.id}>
                                 <Card 
-                                  className="h-100 webinar-card" 
+                                  className="h-100 webinar-card profile-card" 
                                   onClick={() => handleItemClick(item.id)}
-                                  style={{ cursor: 'pointer' }}
+                        
                                 >
                                   <Card.Body>
                                     <div className="d-flex flex-column">
@@ -688,7 +688,7 @@ const ManageWebinars = () => {
                                 <video
                                   src={videoPreview}
                                   controls
-                                  style={{ maxWidth: "400px", maxHeight: "300px" }}
+                                 className="img-current"
                                 />
                               </div>
                             ) : (
@@ -698,7 +698,7 @@ const ManageWebinars = () => {
                                   <video
                                     src={`https://mahadevaaya.com/trilokayurveda/trilokabackend${existingVideo}`}
                                     controls
-                                    style={{ maxWidth: "400px", maxHeight: "300px" }}
+                                    className="img-current"
                                   />
                                 </div>
                               )
@@ -710,7 +710,7 @@ const ManageWebinars = () => {
                               <video
                                 src={`https://mahadevaaya.com/trilokayurveda/trilokabackend${existingVideo}`}
                                 controls
-                                style={{ maxWidth: "400px", maxHeight: "300px" }}
+                               className="img-current"
                               />
                             </div>
                           )

@@ -604,9 +604,9 @@ const ManageSuccessStories = () => {
                             {successStoryItems.map((item) => (
                               <Col md={6} lg={4} className="mb-4" key={item.id}>
                                 <Card 
-                                  className="h-100 success-story-card" 
+                                  className="h-100 success-story-card profile-card" 
                                   onClick={() => handleItemClick(item.id)}
-                                  style={{ cursor: 'pointer' }}
+                                 
                                 >
                                   <Card.Body>
                                     <div className="d-flex flex-column">
@@ -625,8 +625,8 @@ const ManageSuccessStories = () => {
                                             <img
                                               src={`https://mahadevaaya.com/trilokayurveda/trilokabackend${item.image}`}
                                               alt={item.title}
-                                              className="rounded"
-                                              style={{ width: '100px', height: '60px', objectFit: 'cover' }}
+                                              className="rounded img-wrapper"
+                                        
                                             />
                                           </div>
                                         )}
@@ -731,7 +731,7 @@ const ManageSuccessStories = () => {
                                 <img
                                   src={imagePreview}
                                   alt="Image Preview"
-                                  style={{ maxWidth: "300px", maxHeight: "200px" }}
+                                 className="img-current"
                                 />
                               </div>
                             ) : (
@@ -741,7 +741,7 @@ const ManageSuccessStories = () => {
                                   <img
                                     src={`https://mahadevaaya.com/trilokayurveda/trilokabackend${existingImage}`}
                                     alt="Current Image"
-                                    style={{ maxWidth: "300px", maxHeight: "200px" }}
+                                     className="img-current"
                                   />
                                 </div>
                               )
@@ -753,7 +753,7 @@ const ManageSuccessStories = () => {
                               <img
                                 src={`https://mahadevaaya.com/trilokayurveda/trilokabackend${existingImage}`}
                                 alt="Current Image"
-                                style={{ maxWidth: "300px", maxHeight: "200px" }}
+                                 className="img-current"
                               />
                             </div>
                           )

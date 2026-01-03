@@ -199,7 +199,7 @@ function NavBar() {
                       <ul className={`ayur-submenu ${submenuStates.resources ? "ayur-submenu-open" : ""}`}>
                         <li><Link to="/SuccessStories" onClick={(e) => handleSubmenuClick("/SuccessStories", e)}>Success Stories</Link></li>
               
-                        <li><Link to="/CommingSoon" onClick={(e) => handleSubmenuClick("/CommingSoon", e)}>Webinars</Link></li>
+                        <li><Link to="/Webinarss" onClick={(e) => handleSubmenuClick("/Webinarss", e)}>Webinars</Link></li>
               
                       </ul>
                     </li>

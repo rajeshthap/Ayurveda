@@ -164,13 +164,13 @@ function SuccessStories() {
                               <img
                                 src={getYouTubeThumbnailUrl(story.video_link)}
                                 alt="Video thumbnail"
-                                className="img-fluid rounded"
-                                style={{ width: '100%', cursor: 'pointer' }}
+                                className="img-fluid rounded video-thumbnail"
+                    
                                 onClick={() => openVideoModal(story.video_link)}
                               />
                               <div 
-                                className="position-absolute top-50 start-50 translate-middle"
-                                style={{ cursor: 'pointer' }}
+                                className="position-absolute top-50 start-50 translate-middle video-play-icon"
+                    
                                 onClick={() => openVideoModal(story.video_link)}
                               >
                                 <div className="d-flex align-items-center justify-content-center bg-white rounded-circle p-3">
@@ -211,8 +211,8 @@ function SuccessStories() {
                               <img
                                 src={`https://mahadevaaya.com/trilokayurveda/trilokabackend${story.image}`}
                                 alt={story.title}
-                                className="img-fluid rounded"
-                                style={{ width: '100%' }}
+                                className="img-fluid rounded video-thumbnail"
+                              
                               />
                             </div>
                             <Card.Text>
