@@ -96,6 +96,40 @@ const menuItems = [
 
      {
       icon: <FaProjectDiagram />,
+      label: "Success Stories",
+      submenu: [
+        {
+          label: "Add Success Story",
+          path: "/AddSuccessStories",
+          icon: <FaImage />,
+        },
+         {
+          label: "Manage Success Story",
+          path: "/ManageSuccessStories",
+          icon: <FaImage />,
+        },
+      ],
+    },
+
+    {
+      icon: <FaProjectDiagram />,
+      label: "Webinar",
+      submenu: [
+        {
+          label: "Add Webinar",
+          path: "/AddWebinar",
+          icon: <FaImage />,
+        },
+         {
+          label: "Manage Webinar",
+          path: "/ManageWebinar",
+          icon: <FaImage />,
+        },
+      ],
+    },
+
+     {
+      icon: <FaProjectDiagram />,
       label: "Testinomials",
       submenu: [
         {

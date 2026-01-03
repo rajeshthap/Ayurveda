@@ -92,6 +92,8 @@ import Care from './componets/pages/Homepages/Care';
 import Aim from './componets/pages/Homepages/Aim';
 import Call from './componets/pages/Homepages/Call';
 import Safety from './componets/pages/Homepages/Safety';
+import AddSuccessStories from './componets/dash_board/SuccessStories/AddSuccessStories';
+import ManageSuccessStories from './componets/dash_board/SuccessStories/ManageSuccessStories';
 
 
 function App() {
@@ -142,7 +144,9 @@ function App() {
       "/ManageAim",
       "/ManageSafety",
       "/CalltoAction",
-      "/ManageHeroSection"
+      "/ManageHeroSection",
+      "/AddSuccessStories",
+      "/ManageSuccessStories"
 
 
      ]);
@@ -191,7 +195,9 @@ function App() {
     "/ManageAim",
     "/ManageSafety",
     "/CalltoAction",
-    "/ManageHeroSection"
+    "/ManageHeroSection",
+    "/AddSuccessStories",
+    "/ManageSuccessStories"
 
   ]);
 
@@ -285,6 +291,8 @@ function App() {
 <Route path="/Aim" element={<Aim />} />
 <Route path="/Call" element={<Call />} />
 <Route path="/Safety" element={<Safety />} />
+<Route path="/AddSuccessStories" element={<AddSuccessStories />} />
+<Route path="/ManageSuccessStories" element={<ManageSuccessStories />} />
 
 {/* <Route path="*" element={<NotFound />} />  */}
 </Routes>
