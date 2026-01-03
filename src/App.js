@@ -96,6 +96,8 @@ import AddSuccessStories from './componets/dash_board/SuccessStories/AddSuccessS
 import ManageSuccessStories from './componets/dash_board/SuccessStories/ManageSuccessStories';
 import AddWebinar from './componets/dash_board/Webinar/AddWebinar';
 import ManageWebinars from './componets/dash_board/Webinar/ManageWebinars';
+import SuccessStories from './componets/pages/Resources/SuccessStories';
+
 
 
 function App() {
@@ -302,6 +304,7 @@ function App() {
 <Route path="/ManageSuccessStories" element={<ManageSuccessStories />} />
 <Route path="/AddWebinar" element={<AddWebinar/>} />
 <Route path="/ManageWebinars" element={<ManageWebinars />} />
+<Route path="/SuccessStories" element={<SuccessStories/>} />
 
 {/* <Route path="*" element={<NotFound />} />  */}
 </Routes>

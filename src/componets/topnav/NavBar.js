@@ -197,10 +197,10 @@ function NavBar() {
                         </svg>
                       </button>
                       <ul className={`ayur-submenu ${submenuStates.resources ? "ayur-submenu-open" : ""}`}>
-                        <li><Link to="/CommingSoon" onClick={(e) => handleSubmenuClick("/CommingSoon", e)}>Success Stories</Link></li>
-                        <li><Link to="/CommingSoon" onClick={(e) => handleSubmenuClick("/CommingSoon", e)}>Testimonials</Link></li>
+                        <li><Link to="/SuccessStories" onClick={(e) => handleSubmenuClick("/SuccessStories", e)}>Success Stories</Link></li>
+              
                         <li><Link to="/CommingSoon" onClick={(e) => handleSubmenuClick("/CommingSoon", e)}>Webinars</Link></li>
-                        <li><Link to="/CommingSoon" onClick={(e) => handleSubmenuClick("/CommingSoon", e)}>Videos</Link></li>
+              
                       </ul>
                     </li>
 
