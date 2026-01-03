@@ -122,7 +122,7 @@ const menuItems = [
         },
          {
           label: "Manage Webinar",
-          path: "/ManageWebinar",
+          path: "/ManageWebinars",
           icon: <FaImage />,
         },
       ],

@@ -95,7 +95,7 @@ import Safety from './componets/pages/Homepages/Safety';
 import AddSuccessStories from './componets/dash_board/SuccessStories/AddSuccessStories';
 import ManageSuccessStories from './componets/dash_board/SuccessStories/ManageSuccessStories';
 import AddWebinar from './componets/dash_board/Webinar/AddWebinar';
-import ManageWebinar from './componets/dash_board/Webinar/ManageWebinar';
+import ManageWebinars from './componets/dash_board/Webinar/ManageWebinars';
 
 
 function App() {
@@ -150,7 +150,7 @@ function App() {
       "/AddSuccessStories",
       "/ManageSuccessStories",
       "/AddWebinar",
-      "/ManageWebinar"
+      "/ManageWebinars"
 
 
      ]);
@@ -202,8 +202,8 @@ function App() {
     "/ManageHeroSection",
     "/AddSuccessStories",
     "/ManageSuccessStories",
-     "/AddWebinar",
-      "/ManageWebinar"
+    "/AddWebinar",
+    "/ManageWebinars"
     
 
   ]);
@@ -301,7 +301,7 @@ function App() {
 <Route path="/AddSuccessStories" element={<AddSuccessStories />} />
 <Route path="/ManageSuccessStories" element={<ManageSuccessStories />} />
 <Route path="/AddWebinar" element={<AddWebinar/>} />
-<Route path="/ManageWebinar" element={<ManageWebinar />} />
+<Route path="/ManageWebinars" element={<ManageWebinars />} />
 
 {/* <Route path="*" element={<NotFound />} />  */}
 </Routes>

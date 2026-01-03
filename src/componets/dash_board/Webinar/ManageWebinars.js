@@ -7,7 +7,7 @@ import LeftNav from "../LeftNav";
 import DashBoardHeader from "../DashBoardHeader";
 import { FaTrash, FaEdit, FaArrowLeft, FaVideo, FaYoutube } from "react-icons/fa";
 
-const ManageWebinar = () => {
+const ManageWebinars = () => {
   const { auth, refreshAccessToken } = useAuth();
   const authFetch = useAuthFetch();
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -758,4 +758,4 @@ const ManageWebinar = () => {
   );
 };
 
-export default ManageWebinar;
+export default ManageWebinars;
