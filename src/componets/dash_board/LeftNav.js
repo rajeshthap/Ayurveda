@@ -298,12 +298,12 @@ const menuItems = [
       label: "Feature",
       submenu: [
         {
-          label: "Add FQA",
+          label: "Add FAQ",
           path: "/AddFQA",
           icon: <FaImage />,
         },
          {
-          label: "Manage FQA",
+          label: "Manage FAQ",
           path: "/ManageFQA",
           icon: <FaImage />,
         },
@@ -381,27 +381,7 @@ const menuItems = [
     },
    
 
-     {
-      icon: <FaImages />,
-      label: "Contact Us ",
-      submenu: [
-        {
-          label: "Add Contact Us",
-          path: "/AddContactUs",
-          icon: <FaImage />,
-        },
-         {
-          label: "Manage Contact Us",
-          path: "/ManageContactUs",
-          icon: <FaImage />,
-        },
-        
-        
-       
-      ],
-  
-     
-    },
+    
   
   ];
 
@@ -409,7 +389,7 @@ const menuItems = [
   
   
 
-  // 🔹 Auto-close sidebar when switching to mobile or tablet
+  //  Auto-close sidebar when switching to mobile or tablet
   
 
   return (
