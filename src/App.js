@@ -92,6 +92,13 @@ import Care from './componets/pages/Homepages/Care';
 import Aim from './componets/pages/Homepages/Aim';
 import Call from './componets/pages/Homepages/Call';
 import Safety from './componets/pages/Homepages/Safety';
+import AddSuccessStories from './componets/dash_board/SuccessStories/AddSuccessStories';
+import ManageSuccessStories from './componets/dash_board/SuccessStories/ManageSuccessStories';
+import AddWebinar from './componets/dash_board/Webinar/AddWebinar';
+import ManageWebinars from './componets/dash_board/Webinar/ManageWebinars';
+import SuccessStories from './componets/pages/Resources/SuccessStories';
+import Webinarss from './componets/pages/Resources/Webinarss';
+
 
 
 function App() {
@@ -142,7 +149,11 @@ function App() {
       "/ManageAim",
       "/ManageSafety",
       "/CalltoAction",
-      "/ManageHeroSection"
+      "/ManageHeroSection",
+      "/AddSuccessStories",
+      "/ManageSuccessStories",
+      "/AddWebinar",
+      "/ManageWebinars"
 
 
      ]);
@@ -191,7 +202,12 @@ function App() {
     "/ManageAim",
     "/ManageSafety",
     "/CalltoAction",
-    "/ManageHeroSection"
+    "/ManageHeroSection",
+    "/AddSuccessStories",
+    "/ManageSuccessStories",
+    "/AddWebinar",
+    "/ManageWebinars"
+    
 
   ]);
 
@@ -285,6 +301,12 @@ function App() {
 <Route path="/Aim" element={<Aim />} />
 <Route path="/Call" element={<Call />} />
 <Route path="/Safety" element={<Safety />} />
+<Route path="/AddSuccessStories" element={<AddSuccessStories />} />
+<Route path="/ManageSuccessStories" element={<ManageSuccessStories />} />
+<Route path="/AddWebinar" element={<AddWebinar/>} />
+<Route path="/ManageWebinars" element={<ManageWebinars />} />
+<Route path="/SuccessStories" element={<SuccessStories/>} />
+<Route path="/Webinarss" element={<Webinarss/>} />
 
 {/* <Route path="*" element={<NotFound />} />  */}
 </Routes>
