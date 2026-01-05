@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Row, Col, Spinner, Alert, Modal, Tabs, Tab, Card } from 'react-bootstrap';
 import { FaPlayCircle, FaFilePdf, FaImage, FaArrowLeft } from 'react-icons/fa';
-
+import '../../../assets/css/stylecss.css';
 import '../../../assets/css/Success.css';
 import BgShape2 from '../../../assets/images/bg-shape2.png';
 import BgLeaf2 from '../../../assets/images/bg-leaf2.png';
@@ -135,7 +135,7 @@ function SuccessStories() {
       <div className="row">
         <div className="ayur-bgcover ayur-about-sec">
           <div className="container fluid about-us ann-heading">
-            <h3>Success Stories</h3>
+            <h2>Success Stories</h2>
             <h5>Inspiring Journeys to Wellness</h5>
             
             {/* Tabs for Videos, Images, and PDFs */}
@@ -156,7 +156,7 @@ function SuccessStories() {
                     successStories.filter(story => story.video_link).map((story) => (
                       <Col md={6} lg={4} className="mb-4" key={story.id}>
                         <Card className="h-100">
-                          <Card.Header >
+                          <Card.Header className='ayur-tpro-text'>
                             <h3 >{story.title}</h3>
                           </Card.Header>
                           <Card.Body>
@@ -203,7 +203,7 @@ function SuccessStories() {
                     successStories.filter(story => story.image).map((story) => (
                       <Col md={6} lg={4} className="mb-4" key={story.id}>
                         <Card className="h-100">
-                          <Card.Header >
+                          <Card.Header className='ayur-tpro-text'>
                             <h3>{story.title}</h3>
                           </Card.Header>
                           <Card.Body>
@@ -240,9 +240,9 @@ function SuccessStories() {
                     successStories.filter(story => story.pdf_file).map((story) => (
                       <Col md={6} lg={4} className="mb-4" key={story.id}>
                         <Card className="h-100">
-                          <Card.Header >
+                          <div className='ayur-tpro-text'>
                             <h3>{story.title}</h3>
-                          </Card.Header>
+                          </div>
                           <Card.Body>
                             <div className="d-flex justify-content-center mb-3">
                               <FaFilePdf size={80} className="text-danger" />

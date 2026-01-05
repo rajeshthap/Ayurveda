@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Row, Col, Spinner, Alert, Modal, Tabs, Tab, Card, Button, Form } from 'react-bootstrap';
 import { FaPlayCircle, FaFilePdf, FaImage, FaArrowLeft, FaCreditCard, FaMobileAlt } from 'react-icons/fa';
-
+import '../../../assets/css/stylecss.css';
 import '../../../assets/css/Success.css';
 import BgShape2 from '../../../assets/images/bg-shape2.png';
 import BgLeaf2 from '../../../assets/images/bg-leaf2.png';
@@ -196,7 +196,7 @@ function Webinarss() {
       <div className="row">
         <div className="ayur-bgcover ayur-about-sec">
           <div className="container fluid about-us ann-heading">
-            <h3>Webinars</h3>
+            <h2>Webinars</h2>
             <h5>Knowledge Sharing Sessions</h5>
             
             {/* Tabs for Videos and Paid Videos (conditionally rendered) */}
@@ -217,7 +217,7 @@ function Webinarss() {
                     webinars.filter(webinar => webinar.video_link).map((webinar) => (
                       <Col md={6} lg={4} className="mb-4" key={webinar.id}>
                         <Card className="h-100">
-                          <Card.Header>
+                          <Card.Header className='ayur-tpro-text'>
                             <h3>{webinar.title}</h3>
                           </Card.Header>
                           <Card.Body>
@@ -274,7 +274,7 @@ function Webinarss() {
                       webinars.filter(webinar => paidWebinars.includes(webinar.id) && webinar.video_file).map((webinar) => (
                         <Col md={12} className="mb-4" key={webinar.id}>
                           <Card>
-                            <Card.Header>
+                            <Card.Header className='ayur-tpro-text'>
                               <h3>{webinar.title}</h3>
                             </Card.Header>
                             <Card.Body>
