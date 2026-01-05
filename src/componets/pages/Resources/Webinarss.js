@@ -140,7 +140,7 @@ function Webinarss() {
       <div className="ayur-bgcover ayur-about-sec">
         <div className='about-bg'>
           <div className='ayur-bread-content'>
-            <h2>Webinars</h2>
+            <h3>Webinars</h3>
             <div className="ayur-bread-list">
               <span><a href="/">Home</a></span>
               <span className="ayur-active-page">/ Webinars</span>
@@ -217,8 +217,8 @@ function Webinarss() {
                     webinars.filter(webinar => webinar.video_link).map((webinar) => (
                       <Col md={6} lg={4} className="mb-4" key={webinar.id}>
                         <Card className="h-100">
-                          <Card.Header className='ayur-tpro-text'>
-                            <h3>{webinar.title}</h3>
+                          <Card.Header className='ayur-tpro-text-web'>
+                            <h4>{webinar.title}</h4>
                           </Card.Header>
                           <Card.Body>
                             <div className="video-thumbnail-container position-relative mb-3">
@@ -274,8 +274,8 @@ function Webinarss() {
                       webinars.filter(webinar => paidWebinars.includes(webinar.id) && webinar.video_file).map((webinar) => (
                         <Col md={12} className="mb-4" key={webinar.id}>
                           <Card>
-                            <Card.Header className='ayur-tpro-text'>
-                              <h3>{webinar.title}</h3>
+                            <Card.Header className='ayur-tpro-text-web'>
+                              <h4>{webinar.title}</h4>
                             </Card.Header>
                             <Card.Body>
                               <div className="video-container mb-3 ">

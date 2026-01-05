@@ -79,7 +79,7 @@ function SuccessStories() {
       <div className="ayur-bgcover ayur-about-sec">
         <div className='about-bg'>
           <div className='ayur-bread-content'>
-            <h2>Success Stories</h2>
+            <h3>Success Stories</h3>
             <div className="ayur-bread-list">
               <span><a href="/">Home</a></span>
               <span className="ayur-active-page">/ Success Stories</span>
@@ -103,7 +103,7 @@ function SuccessStories() {
       <div className="ayur-bgcover ayur-about-sec">
         <div className='about-bg'>
           <div className='ayur-bread-content'>
-            <h2>Success Stories</h2>
+            <h3>Success Stories</h3>
             <div className="ayur-bread-list">
               <span><a href="/">Home</a></span>
               <span className="ayur-active-page">/ Success Stories</span>
@@ -156,8 +156,8 @@ function SuccessStories() {
                     successStories.filter(story => story.video_link).map((story) => (
                       <Col md={6} lg={4} className="mb-4" key={story.id}>
                         <Card className="h-100">
-                          <Card.Header className='ayur-tpro-text'>
-                            <h3 >{story.title}</h3>
+                          <Card.Header className='ayur-tpro-text-web'>
+                            <h4 >{story.title}</h4>
                           </Card.Header>
                           <Card.Body>
                             <div className="video-thumbnail-container position-relative mb-3">
@@ -203,8 +203,8 @@ function SuccessStories() {
                     successStories.filter(story => story.image).map((story) => (
                       <Col md={6} lg={4} className="mb-4" key={story.id}>
                         <Card className="h-100">
-                          <Card.Header className='ayur-tpro-text'>
-                            <h3>{story.title}</h3>
+                          <Card.Header className='ayur-tpro-text-web'>
+                            <h4>{story.title}</h4>
                           </Card.Header>
                           <Card.Body>
                             <div className="mb-3">
@@ -240,8 +240,8 @@ function SuccessStories() {
                     successStories.filter(story => story.pdf_file).map((story) => (
                       <Col md={6} lg={4} className="mb-4" key={story.id}>
                         <Card className="h-100">
-                          <div className='ayur-tpro-text'>
-                            <h3>{story.title}</h3>
+                          <div className='ayur-tpro-text-web'>
+                            <h4>{story.title}</h4>
                           </div>
                           <Card.Body>
                             <div className="d-flex justify-content-center mb-3">

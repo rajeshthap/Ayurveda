@@ -3135,6 +3135,18 @@ span {
   -webkit-box-orient: vertical;
 }
 
+.ayur-tpro-text-web h4{
+   font-size: 18px;
+  line-height: 1.4;
+  color: #28a745;
+  /* Fixed height for title */
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  /* Limit to 2 lines */
+  -webkit-box-orient: vertical;
+}
+
 .ayur-tpro-text h3 a {
   color: inherit;
   text-decoration: none;
