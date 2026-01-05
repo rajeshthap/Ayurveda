@@ -165,26 +165,33 @@ a {
   margin-left: 11px;
 }
 
-.heading-wrapper{
+.heading-wrapper {
   font-weight: 'bold'
 }
 
-.heading-extend{
+.heading-extend {
   font-weight: 'bold';
-  font-size:  '2rem';
+  font-size: '2rem';
 }
 
-.about-description{
-   font-size: '1.2rem';
+.about-description {
+  font-size: '1.2rem';
 }
 
-.module-description-text{
+.module-description-text {
   white-space: "pre-line"
 }
 
-.ayur-inneraboutimg{
-   will-change: transform;
+.ayur-inneraboutimg {
+  will-change: transform;
   transform: perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1);
+}
+
+.ayur-testname img {
+
+  width: 72px;
+  height: 72px;
+  border-radius: 50% !important;
 }
 
 @media only screen and (max-width: 568px) {
