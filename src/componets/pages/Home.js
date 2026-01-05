@@ -32,12 +32,13 @@ function Home() {
   return (
     <>
       <BannerSection />
-      <OurExpertise />
+      
      <ClinicHome />
       <CareHome />
       <AimHome />
       <CallHome/>
       <SafetyHome/>
+      <OurExpertise />
        <PresentationAwards showBanner={false} showAboutUsClass={false} />
 
       {/* <MediaGallery showBannerOnly={true} /> */}
