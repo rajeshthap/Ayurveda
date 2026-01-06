@@ -29,6 +29,8 @@ function ConsultNow() {
     complete_address: "",
     occupation: "",
     contact_number: "",
+    reference: "", // New field
+    complications: "", // New field
     
     // Medical Information
     chief_complaint: "",
@@ -137,6 +139,15 @@ function ConsultNow() {
       newErrors.complaint_duration = "Complaint duration is required";
     }
     
+    // Validation for new fields
+    if (!formData.reference) {
+      newErrors.reference = "Reference is required";
+    }
+    
+    if (!formData.complications.trim()) {
+      newErrors.complications = "Other health conditions is required";
+    }
+    
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -164,7 +175,24 @@ function ConsultNow() {
     setIsSubmitting(true);
     
     try {
-      const response = await axios.post(API_URL, formData);
+      // Log the form data to debug
+      console.log("Submitting form data:", formData);
+      
+      // Make sure all required fields are included and handle empty dates
+      const submissionData = {
+        ...formData,
+        // Ensure number fields are properly formatted
+        number_of_pregnancies: parseInt(formData.number_of_pregnancies) || 0,
+        number_of_alive_kids: parseInt(formData.number_of_alive_kids) || 0,
+        // Handle empty date fields - set to null if empty
+        past_treatment_1_date: formData.past_treatment_1_date ? formData.past_treatment_1_date : null,
+        past_treatment_2_date: formData.past_treatment_2_date ? formData.past_treatment_2_date : null,
+      };
+      
+      console.log("Final submission data:", submissionData);
+      
+      const response = await axios.post(API_URL, submissionData);
+      console.log("API response:", response.data);
       setSubmitMessage("Your consultation request has been submitted successfully!");
       // Reset form after successful submission
       setFormData({
@@ -178,6 +206,8 @@ function ConsultNow() {
         complete_address: "",
         occupation: "",
         contact_number: "",
+        reference: "", // Reset new field
+        complications: "", // Reset new field
         chief_complaint: "",
         complaint_duration: "",
         family_history: "",
@@ -194,7 +224,6 @@ function ConsultNow() {
         past_treatment_1_hospital_name: "",
         past_treatment_1_place: "",
         past_treatment_1_date: "",
-        past_treatment_1_details: "",
         past_treatment_2_doctor_name: "",
         past_treatment_2_hospital_name: "",
         past_treatment_2_place: "",
@@ -226,7 +255,38 @@ function ConsultNow() {
       setErrors({});
     } catch (error) {
       console.error("Error submitting form:", error);
-      setSubmitMessage("An error occurred while submitting your request. Please try again.");
+      
+      // More detailed error logging
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        console.error("Response data:", error.response.data);
+        console.error("Response status:", error.response.status);
+        console.error("Response headers:", error.response.headers);
+        
+        // Try to extract specific error messages from the response
+        if (error.response.data && typeof error.response.data === 'object') {
+          const errorMessages = [];
+          for (const field in error.response.data) {
+            if (Array.isArray(error.response.data[field])) {
+              errorMessages.push(`${field}: ${error.response.data[field].join(', ')}`);
+            } else {
+              errorMessages.push(`${field}: ${error.response.data[field]}`);
+            }
+          }
+          setSubmitMessage(`Error: ${errorMessages.join('; ')}`);
+        } else {
+          setSubmitMessage(`Error: ${error.response.data || 'An error occurred while submitting your request.'}`);
+        }
+      } else if (error.request) {
+        // The request was made but no response was received
+        console.error("Request error:", error.request);
+        setSubmitMessage("No response from server. Please try again.");
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        console.error("Error message:", error.message);
+        setSubmitMessage(`Error: ${error.message}`);
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -415,6 +475,38 @@ function ConsultNow() {
             onChange={handleInputChange}
           />
           {errors.complaint_duration && <div className="invalid-feedback">{errors.complaint_duration}</div>}
+        </div>
+        
+        {/* New fields */}
+        <div className="col-md-6 mb-3">
+          <label htmlFor="reference" className="form-label">Reference</label>
+          <select
+            className={`form-select ${errors.reference ? 'is-invalid' : ''}`}
+            id="reference"
+            name="reference"
+            value={formData.reference}
+            onChange={handleInputChange}
+            required
+          >
+            <option value="">Select Reference</option>
+            <option value="Friends or Relatives">Friends or Relatives</option>
+            <option value="Internet">Internet</option>
+            <option value="Other">Other</option>
+          </select>
+          {errors.reference && <div className="invalid-feedback">{errors.reference}</div>}
+        </div>
+        <div className="col-md-6 mb-3">
+          <label htmlFor="complications" className="form-label">Other Health Conditions</label>
+          <input
+            type="text"
+            className={`form-control ${errors.complications ? 'is-invalid' : ''}`}
+            id="complications"
+            name="complications"
+            value={formData.complications}
+            onChange={handleInputChange}
+            required
+          />
+          {errors.complications && <div className="invalid-feedback">{errors.complications}</div>}
         </div>
       </div>
     </div>
@@ -616,6 +708,7 @@ function ConsultNow() {
             value={formData.past_treatment_1_date}
             onChange={handleInputChange}
           />
+          <small className="form-text text-muted">Leave empty if not applicable</small>
         </div>
         <div className="col-12 mb-3">
           <label htmlFor="past_treatment_1_details" className="form-label">Treatment Details</label>
@@ -675,6 +768,7 @@ function ConsultNow() {
             value={formData.past_treatment_2_date}
             onChange={handleInputChange}
           />
+          <small className="form-text text-muted">Leave empty if not applicable</small>
         </div>
         <div className="col-12 mb-3">
           <label htmlFor="past_treatment_2_details" className="form-label">Treatment Details</label>
@@ -1058,6 +1152,13 @@ function ConsultNow() {
                   <td><strong>Complaint Duration:</strong></td>
                   <td>{formData.complaint_duration}</td>
                 </tr>
+                {/* New fields in review */}
+                <tr>
+                  <td><strong>Reference:</strong></td>
+                  <td>{formData.reference}</td>
+                  <td><strong>Other Health Conditions:</strong></td>
+                  <td>{formData.complications}</td>
+                </tr>
               </tbody>
             </table>
           </div>
@@ -1114,7 +1215,7 @@ function ConsultNow() {
                   <td><strong>Treatment 1 Place:</strong></td>
                   <td>{formData.past_treatment_1_place}</td>
                   <td><strong>Treatment 1 Date:</strong></td>
-                  <td>{formData.past_treatment_1_date}</td>
+                  <td>{formData.past_treatment_1_date || 'Not provided'}</td>
                 </tr>
                 <tr>
                   <td colSpan="4"><strong>Treatment 1 Details:</strong> {formData.past_treatment_1_details}</td>
@@ -1129,7 +1230,7 @@ function ConsultNow() {
                   <td><strong>Treatment 2 Place:</strong></td>
                   <td>{formData.past_treatment_2_place}</td>
                   <td><strong>Treatment 2 Date:</strong></td>
-                  <td>{formData.past_treatment_2_date}</td>
+                  <td>{formData.past_treatment_2_date || 'Not provided'}</td>
                 </tr>
                 <tr>
                   <td colSpan="4"><strong>Treatment 2 Details:</strong> {formData.past_treatment_2_details}</td>
@@ -1299,7 +1400,7 @@ function ConsultNow() {
               </div>
               
               {submitMessage ? (
-                <div className="alert alert-success my-4">
+                <div className={`alert ${submitMessage.includes('Error') ? 'alert-danger' : 'alert-success'} my-4`}>
                   {submitMessage}
                 </div>
               ) : (
@@ -1337,8 +1438,6 @@ function ConsultNow() {
           </div>
         </div>
       </div>
-      
-     
     </div>
   );
 }
