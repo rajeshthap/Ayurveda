@@ -1,0 +1,22 @@
+/* Simple styles for radio buttons */
+.simple-radio-container {
+  margin-top: 10px;
+}
+
+.simple-radio-container label {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+  font-weight: normal;
+  cursor: pointer;
+}
+
+.simple-radio-container input[type="radio"] {
+  margin-right: 10px;
+  flex-shrink: 0; /* Prevents the radio button from shrinking */
+}
+
+/* Optional: Add some spacing between the two radio options */
+.simple-radio-container label:not(:last-child) {
+  margin-bottom: 15px;
+}

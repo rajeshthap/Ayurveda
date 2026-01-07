@@ -98,6 +98,7 @@ import AddWebinar from './componets/dash_board/Webinar/AddWebinar';
 import ManageWebinars from './componets/dash_board/Webinar/ManageWebinars';
 import SuccessStories from './componets/pages/Resources/SuccessStories';
 import Webinarss from './componets/pages/Resources/Webinarss';
+import PatientFeedback from './componets/pages/PatientFeedback';
 
 
 
@@ -307,6 +308,7 @@ function App() {
 <Route path="/ManageWebinars" element={<ManageWebinars />} />
 <Route path="/SuccessStories" element={<SuccessStories/>} />
 <Route path="/Webinarss" element={<Webinarss/>} />
+<Route path="/PatientFeedback" element={<PatientFeedback/>} />
 
 {/* <Route path="*" element={<NotFound />} />  */}
 </Routes>

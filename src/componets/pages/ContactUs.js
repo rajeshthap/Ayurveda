@@ -163,9 +163,37 @@ const ContactUs = () => {
                   </svg>
                 </div>
                 <div className="trilok-info-content">
-                  <h4>Trilok Ayurveda</h4>
-                  <p>123 Wellness Street, Health City, India</p>
-                  <p>456 Ayurveda Lane, Herbal District, India</p>
+                  <h4>Trilok Ayurveda: Dehradun</h4>
+                  <p>475, Lane-8, Street-8, Rajendra Nagar, Dehradun – 248001 (UK)</p>
+                  <p>Land mark: Near Govind Niwas wedding point</p>
+                  <p>Google location:</p>
+                  <div className="map-container">
+                    <iframe 
+                      src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d3443.3101874914964!2d78.02352577!3d30.34213321!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390929ff3110c039%3A0x5cded829d275e38c!2sTrilok%20Ayurveda%20Speciality%20Clinic%20for%20Chronic%20Disorders!5e0!3m2!1sen!2sin!4v1767613486738!5m2!1sen!2sin%22" 
+                      width="80%" 
+                      height="150" 
+                      style={{border:0}} 
+                      allowFullScreen="" 
+                      loading="lazy" 
+                      referrerPolicy="no-referrer-when-downgrade"
+                      title="Trilok Ayurveda Dehradun Location"
+                    ></iframe>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="trilok-info-item">
+                <div className="trilok-info-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                    <circle cx="12" cy="10" r="3"></circle>
+                  </svg>
+                </div>
+                <div className="trilok-info-content">
+                  <h4>Trilok Ayurveda: Rishikesh</h4>
+                  <p>270, Nirmal Block – B, Tehri Punarvas Sthal, Pashulok, Rishikesh – 249201 (UK)</p>
+                  <p>Land mark: Near Shiv chowk, Tehri Visthapit</p>
+                  <p>Google location:</p>
                 </div>
               </div>
               
@@ -178,7 +206,8 @@ const ContactUs = () => {
                 <div className="trilok-info-content">
                   <h4>Phone</h4>
                   <p>+91 - 9837071030</p>
-                  <p>+91 - 1234567890</p>
+                  <p>+91 - 9758253472</p>
+                  <p>(Call hours: 9 AM – 7 PM IST)</p>
                 </div>
               </div>
               
@@ -191,8 +220,8 @@ const ContactUs = () => {
                 </div>
                 <div className="trilok-info-content">
                   <h4>Email</h4>
-                  <p>vdharsh@trilokayurveda.com</p>
-                  <p>info@trilokayurveda.com</p>
+                 <p>info@trilokayurveda.com</p>
+                  <p>cure@trilokayurveda.com</p>
                 </div>
               </div>
             </div>
