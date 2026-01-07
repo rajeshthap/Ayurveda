@@ -99,6 +99,9 @@ import ManageWebinars from './componets/dash_board/Webinar/ManageWebinars';
 import SuccessStories from './componets/pages/Resources/SuccessStories';
 import Webinarss from './componets/pages/Resources/Webinarss';
 import PatientFeedback from './componets/pages/PatientFeedback';
+import TotalFeedback from './componets/dash_board/total_consult_now/TotalFeedback';
+import ConsentForm from './componets/pages/ConsentForm';
+
 
 
 
@@ -154,7 +157,8 @@ function App() {
       "/AddSuccessStories",
       "/ManageSuccessStories",
       "/AddWebinar",
-      "/ManageWebinars"
+      "/ManageWebinars",
+      "/TotalFeedback"
 
 
      ]);
@@ -207,7 +211,8 @@ function App() {
     "/AddSuccessStories",
     "/ManageSuccessStories",
     "/AddWebinar",
-    "/ManageWebinars"
+    "/ManageWebinars",
+    "/TotalFeedback"
     
 
   ]);
@@ -309,7 +314,8 @@ function App() {
 <Route path="/SuccessStories" element={<SuccessStories/>} />
 <Route path="/Webinarss" element={<Webinarss/>} />
 <Route path="/PatientFeedback" element={<PatientFeedback/>} />
-
+<Route path="/TotalFeedback" element={<TotalFeedback/>} />
+<Route path="/ConsentForm" element={<ConsentForm/>} />
 {/* <Route path="*" element={<NotFound />} />  */}
 </Routes>
 

@@ -57,6 +57,13 @@ const menuItems = [
       path: "/TotalConsultNow",
       active: true,
     },
+
+      {
+      icon: <FaTachometerAlt />,
+      label: "Patient Feedback",
+      path: "/TotalFeedback",
+      active: true,
+    },
     
      {
       icon: <FaImages />,
