@@ -9,6 +9,8 @@
   margin-bottom: 15px;
   font-weight: normal;
   cursor: pointer;
+  width: 100%; /* Ensure each label takes full width */
+  margin-top: 10px; /* Add space at the top of each label */
 }
 
 .simple-radio-container input[type="radio"] {
@@ -19,4 +21,22 @@
 /* Optional: Add some spacing between the two radio options */
 .simple-radio-container label:not(:last-child) {
   margin-bottom: 15px;
+}
+
+/* Ensure the radio options stack vertically */
+.simple-radio-container label {
+  display: block;
+  margin-bottom: 15px;
+}
+
+.simple-radio-container label input[type="radio"] {
+  display: inline-block;
+  margin-right: 10px;
+  vertical-align: middle;
+}
+
+.simple-radio-container label span {
+  display: inline-block;
+  vertical-align: middle;
+  width: calc(100% - 30px); /* Adjust width to account for radio button */
 }

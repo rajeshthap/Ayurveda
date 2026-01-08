@@ -180,6 +180,7 @@ function NavBar() {
                         <li><Link to="/MediaGallery" onClick={(e) => handleSubmenuClick("/MediaGallery", e)}>Media Gallery</Link></li>
                         <li><Link to="/CommingSoon" onClick={(e) => handleSubmenuClick("/CommingSoon", e)}>Patient's Guide</Link></li>
                         <li><Link to="/ConsentForm" onClick={(e) => handleSubmenuClick("/ConsentForm", e)}>Consent Form</Link></li>
+                        <li><Link to="/QolForm" onClick={(e) => handleSubmenuClick("/QolForm", e)}>Qol Form</Link></li>
                         <li><Link to="/PatientFeedback" onClick={(e) => handleSubmenuClick("/PatientFeedback", e)}>Feedback</Link></li>
                         <li><Link to="/CommingSoon" onClick={(e) => handleSubmenuClick("/CommingSoon", e)}>External Links</Link></li>
                         <li><Link to="/Disclaimer" onClick={(e) => handleSubmenuClick("/Disclaimer", e)}>Disclaimer</Link></li>

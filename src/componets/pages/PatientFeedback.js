@@ -8,12 +8,12 @@ import { Link } from "react-router-dom";
 function PatientFeedback() {
   // API endpoint
   const API_URL = "https://mahadevaaya.com/trilokayurveda/trilokabackend/api/patient-feedback/";
-  
+
   // Form state
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState("");
   const [errors, setErrors] = useState({});
-  
+
   // Form data state
   const [formData, setFormData] = useState({
     name: "",
@@ -29,46 +29,49 @@ function PatientFeedback() {
     permission_to_use: false
   });
 
+  // CSS for red asterisk
+  const requiredAsterisk = <span className="text-danger">*</span>;
+
   // Validate form
   const validateForm = () => {
     const newErrors = {};
-    
+
     if (!formData.visit_date) {
       newErrors.visit_date = "Visit date is required";
     }
-    
+
     if (!formData.treatment_taken.trim()) {
       newErrors.treatment_taken = "Treatment taken is required";
     }
-    
+
     if (!formData.before_treatment.trim()) {
       newErrors.before_treatment = "Please describe your condition before treatment";
     }
-    
+
     if (!formData.experience_during_treatment.trim()) {
       newErrors.experience_during_treatment = "Please share your experience during treatment";
     }
-    
+
     if (!formData.improvement_notice.trim()) {
       newErrors.improvement_notice = "Please describe the improvements you noticed";
     }
-    
+
     if (!formData.improvement_helped.trim()) {
       newErrors.improvement_helped = "Please explain how the improvement helped you";
     }
-    
+
     if (!formData.overall_experience) {
       newErrors.overall_experience = "Please rate your overall experience";
     }
-    
+
     if (!formData.message_to_other.trim()) {
       newErrors.message_to_other = "Please share a message for other patients";
     }
-    
+
     if (formData.permission_to_use === undefined || formData.permission_to_use === null) {
       newErrors.permission_to_use = "Please select a permission option";
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -76,7 +79,7 @@ function PatientFeedback() {
   // Handle input changes
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
-    
+
     // Handle checkbox for permission
     if (type === 'checkbox' || type === 'radio') {
       setFormData({
@@ -89,7 +92,7 @@ function PatientFeedback() {
         [name]: value
       });
     }
-    
+
     // Clear error for this field if it exists
     if (errors[name]) {
       setErrors({
@@ -102,30 +105,30 @@ function PatientFeedback() {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
-    
+
     setIsSubmitting(true);
-    
+
     try {
       // Log the form data to debug
       console.log("Submitting form data:", formData);
-      
+
       // Make sure all required fields are included
       const submissionData = {
         ...formData,
         // Ensure age is a number or null
         age: formData.age ? parseInt(formData.age) : null,
       };
-      
+
       console.log("Final submission data:", submissionData);
-      
+
       const response = await axios.post(API_URL, submissionData);
       console.log("API response:", response.data);
       setSubmitMessage("Your feedback has been submitted successfully!");
-      
+
       // Reset form after successful submission
       setFormData({
         name: "",
@@ -143,13 +146,13 @@ function PatientFeedback() {
       setErrors({});
     } catch (error) {
       console.error("Error submitting form:", error);
-      
+
       // More detailed error logging
       if (error.response) {
         console.error("Response data:", error.response.data);
         console.error("Response status:", error.response.status);
         console.error("Response headers:", error.response.headers);
-        
+
         // Try to extract specific error messages from the response
         if (error.response.data && typeof error.response.data === 'object') {
           const errorMessages = [];
@@ -199,7 +202,7 @@ function PatientFeedback() {
                 <h4 className='heading-extend'>Patient Feedback Form</h4>
                 <div className='about-description'>Wellness Center and Speciality Clinic for Chronic Disorders</div>
               </div>
-              
+
               {submitMessage ? (
                 <div className={`alert ${submitMessage.includes('Error') ? 'alert-danger' : 'alert-success'} my-4`}>
                   {submitMessage}
@@ -234,7 +237,7 @@ function PatientFeedback() {
                         {errors.age && <div className="invalid-feedback">{errors.age}</div>}
                       </div>
                       <div className="col-md-6 mb-3">
-                        <label htmlFor="visit_date" className="form-label">Treatment Period / Date of Visit *</label>
+                        <label htmlFor="visit_date" className="form-label">Treatment Period / Date of Visit {requiredAsterisk}</label>
                         <input
                           type="date"
                           className={`form-control ${errors.visit_date ? 'is-invalid' : ''}`}
@@ -247,7 +250,7 @@ function PatientFeedback() {
                         {errors.visit_date && <div className="invalid-feedback">{errors.visit_date}</div>}
                       </div>
                       <div className="col-md-6 mb-3">
-                        <label htmlFor="treatment_taken" className="form-label">Treatment Taken for (Name the condition) *</label>
+                        <label htmlFor="treatment_taken" className="form-label">Treatment Taken for (Name the condition) {requiredAsterisk}</label>
                         <input
                           type="text"
                           className={`form-control ${errors.treatment_taken ? 'is-invalid' : ''}`}
@@ -263,7 +266,7 @@ function PatientFeedback() {
                   </div>
 
                   <div className="consult-form-step">
-                    <h3 className="form-label">Your Health Condition Before Treatment *</h3>
+                    <h3 className="form-label">Your Health Condition Before Treatment {requiredAsterisk}</h3>
                     <p className="mb-3">How were you feeling before you started treatment? (What problems did you have? How did it affect your daily life?)</p>
                     <div className="row">
                       <div className="col-12 mb-3">
@@ -282,7 +285,7 @@ function PatientFeedback() {
                   </div>
 
                   <div className="consult-form-step">
-                    <h3 className="form-label">Your Experience During Treatment *</h3>
+                    <h3 className="form-label">Your Experience During Treatment {requiredAsterisk}</h3>
                     <p className="mb-3">Please share your experience during the treatment. (Your interaction with doctors, staff, explanations given, and overall care.)</p>
                     <div className="row">
                       <div className="col-12 mb-3">
@@ -301,7 +304,7 @@ function PatientFeedback() {
                   </div>
 
                   <div className="consult-form-step">
-                    <h3 className="form-label">Changes or Improvements You Noticed *</h3>
+                    <h3 className="form-label">Changes or Improvements You Noticed {requiredAsterisk}</h3>
                     <p className="mb-3">What changes or improvements did you notice after treatment? (For example: pain relief, better sleep, more energy, improved digestion or movement, symptoms reduction)</p>
                     <div className="row">
                       <div className="col-12 mb-3">
@@ -320,7 +323,7 @@ function PatientFeedback() {
                   </div>
 
                   <div className="consult-form-step">
-                    <h3 className="form-label">How This Improvement Helped You *</h3>
+                    <h3 className="form-label">How This Improvement Helped You {requiredAsterisk}</h3>
                     <p className="mb-3">How has this improvement helped you in your daily life? (Work, home activities, comfort, confidence, or overall well-being.)</p>
                     <div className="row">
                       <div className="col-12 mb-3">
@@ -339,7 +342,7 @@ function PatientFeedback() {
                   </div>
 
                   <div className="consult-form-step">
-                    <h3 className="form-label">Overall Experience *</h3>
+                    <h3 className="form-label">Overall Experience {requiredAsterisk}</h3>
                     <p className="mb-3">How would you rate your overall experience with our clinic?</p>
                     <div className="row">
                       <div className="col-md-6 mb-3">
@@ -363,7 +366,7 @@ function PatientFeedback() {
                   </div>
 
                   <div className="consult-form-step">
-                    <h3 className="form-label">Your Message to Others *</h3>
+                    <h3 className="form-label">Your Message to Others {requiredAsterisk}</h3>
                     <p className="mb-3">Would you like to share a message for other patients facing similar health issues?</p>
                     <div className="row">
                       <div className="col-12 mb-3">
@@ -382,38 +385,43 @@ function PatientFeedback() {
                   </div>
 
                   <div className="consult-form-step">
-                    <h3 className="step-title">Permission to Use Your Feedback *</h3>
+                    <h3 className="step-title">Permission to Use Your Feedback {requiredAsterisk}</h3>
                     <p className="mb-3">Please select one option:</p>
                     <div className="row">
                       <div className="col-12 mb-3">
                         <div className="simple-radio-container">
                           {errors.permission_to_use && <div className="invalid-feedback d-block mb-2">{errors.permission_to_use}</div>}
-                          <label>
-                            <input 
-                              type="radio" 
-                              name="permission_to_use" 
-                              value="true"
-                              checked={formData.permission_to_use === true} 
-                              onChange={() => setFormData({...formData, permission_to_use: true})} 
-                            /> 
-                            I give permission to use my feedback (with/without my name) for quality improvement, education, or patient awareness.
-                          </label>
-                          <br />
-                          <label>
-                            <input 
-                              type="radio" 
-                              name="permission_to_use" 
-                              value="false"
-                              checked={formData.permission_to_use === false} 
-                              onChange={() => setFormData({...formData, permission_to_use: false})} 
-                            /> 
-                            I do not give permission to use my feedback.
-                          </label>
+
+                          <div className="radio-option">
+                            <label>
+                              <input
+                                type="radio"
+                                name="permission_to_use"
+                                value="true"
+                                checked={formData.permission_to_use === true}
+                                onChange={() => setFormData({ ...formData, permission_to_use: true })}
+                              />
+                              <span>I give permission to use my feedback (with/without my name) for quality improvement, education, or patient awareness.</span>
+                            </label>
+                          </div>
+
+                          <div className="radio-option">
+                            <label>
+                              <input
+                                type="radio"
+                                name="permission_to_use"
+                                value="false"
+                                checked={formData.permission_to_use === false}
+                                onChange={() => setFormData({ ...formData, permission_to_use: false })}
+                              />
+                              <span>I do not give permission to use my feedback.</span>
+                            </label>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="form-navigation mt-4 d-flex justify-content-center">
                     <button type="submit" className="btn btn-success" disabled={isSubmitting}>
                       {isSubmitting ? 'Submitting...' : 'Submit Feedback'}

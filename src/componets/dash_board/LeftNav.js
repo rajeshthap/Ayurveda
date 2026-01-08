@@ -64,6 +64,13 @@ const menuItems = [
       path: "/TotalFeedback",
       active: true,
     },
+
+     {
+      icon: <FaTachometerAlt />,
+      label: "Patient Qol",
+      path: "/TotalQol",
+      active: true,
+    },
     
      {
       icon: <FaImages />,

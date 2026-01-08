@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import BgShape2 from "../../assets/images/bg-shape2.png";
 import BgLeaf2 from "../../assets/images/bg-leaf2.png";
+import Logo1 from "../../assets/images/Logo1.jpeg"; // Added logo import
 import "../../assets/css/PatientFeedback.css";
 import { Link } from "react-router-dom";
 
@@ -252,11 +253,21 @@ function ConsentForm() {
                 <form onSubmit={handleSubmit}>
                   {/* Static Clinic Information */}
                   <div className="consult-form-step">
-                    <h3 className="form-label">Informed medical consent for Ayurvedic treatment</h3>
                     <div className="clinic-info mb-4">
-                      <p><strong>Name of the Clinic:</strong> Trilok Ayurveda</p>
-                      <p><strong>Address:</strong> 475, Street-8, Rajendra Nagar, Dehradun, U.K.</p>
-                      <p><strong>Contact Details:</strong> +91-9837071030, +91-9758253472</p>
+                      {/* New layout with logo and address */}
+                      <div className="row align-items-center">
+                        <div className="col-md-3">
+                          <img src={Logo1} alt="Trilok Ayurveda Logo" className="img-fluid" style={{maxHeight: '150px'}} />
+                        </div>
+                        <div className="col-md-9 d-flex justify-content-end">
+                          <div className="text-end">
+                            <h3 className="form-label">Informed medical consent for Ayurvedic treatment</h3>
+                            <p><strong>Name of the Clinic:</strong> Trilok Ayurveda</p>
+                            <p><strong>Address:</strong> 475, Street-8, Rajendra Nagar, Dehradun, U.K.</p>
+                            <p><strong>Contact Details:</strong> +91-9837071030, +91-9758253472</p>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
 
@@ -492,42 +503,7 @@ function ConsentForm() {
                         />
                         {errors.attendee_name && <div className="invalid-feedback">{errors.attendee_name}</div>}
                       </div>
-                      <div className="col-md-6 mb-3">
-                        <label htmlFor="attendee_physician_signature" className="form-label">Attending Physician's Signature {requiredAsterisk}</label>
-                        <input
-                          type="file"
-                          className={`form-control ${errors.attendee_physician_signature ? 'is-invalid' : ''}`}
-                          id="attendee_physician_signature"
-                          name="attendee_physician_signature"
-                          onChange={handleFileChange}
-                          accept="image/*"
-                          required
-                        />
-                        {errors.attendee_physician_signature && <div className="invalid-feedback">{errors.attendee_physician_signature}</div>}
-                        {formData.attendee_physician_signature && (
-                          <div className="mt-2">
-                            <img 
-                              src={URL.createObjectURL(formData.attendee_physician_signature)} 
-                              alt="Physician Signature Preview" 
-                              style={{maxHeight: '100px'}}
-                            />
-                          </div>
-                        )}
-                      </div>
-                      <div className="col-md-6 mb-3">
-                        <label htmlFor="attendee_physician_name" className="form-label">Physician Name {requiredAsterisk}</label>
-                        <input
-                          type="text"
-                          className={`form-control ${errors.attendee_physician_name ? 'is-invalid' : ''}`}
-                          id="attendee_physician_name"
-                          name="attendee_physician_name"
-                          value={formData.attendee_physician_name}
-                          onChange={handleInputChange}
-                          required
-                        />
-                        {errors.attendee_physician_name && <div className="invalid-feedback">{errors.attendee_physician_name}</div>}
-                      </div>
-                      <div className="col-md-6 mb-3">
+                                         <div className="col-md-6 mb-3">
                         <label htmlFor="visit_date" className="form-label">Date {requiredAsterisk}</label>
                         <input
                           type="date"

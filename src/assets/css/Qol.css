@@ -1,0 +1,35 @@
+/* Alternative approach if the above doesn't work */
+.simple-radio-container {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.simple-radio-container label {
+  display: table-cell;
+  vertical-align: middle;
+  padding-right: 15px;
+  white-space: nowrap;
+}
+
+.simple-radio-container input[type="radio"] {
+  margin-right: 8px;
+  vertical-align: middle;
+  position: relative;
+  top: 0;
+}
+
+.simple-radio-container label:last-child {
+  padding-right: 0;
+}
+
+
+/* Section headings - make them bolder and darker */
+.section-heading {
+  font-weight: 700; /* Bolder than regular labels */
+  color: #212529; /* Darker black color */
+  font-size: 1.1rem; /* Slightly larger font size */
+  margin-bottom: 15px; /* More space below section heading */
+  border-bottom: 1px solid #e9ecef; /* Add a subtle border below */
+  padding-bottom: 8px; /* Space between text and border */
+}

@@ -101,6 +101,8 @@ import Webinarss from './componets/pages/Resources/Webinarss';
 import PatientFeedback from './componets/pages/PatientFeedback';
 import TotalFeedback from './componets/dash_board/total_consult_now/TotalFeedback';
 import ConsentForm from './componets/pages/ConsentForm';
+import QolForm from './componets/pages/QolForm';
+import TotalQol from './componets/dash_board/total_consult_now/TotalQol';
 
 
 
@@ -158,7 +160,8 @@ function App() {
       "/ManageSuccessStories",
       "/AddWebinar",
       "/ManageWebinars",
-      "/TotalFeedback"
+      "/TotalFeedback",
+      "/TotalQol"
 
 
      ]);
@@ -212,7 +215,8 @@ function App() {
     "/ManageSuccessStories",
     "/AddWebinar",
     "/ManageWebinars",
-    "/TotalFeedback"
+    "/TotalFeedback",
+    "/TotalQol"
     
 
   ]);
@@ -316,6 +320,8 @@ function App() {
 <Route path="/PatientFeedback" element={<PatientFeedback/>} />
 <Route path="/TotalFeedback" element={<TotalFeedback/>} />
 <Route path="/ConsentForm" element={<ConsentForm/>} />
+<Route path="/QolForm" element={<QolForm/>} />
+<Route path="/TotalQol" element={<TotalQol/>} />
 {/* <Route path="*" element={<NotFound />} />  */}
 </Routes>
 
