@@ -140,7 +140,7 @@ function NavBar() {
                         <li><Link to="/Profile" onClick={(e) => handleSubmenuClick("/Profile", e)}>Profile</Link></li>
                         <li><Link to="/Thejourney" onClick={(e) => handleSubmenuClick("/Thejourney", e)}>The Journey</Link></li>
                         <li><Link to="/Researchers" onClick={(e) => handleSubmenuClick("/Researchers", e)}>Researches</Link></li>
-                        <li><Link to="/CommingSoon" onClick={(e) => handleSubmenuClick("/CommingSoon", e)}>Articles</Link></li>
+                        {/* <li><Link to="/CommingSoon" onClick={(e) => handleSubmenuClick("/CommingSoon", e)}>Articles</Link></li> */}
                       </ul>
                     </li>
 
@@ -178,11 +178,11 @@ function NavBar() {
                         <li><Link to="/Faqs" onClick={(e) => handleSubmenuClick("/Faqs", e)}>FAQs</Link></li>
                         <li><Link to="/PresentationAwards" onClick={(e) => handleSubmenuClick("/PresentationAwards", e)}>Presentations & Awards</Link></li>
                         <li><Link to="/MediaGallery" onClick={(e) => handleSubmenuClick("/MediaGallery", e)}>Media Gallery</Link></li>
-                        <li><Link to="/CommingSoon" onClick={(e) => handleSubmenuClick("/CommingSoon", e)}>Patient's Guide</Link></li>
+                        {/* <li><Link to="/CommingSoon" onClick={(e) => handleSubmenuClick("/CommingSoon", e)}>Patient's Guide</Link></li> */}
                         <li><Link to="/ConsentForm" onClick={(e) => handleSubmenuClick("/ConsentForm", e)}>Consent Form</Link></li>
                         <li><Link to="/QolForm" onClick={(e) => handleSubmenuClick("/QolForm", e)}>Qol Form</Link></li>
                         <li><Link to="/PatientFeedback" onClick={(e) => handleSubmenuClick("/PatientFeedback", e)}>Feedback</Link></li>
-                        <li><Link to="/CommingSoon" onClick={(e) => handleSubmenuClick("/CommingSoon", e)}>External Links</Link></li>
+                        {/* <li><Link to="/CommingSoon" onClick={(e) => handleSubmenuClick("/CommingSoon", e)}>External Links</Link></li> */}
                         <li><Link to="/Disclaimer" onClick={(e) => handleSubmenuClick("/Disclaimer", e)}>Disclaimer</Link></li>
                       </ul>
                     </li>

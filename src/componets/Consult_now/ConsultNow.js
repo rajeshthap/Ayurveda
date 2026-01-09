@@ -9,6 +9,14 @@ function ConsultNow() {
   // API endpoint
   const API_URL = "https://mahadevaaya.com/trilokayurveda/trilokabackend/api/consult-entries/";
   
+  // Get today's date in YYYY-MM-DD format
+  const getTodayDate = () => {
+    const today = new Date();
+    return today.toISOString().split('T')[0];
+  };
+  
+  const todayDate = getTodayDate();
+  
   // Form state
   const [currentStep, setCurrentStep] = useState(1);
   const [completedSteps, setCompletedSteps] = useState([]);
@@ -155,9 +163,21 @@ function ConsultNow() {
   // Handle input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+    let updatedValue = value;
+    
+    // Remove numbers from full name field
+    if (name === "name") {
+      updatedValue = value.replace(/[0-9]/g, "");
+    }
+    
+    // Remove numbers from occupation field
+    if (name === "occupation") {
+      updatedValue = value.replace(/[0-9]/g, "");
+    }
+    
     setFormData({
       ...formData,
-      [name]: value
+      [name]: updatedValue
     });
     
     // Clear error for this field if it exists
@@ -338,6 +358,7 @@ function ConsultNow() {
             name="date"
             value={formData.date}
             onChange={handleInputChange}
+            min={todayDate}
             required
           />
           {errors.date && <div className="invalid-feedback">{errors.date}</div>}
@@ -362,7 +383,7 @@ function ConsultNow() {
         <div className="col-md-6 mb-3">
           <label htmlFor="height" className="form-label">Height</label>
           <input
-            type="text"
+            type="number"
             className={`form-control ${errors.height ? 'is-invalid' : ''}`}
             id="height"
             name="height"
@@ -375,7 +396,7 @@ function ConsultNow() {
         <div className="col-md-6 mb-3">
           <label htmlFor="weight" className="form-label">Weight</label>
           <input
-            type="text"
+            type="number"
             className={`form-control ${errors.weight ? 'is-invalid' : ''}`}
             id="weight"
             name="weight"
@@ -430,7 +451,7 @@ function ConsultNow() {
         <div className="col-md-6 mb-3">
           <label htmlFor="contact_number" className="form-label">Contact Number</label>
           <input
-            type="tel"
+            type="number"
             className={`form-control ${errors.contact_number ? 'is-invalid' : ''}`}
             id="contact_number"
             name="contact_number"
