@@ -687,26 +687,95 @@ const ManageConsent = () => {
  // Generate PDF from the form
 const generatePDF = async () => {
   try {
-    // Wait a bit for any DOM updates to complete
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
     const element = consentFormRef.current;
     if (!element) {
       throw new Error("Form element not found for PDF generation");
     }
     
+    // Scroll to top to ensure all elements are visible
+    element.scrollTop = 0;
+    
+    console.log("Starting PDF generation...");
+    
+    // Function to convert image to data URL
+    const imageToDataUrl = async (imageUrl) => {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0);
+          resolve(canvas.toDataURL('image/png'));
+        };
+        img.onerror = () => {
+          console.warn('Failed to load image:', imageUrl);
+          resolve(null); // Return null if image fails to load
+        };
+        img.src = imageUrl;
+      });
+    };
+    
+    // Get all images in the form
+    const images = element.querySelectorAll('img');
+    console.log("Total images found:", images.length);
+    
+    // Store original sources and convert to data URLs
+    const imageData = [];
+    for (let i = 0; i < images.length; i++) {
+      const img = images[i];
+      const originalSrc = img.src;
+      console.log(`Processing image ${i + 1}:`, originalSrc);
+      
+      try {
+        // Check if it's an external URL
+        if (originalSrc.startsWith('http')) {
+          const dataUrl = await imageToDataUrl(originalSrc);
+          if (dataUrl) {
+            imageData.push({ element: img, originalSrc, dataUrl });
+            img.src = dataUrl;
+            console.log(`Image ${i + 1} converted to data URL`);
+          }
+        } else {
+          console.log(`Image ${i + 1} is already local or data URL`);
+        }
+      } catch (error) {
+        console.error(`Error processing image ${i + 1}:`, error);
+      }
+    }
+    
+    // Wait for images to update in DOM
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    console.log("All images processed, generating canvas...");
+    
     // Configure html2canvas for better quality
     const canvas = await html2canvas(element, {
-      scale: 2, // Higher scale for better quality
+      scale: 2,
       logging: false,
       useCORS: true,
       allowTaint: true,
       backgroundColor: '#ffffff',
       width: element.scrollWidth,
-      height: element.scrollHeight
+      height: element.scrollHeight,
+      onclone: (clonedDocument) => {
+        const clonedImages = clonedDocument.querySelectorAll('img');
+        clonedImages.forEach(img => {
+          img.style.display = 'block';
+          img.style.visibility = 'visible';
+          img.style.opacity = '1';
+        });
+      }
     });
     
-    const imgData = canvas.toDataURL('image/png', 1.0); // Maximum quality
+    // Restore original image sources
+    imageData.forEach(({ element: img, originalSrc }) => {
+      img.src = originalSrc;
+    });
+    
+    const imgData = canvas.toDataURL('image/png', 1.0);
     const pdf = new jsPDF('p', 'mm', 'a4');
     
     // Define margins (in mm)
@@ -716,15 +785,15 @@ const generatePDF = async () => {
     const bottomMargin = 15;
     
     // Calculate available width and height within margins
-    const availableWidth = 210 - leftMargin - rightMargin; // A4 width (210mm) minus margins
-    const availableHeight = 295 - topMargin - bottomMargin; // A4 height (295mm) minus margins
+    const availableWidth = 210 - leftMargin - rightMargin;
+    const availableHeight = 295 - topMargin - bottomMargin;
     
     // Calculate image dimensions to fit within available space
     const imgWidth = availableWidth;
     const imgHeight = (canvas.height * imgWidth) / canvas.width;
     
     let heightLeft = imgHeight;
-    let position = topMargin; // Start at top margin
+    let position = topMargin;
     
     // Add first page
     pdf.addImage(imgData, 'PNG', leftMargin, position, imgWidth, imgHeight);
@@ -1077,8 +1146,8 @@ const generatePDF = async () => {
                                       <p>New Signature Preview:</p>
                                       <img 
                                         src={attendeeSignaturePreview} 
-                                        alt="Signature Preview" 
-                                        style={{maxHeight: '100px'}}
+                                        alt="Signature Preview"
+                                        style={{maxHeight: '100px', border: '1px solid #ccc', padding: '5px'}}
                                       />
                                     </div>
                                   ) : existingAttendeeSignature && (
@@ -1086,8 +1155,8 @@ const generatePDF = async () => {
                                       <p>Current Signature:</p>
                                       <img 
                                         src={`https://mahadevaaya.com/trilokayurveda/trilokabackend${existingAttendeeSignature}`} 
-                                        alt="Existing Signature" 
-                                        style={{maxHeight: '100px'}}
+                                        alt="Existing Signature"
+                                        style={{maxHeight: '100px', border: '1px solid #ccc', padding: '5px', display: 'block'}}
                                       />
                                     </div>
                                   )}
@@ -1098,8 +1167,8 @@ const generatePDF = async () => {
                                     <p>Current Signature:</p>
                                     <img 
                                       src={`https://mahadevaaya.com/trilokayurveda/trilokabackend${existingAttendeeSignature}`} 
-                                      alt="Existing Signature" 
-                                      style={{maxHeight: '100px'}}
+                                      alt="Existing Signature"
+                                      style={{maxHeight: '100px', border: '1px solid #ccc', padding: '5px', display: 'block'}}
                                     />
                                   </div>
                                 )
@@ -1130,8 +1199,8 @@ const generatePDF = async () => {
                                       <p>New Physician Signature Preview:</p>
                                       <img 
                                         src={physicianSignaturePreview} 
-                                        alt="Physician Signature Preview" 
-                                        style={{maxHeight: '100px'}}
+                                        alt="Physician Signature Preview"
+                                        style={{maxHeight: '100px', border: '1px solid #ccc', padding: '5px'}}
                                       />
                                     </div>
                                   ) : existingPhysicianSignature && (
@@ -1139,8 +1208,8 @@ const generatePDF = async () => {
                                       <p>Current Physician Signature:</p>
                                       <img 
                                         src={`https://mahadevaaya.com/trilokayurveda/trilokabackend${existingPhysicianSignature}`} 
-                                        alt="Existing Physician Signature" 
-                                        style={{maxHeight: '100px'}}
+                                        alt="Existing Physician Signature"
+                                        style={{maxHeight: '100px', border: '1px solid #ccc', padding: '5px', display: 'block'}}
                                       />
                                     </div>
                                   )}
@@ -1151,8 +1220,8 @@ const generatePDF = async () => {
                                     <p>Current Physician Signature:</p>
                                     <img 
                                       src={`https://mahadevaaya.com/trilokayurveda/trilokabackend${existingPhysicianSignature}`} 
-                                      alt="Existing Physician Signature" 
-                                      style={{maxHeight: '100px'}}
+                                      alt="Existing Physician Signature"
+                                      style={{maxHeight: '100px', border: '1px solid #ccc', padding: '5px', display: 'block'}}
                                     />
                                   </div>
                                 )

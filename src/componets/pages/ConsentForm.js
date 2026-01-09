@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { Form, Button } from "react-bootstrap";
 import BgShape2 from "../../assets/images/bg-shape2.png";
 import BgLeaf2 from "../../assets/images/bg-leaf2.png";
-import Logo1 from "../../assets/images/Logo1.jpeg"; // Added logo import
+import Logo1 from "../../assets/images/Logo1.jpeg";
 import "../../assets/css/PatientFeedback.css";
 import { Link } from "react-router-dom";
 
@@ -14,6 +15,7 @@ function ConsentForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState("");
   const [errors, setErrors] = useState({});
+  const [validated, setValidated] = useState(false);
   
   // Form data state
   const [formData, setFormData] = useState({
@@ -35,64 +37,131 @@ function ConsentForm() {
   // Validate form
   const validateForm = () => {
     const newErrors = {};
+    let isValid = true;
     
+    // Validate patient name
     if (!formData.patient_name.trim()) {
       newErrors.patient_name = "Patient name is required";
+      isValid = false;
     }
     
+    // Validate date of birth
     if (!formData.date_of_birth) {
       newErrors.date_of_birth = "Date of birth is required";
+      isValid = false;
+    } else {
+      const dob = new Date(formData.date_of_birth);
+      const today = new Date();
+      if (dob > today) {
+        newErrors.date_of_birth = "Date of birth cannot be in the future";
+        isValid = false;
+      }
     }
     
+    // Validate gender
     if (!formData.gender) {
       newErrors.gender = "Gender is required";
+      isValid = false;
     }
     
+    // Validate mobile number
     if (!formData.mobile_number.trim()) {
       newErrors.mobile_number = "Mobile number is required";
+      isValid = false;
     } else if (!/^\d{10}$/.test(formData.mobile_number.replace(/\s/g, ""))) {
       newErrors.mobile_number = "Mobile number must be 10 digits";
+      isValid = false;
     }
     
+    // Validate diagnosis
     if (!formData.diagnosis_name.trim()) {
       newErrors.diagnosis_name = "Diagnosis name is required";
+      isValid = false;
     }
     
+    // Validate guardian name
     if (!formData.gurdian_name.trim()) {
       newErrors.gurdian_name = "Guardian name is required";
+      isValid = false;
     }
     
+    // Validate relationship
     if (!formData.relationship_to_patient.trim()) {
       newErrors.relationship_to_patient = "Relationship to patient is required";
+      isValid = false;
     }
     
+    // Validate attendee signature
     if (!formData.attendee_signature) {
       newErrors.attendee_signature = "Attendee signature is required";
+      isValid = false;
     }
     
+    // Validate attendee name
     if (!formData.attendee_name.trim()) {
       newErrors.attendee_name = "Attendee name is required";
+      isValid = false;
     }
     
-    if (!formData.attendee_physician_signature) {
-      newErrors.attendee_physician_signature = "Physician signature is required";
-    }
-    
-    if (!formData.attendee_physician_name.trim()) {
-      newErrors.attendee_physician_name = "Physician name is required";
-    }
-    
+    // Validate visit date
     if (!formData.visit_date) {
       newErrors.visit_date = "Visit date is required";
+      isValid = false;
+    } else {
+      const visitDate = new Date(formData.visit_date);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0); // Set to beginning of day for accurate comparison
+      if (visitDate < today) {
+        newErrors.visit_date = "Visit date cannot be in the past";
+        isValid = false;
+      }
     }
     
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    return isValid;
   };
 
   // Handle input changes
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type } = e.target;
+    
+    // Special handling for mobile number to only accept digits
+    if (name === 'mobile_number') {
+      // Only allow digits and limit to 10 characters
+      const digitsOnly = value.replace(/\D/g, '').slice(0, 10);
+      setFormData({
+        ...formData,
+        [name]: digitsOnly
+      });
+      
+      // Clear error for this field if it exists
+      if (errors[name]) {
+        setErrors({
+          ...errors,
+          [name]: ""
+        });
+      }
+      return;
+    }
+    
+    // For text fields (not textarea, not select), remove numbers
+    if (type === 'text' && name !== 'mobile_number') {
+      const textOnly = value.replace(/[0-9]/g, '');
+      setFormData({
+        ...formData,
+        [name]: textOnly
+      });
+      
+      // Clear error for this field if it exists
+      if (errors[name]) {
+        setErrors({
+          ...errors,
+          [name]: ""
+        });
+      }
+      return;
+    }
+    
     setFormData({
       ...formData,
       [name]: value
@@ -129,6 +198,13 @@ function ConsentForm() {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    const form = e.currentTarget;
+    if (form.checkValidity() === false) {
+      e.stopPropagation();
+    }
+    
+    setValidated(true);
     
     if (!validateForm()) {
       return;
@@ -183,6 +259,7 @@ function ConsentForm() {
         visit_date: new Date().toISOString().split('T')[0]
       });
       setErrors({});
+      setValidated(false);
     } catch (error) {
       console.error("Error submitting form:", error);
       
@@ -218,8 +295,8 @@ function ConsentForm() {
     }
   };
 
-  // CSS for red asterisk
-  const requiredAsterisk = <span className="text-danger">*</span>;
+  // Get today's date in YYYY-MM-DD format for max attribute on DOB input
+  const today = new Date().toISOString().split('T')[0];
 
   return (
     <div className="ayur-bgcover ayur-about-sec">
@@ -239,7 +316,6 @@ function ConsentForm() {
         <div className="ayur-bgcover ayur-about-sec">
           <div className="container fluid about-us">
             <div className="consult-form-container">
-              {/* Added heading with requested classes */}
               <div className="text-center mb-4">
                 <h4 className='heading-extend'>Consent Form</h4>
                 <div className='about-description'>Wellness Center and Speciality Clinic for Chronic Disorders</div>
@@ -250,11 +326,10 @@ function ConsentForm() {
                   {submitMessage}
                 </div>
               ) : (
-                <form onSubmit={handleSubmit}>
+                <Form noValidate validated={validated} onSubmit={handleSubmit}>
                   {/* Static Clinic Information */}
                   <div className="consult-form-step">
                     <div className="clinic-info mb-4">
-                      {/* New layout with logo and address */}
                       <div className="row align-items-center">
                         <div className="col-md-3">
                           <img src={Logo1} alt="Trilok Ayurveda Logo" className="img-fluid" style={{maxHeight: '150px'}} />
@@ -276,111 +351,158 @@ function ConsentForm() {
                     <h3 className="form-label">PATIENT IDENTIFICATION</h3>
                     <div className="row">
                       <div className="col-md-6 mb-3">
-                        <label htmlFor="patient_name" className="form-label">Patient Name {requiredAsterisk}</label>
-                        <input
-                          type="text"
-                          className={`form-control ${errors.patient_name ? 'is-invalid' : ''}`}
-                          id="patient_name"
-                          name="patient_name"
-                          value={formData.patient_name}
-                          onChange={handleInputChange}
-                          required
-                        />
-                        {errors.patient_name && <div className="invalid-feedback">{errors.patient_name}</div>}
+                        <Form.Group controlId="patient_name">
+                          <Form.Label>Patient Name <span className="text-danger">*</span></Form.Label>
+                          <Form.Control 
+                            type="text" 
+                            name="patient_name"
+                            value={formData.patient_name}
+                            onChange={handleInputChange}
+                            onKeyPress={(e) => {
+                              // Prevent numbers from being typed
+                              if (/[0-9]/.test(e.key)) {
+                                e.preventDefault();
+                              }
+                            }}
+                            required
+                            isInvalid={!!errors.patient_name}
+                          />
+                          <Form.Control.Feedback type="invalid">
+                            {errors.patient_name}
+                          </Form.Control.Feedback>
+                        </Form.Group>
                       </div>
                       <div className="col-md-6 mb-3">
-                        <label htmlFor="date_of_birth" className="form-label">Date of Birth {requiredAsterisk}</label>
-                        <input
-                          type="date"
-                          className={`form-control ${errors.date_of_birth ? 'is-invalid' : ''}`}
-                          id="date_of_birth"
-                          name="date_of_birth"
-                          value={formData.date_of_birth}
-                          onChange={handleInputChange}
-                          required
-                        />
-                        {errors.date_of_birth && <div className="invalid-feedback">{errors.date_of_birth}</div>}
+                        <Form.Group controlId="date_of_birth">
+                          <Form.Label>Date of Birth <span className="text-danger">*</span></Form.Label>
+                          <Form.Control 
+                            type="date" 
+                            name="date_of_birth"
+                            value={formData.date_of_birth}
+                            onChange={handleInputChange}
+                            max={today} // Disable future dates
+                            required
+                            isInvalid={!!errors.date_of_birth}
+                          />
+                          <Form.Control.Feedback type="invalid">
+                            {errors.date_of_birth}
+                          </Form.Control.Feedback>
+                        </Form.Group>
                       </div>
                       <div className="col-md-6 mb-3">
-                        <label htmlFor="gender" className="form-label">Gender {requiredAsterisk}</label>
-                        <select
-                          className={`form-select ${errors.gender ? 'is-invalid' : ''}`}
-                          id="gender"
-                          name="gender"
-                          value={formData.gender}
-                          onChange={handleInputChange}
-                          required
-                        >
-                          <option value="">Select Gender</option>
-                          <option value="Male">Male</option>
-                          <option value="Female">Female</option>
-                          <option value="Other">Other</option>
-                        </select>
-                        {errors.gender && <div className="invalid-feedback">{errors.gender}</div>}
+                        <Form.Group controlId="gender">
+                          <Form.Label>Gender <span className="text-danger">*</span></Form.Label>
+                          <Form.Select
+                            name="gender"
+                            value={formData.gender}
+                            onChange={handleInputChange}
+                            required
+                            isInvalid={!!errors.gender}
+                          >
+                            <option value="">Select Gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                          </Form.Select>
+                          <Form.Control.Feedback type="invalid">
+                            {errors.gender}
+                          </Form.Control.Feedback>
+                        </Form.Group>
                       </div>
                       <div className="col-md-6 mb-3">
-                        <label htmlFor="mobile_number" className="form-label">Contact Number {requiredAsterisk}</label>
-                        <input
-                          type="tel"
-                          className={`form-control ${errors.mobile_number ? 'is-invalid' : ''}`}
-                          id="mobile_number"
-                          name="mobile_number"
-                          value={formData.mobile_number}
-                          onChange={handleInputChange}
-                          required
-                        />
-                        {errors.mobile_number && <div className="invalid-feedback">{errors.mobile_number}</div>}
+                        <Form.Group controlId="mobile_number">
+                          <Form.Label>Contact Number <span className="text-danger">*</span></Form.Label>
+                          <Form.Control 
+                            type="text" 
+                            name="mobile_number"
+                            value={formData.mobile_number}
+                            onChange={handleInputChange}
+                            placeholder="10-digit mobile number"
+                            required
+                            isInvalid={!!errors.mobile_number}
+                          />
+                          <Form.Control.Feedback type="invalid">
+                            {errors.mobile_number}
+                          </Form.Control.Feedback>
+                        </Form.Group>
                       </div>
                       <div className="col-12 mb-3">
-                        <label htmlFor="address" className="form-label">Address</label>
-                        <textarea
-                          className={`form-control ${errors.address ? 'is-invalid' : ''}`}
-                          id="address"
-                          name="address"
-                          value={formData.address}
-                          onChange={handleInputChange}
-                          rows="2"
-                        ></textarea>
-                        {errors.address && <div className="invalid-feedback">{errors.address}</div>}
+                        <Form.Group controlId="address">
+                          <Form.Label>Address</Form.Label>
+                          <Form.Control 
+                            as="textarea"
+                            rows={2}
+                            name="address"
+                            value={formData.address}
+                            onChange={handleInputChange}
+                          />
+                        </Form.Group>
                       </div>
                       <div className="col-md-6 mb-3">
-                        <label htmlFor="diagnosis_name" className="form-label">Diagnosis {requiredAsterisk}</label>
-                        <input
-                          type="text"
-                          className={`form-control ${errors.diagnosis_name ? 'is-invalid' : ''}`}
-                          id="diagnosis_name"
-                          name="diagnosis_name"
-                          value={formData.diagnosis_name}
-                          onChange={handleInputChange}
-                          required
-                        />
-                        {errors.diagnosis_name && <div className="invalid-feedback">{errors.diagnosis_name}</div>}
+                        <Form.Group controlId="diagnosis_name">
+                          <Form.Label>Diagnosis <span className="text-danger">*</span></Form.Label>
+                          <Form.Control 
+                            type="text" 
+                            name="diagnosis_name"
+                            value={formData.diagnosis_name}
+                            onChange={handleInputChange}
+                            onKeyPress={(e) => {
+                              // Prevent numbers from being typed
+                              if (/[0-9]/.test(e.key)) {
+                                e.preventDefault();
+                              }
+                            }}
+                            required
+                            isInvalid={!!errors.diagnosis_name}
+                          />
+                          <Form.Control.Feedback type="invalid">
+                            {errors.diagnosis_name}
+                          </Form.Control.Feedback>
+                        </Form.Group>
                       </div>
                       <div className="col-md-6 mb-3">
-                        <label htmlFor="gurdian_name" className="form-label">Name of Parent/Legal Guardian {requiredAsterisk}</label>
-                        <input
-                          type="text"
-                          className={`form-control ${errors.gurdian_name ? 'is-invalid' : ''}`}
-                          id="gurdian_name"
-                          name="gurdian_name"
-                          value={formData.gurdian_name}
-                          onChange={handleInputChange}
-                          required
-                        />
-                        {errors.gurdian_name && <div className="invalid-feedback">{errors.gurdian_name}</div>}
+                        <Form.Group controlId="gurdian_name">
+                          <Form.Label>Name of Parent/Legal Guardian <span className="text-danger">*</span></Form.Label>
+                          <Form.Control 
+                            type="text" 
+                            name="gurdian_name"
+                            value={formData.gurdian_name}
+                            onChange={handleInputChange}
+                            onKeyPress={(e) => {
+                              // Prevent numbers from being typed
+                              if (/[0-9]/.test(e.key)) {
+                                e.preventDefault();
+                              }
+                            }}
+                            required
+                            isInvalid={!!errors.gurdian_name}
+                          />
+                          <Form.Control.Feedback type="invalid">
+                            {errors.gurdian_name}
+                          </Form.Control.Feedback>
+                        </Form.Group>
                       </div>
                       <div className="col-md-6 mb-3">
-                        <label htmlFor="relationship_to_patient" className="form-label">Relationship {requiredAsterisk}</label>
-                        <input
-                          type="text"
-                          className={`form-control ${errors.relationship_to_patient ? 'is-invalid' : ''}`}
-                          id="relationship_to_patient"
-                          name="relationship_to_patient"
-                          value={formData.relationship_to_patient}
-                          onChange={handleInputChange}
-                          required
-                        />
-                        {errors.relationship_to_patient && <div className="invalid-feedback">{errors.relationship_to_patient}</div>}
+                        <Form.Group controlId="relationship_to_patient">
+                          <Form.Label>Relationship <span className="text-danger">*</span></Form.Label>
+                          <Form.Control 
+                            type="text" 
+                            name="relationship_to_patient"
+                            value={formData.relationship_to_patient}
+                            onChange={handleInputChange}
+                            onKeyPress={(e) => {
+                              // Prevent numbers from being typed
+                              if (/[0-9]/.test(e.key)) {
+                                e.preventDefault();
+                              }
+                            }}
+                            required
+                            isInvalid={!!errors.relationship_to_patient}
+                          />
+                          <Form.Control.Feedback type="invalid">
+                            {errors.relationship_to_patient}
+                          </Form.Control.Feedback>
+                        </Form.Group>
                       </div>
                     </div>
                   </div>
@@ -469,62 +591,78 @@ function ConsentForm() {
                     <h3 className="form-label">SIGNATURES</h3>
                     <div className="row">
                       <div className="col-md-6 mb-3">
-                        <label htmlFor="attendee_signature" className="form-label">Patient / Guardian Signature {requiredAsterisk}</label>
-                        <input
-                          type="file"
-                          className={`form-control ${errors.attendee_signature ? 'is-invalid' : ''}`}
-                          id="attendee_signature"
-                          name="attendee_signature"
-                          onChange={handleFileChange}
-                          accept="image/*"
-                          required
-                        />
-                        {errors.attendee_signature && <div className="invalid-feedback">{errors.attendee_signature}</div>}
-                        {formData.attendee_signature && (
-                          <div className="mt-2">
-                            <img 
-                              src={URL.createObjectURL(formData.attendee_signature)} 
-                              alt="Signature Preview" 
-                              style={{maxHeight: '100px'}}
-                            />
-                          </div>
-                        )}
+                        <Form.Group controlId="attendee_signature">
+                          <Form.Label>Patient / Guardian Signature <span className="text-danger">*</span></Form.Label>
+                          <Form.Control 
+                            type="file"
+                            name="attendee_signature"
+                            onChange={handleFileChange}
+                            accept="image/*"
+                            required
+                            isInvalid={!!errors.attendee_signature}
+                          />
+                          <Form.Control.Feedback type="invalid">
+                            {errors.attendee_signature}
+                          </Form.Control.Feedback>
+                          {formData.attendee_signature && (
+                            <div className="mt-2">
+                              <img 
+                                src={URL.createObjectURL(formData.attendee_signature)} 
+                                alt="Signature Preview" 
+                                style={{maxHeight: '100px'}}
+                              />
+                            </div>
+                          )}
+                        </Form.Group>
                       </div>
                       <div className="col-md-6 mb-3">
-                        <label htmlFor="attendee_name" className="form-label">Name {requiredAsterisk}</label>
-                        <input
-                          type="text"
-                          className={`form-control ${errors.attendee_name ? 'is-invalid' : ''}`}
-                          id="attendee_name"
-                          name="attendee_name"
-                          value={formData.attendee_name}
-                          onChange={handleInputChange}
-                          required
-                        />
-                        {errors.attendee_name && <div className="invalid-feedback">{errors.attendee_name}</div>}
+                        <Form.Group controlId="attendee_name">
+                          <Form.Label>Name <span className="text-danger">*</span></Form.Label>
+                          <Form.Control 
+                            type="text" 
+                            name="attendee_name"
+                            value={formData.attendee_name}
+                            onChange={handleInputChange}
+                            onKeyPress={(e) => {
+                              // Prevent numbers from being typed
+                              if (/[0-9]/.test(e.key)) {
+                                e.preventDefault();
+                              }
+                            }}
+                            required
+                            isInvalid={!!errors.attendee_name}
+                          />
+                          <Form.Control.Feedback type="invalid">
+                            {errors.attendee_name}
+                          </Form.Control.Feedback>
+                        </Form.Group>
                       </div>
-                                         <div className="col-md-6 mb-3">
-                        <label htmlFor="visit_date" className="form-label">Date {requiredAsterisk}</label>
-                        <input
-                          type="date"
-                          className={`form-control ${errors.visit_date ? 'is-invalid' : ''}`}
-                          id="visit_date"
-                          name="visit_date"
-                          value={formData.visit_date}
-                          onChange={handleInputChange}
-                          required
-                        />
-                        {errors.visit_date && <div className="invalid-feedback">{errors.visit_date}</div>}
+                      <div className="col-md-6 mb-3">
+                        <Form.Group controlId="visit_date">
+                          <Form.Label>Date <span className="text-danger">*</span></Form.Label>
+                          <Form.Control 
+                            type="date" 
+                            name="visit_date"
+                            value={formData.visit_date}
+                            onChange={handleInputChange}
+                            min={today} // Disable past dates
+                            required
+                            isInvalid={!!errors.visit_date}
+                          />
+                          <Form.Control.Feedback type="invalid">
+                            {errors.visit_date}
+                          </Form.Control.Feedback>
+                        </Form.Group>
                       </div>
                     </div>
                   </div>
                   
                   <div className="form-navigation mt-4 d-flex justify-content-center">
-                    <button type="submit" className="btn btn-success" disabled={isSubmitting}>
+                    <Button variant="success" type="submit" disabled={isSubmitting}>
                       {isSubmitting ? 'Submitting...' : 'Submit Consent Form'}
-                    </button>
+                    </Button>
                   </div>
-                </form>
+                </Form>
               )}
             </div>
           </div>

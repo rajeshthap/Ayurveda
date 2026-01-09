@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { Form, Button } from "react-bootstrap";
 import BgShape2 from "../../assets/images/bg-shape2.png";
 import BgLeaf2 from "../../assets/images/bg-leaf2.png";
 import "../../assets/css/PatientFeedback.css";
@@ -14,6 +15,7 @@ function QolForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState("");
   const [errors, setErrors] = useState({});
+  const [validated, setValidated] = useState(false);
   
   // Form data state
   const [formData, setFormData] = useState({
@@ -61,27 +63,49 @@ function QolForm() {
   // Validate form
   const validateForm = () => {
     const newErrors = {};
+    let isValid = true;
     
+    // Validate patient name
     if (!formData.patient_name.trim()) {
       newErrors.patient_name = "Patient name is required";
+      isValid = false;
     }
     
+    // Validate age (date of birth)
     if (!formData.age) {
-      newErrors.age = "Age is required";
-    } else if (isNaN(formData.age) || formData.age <= 0) {
-      newErrors.age = "Please enter a valid age";
+      newErrors.age = "Date of birth is required";
+      isValid = false;
+    } else {
+      const dob = new Date(formData.age);
+      const today = new Date();
+      if (dob > today) {
+        newErrors.age = "Date of birth cannot be in the future";
+        isValid = false;
+      }
     }
     
+    // Validate gender
     if (!formData.gender) {
       newErrors.gender = "Gender is required";
+      isValid = false;
     }
     
-    if (!formData.diagnosis_date) {
-      newErrors.diagnosis_date = "Diagnosis date is required";
-    }
-    
+    // Validate diagnosis date
+if (!formData.diagnosis_date) {
+  newErrors.diagnosis_date = "Diagnosis date is required";
+  isValid = false;
+} else {
+  const diagnosisDate = new Date(formData.diagnosis_date);
+  const today = new Date();
+  if (diagnosisDate > today) { // Check for future date instead of past date
+    newErrors.diagnosis_date = "Diagnosis date cannot be in the future";
+    isValid = false;
+  }
+}
+    // Validate current medications
     if (!formData.current_medications.trim()) {
       newErrors.current_medications = "Current medications is required";
+      isValid = false;
     }
     
     // Validate all questions are answered
@@ -89,11 +113,12 @@ function QolForm() {
       const fieldName = `q${i}_${getQuestionFieldName(i)}`;
       if (!formData[fieldName] || formData[fieldName] === 0) {
         newErrors[fieldName] = `Please answer question ${i}`;
+        isValid = false;
       }
     }
     
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    return isValid;
   };
 
   // Get the field name part for each question
@@ -126,7 +151,26 @@ function QolForm() {
 
   // Handle input changes
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type } = e.target;
+    
+    // For text fields, remove numbers
+    if (type === 'text') {
+      const textOnly = value.replace(/[0-9]/g, '');
+      setFormData({
+        ...formData,
+        [name]: textOnly
+      });
+      
+      // Clear error for this field if it exists
+      if (errors[name]) {
+        setErrors({
+          ...errors,
+          [name]: ""
+        });
+      }
+      return;
+    }
+    
     setFormData({
       ...formData,
       [name]: value
@@ -162,6 +206,13 @@ function QolForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
+    const form = e.currentTarget;
+    if (form.checkValidity() === false) {
+      e.stopPropagation();
+    }
+    
+    setValidated(true);
+    
     if (!validateForm()) {
       return;
     }
@@ -173,10 +224,23 @@ function QolForm() {
       console.log("Submitting form data:", formData);
       
       // Make sure all required fields are included
+      // Convert Date of Birth (formData.age) to integer age in years
+      let ageInt = null;
+      if (formData.age) {
+        const dob = new Date(formData.age);
+        const todayDate = new Date();
+        ageInt = todayDate.getFullYear() - dob.getFullYear();
+        const m = todayDate.getMonth() - dob.getMonth();
+        if (m < 0 || (m === 0 && todayDate.getDate() < dob.getDate())) {
+          ageInt -= 1;
+        }
+        if (ageInt < 0) ageInt = 0;
+      }
+
       const submissionData = {
         ...formData,
-        // Ensure age is a number
-        age: parseInt(formData.age),
+        // Send integer age (years) as required by the API
+        age: ageInt,
       };
       
       console.log("Final submission data:", submissionData);
@@ -228,6 +292,7 @@ function QolForm() {
         q21_overall_health: 0
       });
       setErrors({});
+      setValidated(false);
     } catch (error) {
       console.error("Error submitting form:", error);
       
@@ -263,8 +328,8 @@ function QolForm() {
     }
   };
 
-  // CSS for red asterisk
-  const requiredAsterisk = <span className="text-danger">*</span>;
+  // Get today's date in YYYY-MM-DD format for max attribute on age input
+  const today = new Date().toISOString().split('T')[0];
 
   // Options for questions 1-19
   const options1to19 = [
@@ -323,79 +388,103 @@ function QolForm() {
                   {submitMessage}
                 </div>
               ) : (
-                <form onSubmit={handleSubmit}>
+                <Form noValidate validated={validated} onSubmit={handleSubmit}>
                   {/* Patient Information Section */}
                   <div className="consult-form-step">
                     <h3 className="form-label">Patient Information</h3>
                     <div className="row">
                       <div className="col-md-6 mb-3">
-                        <label htmlFor="patient_name" className="form-label">Patient Name {requiredAsterisk}</label>
-                        <input
-                          type="text"
-                          className={`form-control ${errors.patient_name ? 'is-invalid' : ''}`}
-                          id="patient_name"
-                          name="patient_name"
-                          value={formData.patient_name}
-                          onChange={handleInputChange}
-                          required
-                        />
-                        {errors.patient_name && <div className="invalid-feedback">{errors.patient_name}</div>}
+                        <Form.Group controlId="patient_name">
+                          <Form.Label>Patient Name <span className="text-danger">*</span></Form.Label>
+                          <Form.Control 
+                            type="text" 
+                            name="patient_name"
+                            value={formData.patient_name}
+                            onChange={handleInputChange}
+                            onKeyPress={(e) => {
+                              // Prevent numbers from being typed
+                              if (/[0-9]/.test(e.key)) {
+                                e.preventDefault();
+                              }
+                            }}
+                            required
+                            isInvalid={!!errors.patient_name}
+                          />
+                          <Form.Control.Feedback type="invalid">
+                            {errors.patient_name}
+                          </Form.Control.Feedback>
+                        </Form.Group>
                       </div>
                       <div className="col-md-6 mb-3">
-                        <label htmlFor="age" className="form-label">Age {requiredAsterisk}</label>
-                        <input
-                          type="number"
-                          className={`form-control ${errors.age ? 'is-invalid' : ''}`}
-                          id="age"
-                          name="age"
-                          value={formData.age}
-                          onChange={handleInputChange}
-                          required
-                        />
-                        {errors.age && <div className="invalid-feedback">{errors.age}</div>}
+                        <Form.Group controlId="age">
+                          <Form.Label>Date of Birth <span className="text-danger">*</span></Form.Label>
+                          <Form.Control 
+                            type="date" 
+                            name="age"
+                            value={formData.age}
+                            onChange={handleInputChange}
+                            max={today} // Disable future dates
+                            required
+                            isInvalid={!!errors.age}
+                          />
+                          <Form.Control.Feedback type="invalid">
+                            {errors.age}
+                          </Form.Control.Feedback>
+                        </Form.Group>
                       </div>
                       <div className="col-md-6 mb-3">
-                        <label htmlFor="gender" className="form-label">Gender {requiredAsterisk}</label>
-                        <select
-                          className={`form-select ${errors.gender ? 'is-invalid' : ''}`}
-                          id="gender"
-                          name="gender"
-                          value={formData.gender}
-                          onChange={handleInputChange}
-                          required
-                        >
-                          <option value="">Select Gender</option>
-                          <option value="Male">Male</option>
-                          <option value="Female">Female</option>
-                          <option value="Other">Other</option>
-                        </select>
-                        {errors.gender && <div className="invalid-feedback">{errors.gender}</div>}
+                        <Form.Group controlId="gender">
+                          <Form.Label>Gender <span className="text-danger">*</span></Form.Label>
+                          <Form.Select
+                            name="gender"
+                            value={formData.gender}
+                            onChange={handleInputChange}
+                            required
+                            isInvalid={!!errors.gender}
+                          >
+                            <option value="">Select Gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                          </Form.Select>
+                          <Form.Control.Feedback type="invalid">
+                            {errors.gender}
+                          </Form.Control.Feedback>
+                        </Form.Group>
                       </div>
                       <div className="col-md-6 mb-3">
-                        <label htmlFor="diagnosis_date" className="form-label">Diagnosis Date {requiredAsterisk}</label>
-                        <input
-                          type="date"
-                          className={`form-control ${errors.diagnosis_date ? 'is-invalid' : ''}`}
-                          id="diagnosis_date"
-                          name="diagnosis_date"
-                          value={formData.diagnosis_date}
-                          onChange={handleInputChange}
-                          required
-                        />
-                        {errors.diagnosis_date && <div className="invalid-feedback">{errors.diagnosis_date}</div>}
+                        <Form.Group controlId="diagnosis_date">
+                          <Form.Label>Diagnosis Date <span className="text-danger">*</span></Form.Label>
+                          <Form.Control 
+                            type="date" 
+                            name="diagnosis_date"
+                            value={formData.diagnosis_date}
+                            onChange={handleInputChange}
+                            max={today} // Disable past dates
+                            required
+                            isInvalid={!!errors.diagnosis_date}
+                          />
+                          <Form.Control.Feedback type="invalid">
+                            {errors.diagnosis_date}
+                          </Form.Control.Feedback>
+                        </Form.Group>
                       </div>
                       <div className="col-12 mb-3">
-                        <label htmlFor="current_medications" className="form-label">Current Medications {requiredAsterisk}</label>
-                        <textarea
-                          className={`form-control ${errors.current_medications ? 'is-invalid' : ''}`}
-                          id="current_medications"
-                          name="current_medications"
-                          value={formData.current_medications}
-                          onChange={handleInputChange}
-                          rows="2"
-                          required
-                        ></textarea>
-                        {errors.current_medications && <div className="invalid-feedback">{errors.current_medications}</div>}
+                        <Form.Group controlId="current_medications">
+                          <Form.Label>Current Medications <span className="text-danger">*</span></Form.Label>
+                          <Form.Control 
+                            as="textarea"
+                            rows={2}
+                            name="current_medications"
+                            value={formData.current_medications}
+                            onChange={handleInputChange}
+                            required
+                            isInvalid={!!errors.current_medications}
+                          />
+                          <Form.Control.Feedback type="invalid">
+                            {errors.current_medications}
+                          </Form.Control.Feedback>
+                        </Form.Group>
                       </div>
                     </div>
                   </div>
@@ -406,9 +495,9 @@ function QolForm() {
                     <div className="row">
                       {/* Question 1 */}
                       <div className="col-12 mb-3">
-                        <label className="form-label">1. Causing swelling in your ankles or legs?</label>
+                        <label className="form-label">1. Causing swelling in your ankles or legs? <span className="text-danger">*</span></label>
+                        {errors.q1_swelling && <div className="text-danger mb-2">{errors.q1_swelling}</div>}
                         <div className="simple-radio-container">
-                          {errors.q1_swelling && <div className="invalid-feedback d-block mb-2">{errors.q1_swelling}</div>}
                           {options1to19.map(option => (
                             <label key={option.value}>
                               <input 
@@ -426,9 +515,9 @@ function QolForm() {
                       
                       {/* Question 2 */}
                       <div className="col-12 mb-3">
-                        <label className="form-label">2. Making you sit or lie down to rest during the day?</label>
+                        <label className="form-label">2. Making you sit or lie down to rest during the day? <span className="text-danger">*</span></label>
+                        {errors.q2_rest_needed && <div className="text-danger mb-2">{errors.q2_rest_needed}</div>}
                         <div className="simple-radio-container">
-                          {errors.q2_rest_needed && <div className="invalid-feedback d-block mb-2">{errors.q2_rest_needed}</div>}
                           {options1to19.map(option => (
                             <label key={option.value}>
                               <input 
@@ -446,9 +535,9 @@ function QolForm() {
                       
                       {/* Question 3 */}
                       <div className="col-12 mb-3">
-                        <label className="form-label">3. Making your walking about or climbing stairs difficult?</label>
+                        <label className="form-label">3. Making your walking about or climbing stairs difficult? <span className="text-danger">*</span></label>
+                        {errors.q3_walking_difficulty && <div className="text-danger mb-2">{errors.q3_walking_difficulty}</div>}
                         <div className="simple-radio-container">
-                          {errors.q3_walking_difficulty && <div className="invalid-feedback d-block mb-2">{errors.q3_walking_difficulty}</div>}
                           {options1to19.map(option => (
                             <label key={option.value}>
                               <input 
@@ -466,9 +555,9 @@ function QolForm() {
                       
                       {/* Question 4 */}
                       <div className="col-12 mb-3">
-                        <label className="form-label">4. Making your going places away from home difficult?</label>
+                        <label className="form-label">4. Making your going places away from home difficult? <span className="text-danger">*</span></label>
+                        {errors.q4_going_out_difficulty && <div className="text-danger mb-2">{errors.q4_going_out_difficulty}</div>}
                         <div className="simple-radio-container">
-                          {errors.q4_going_out_difficulty && <div className="invalid-feedback d-block mb-2">{errors.q4_going_out_difficulty}</div>}
                           {options1to19.map(option => (
                             <label key={option.value}>
                               <input 
@@ -486,9 +575,9 @@ function QolForm() {
                       
                       {/* Question 5 */}
                       <div className="col-12 mb-3">
-                        <label className="form-label">5. Making you short of breath?</label>
+                        <label className="form-label">5. Making you short of breath? <span className="text-danger">*</span></label>
+                        {errors.q5_shortness_of_breath && <div className="text-danger mb-2">{errors.q5_shortness_of_breath}</div>}
                         <div className="simple-radio-container">
-                          {errors.q5_shortness_of_breath && <div className="invalid-feedback d-block mb-2">{errors.q5_shortness_of_breath}</div>}
                           {options1to19.map(option => (
                             <label key={option.value}>
                               <input 
@@ -506,9 +595,9 @@ function QolForm() {
                       
                       {/* Question 6 */}
                       <div className="col-12 mb-3">
-                        <label className="form-label">6. Making you tired, fatigued, or low on energy?</label>
+                        <label className="form-label">6. Making you tired, fatigued, or low on energy? <span className="text-danger">*</span></label>
+                        {errors.q6_fatigue && <div className="text-danger mb-2">{errors.q6_fatigue}</div>}
                         <div className="simple-radio-container">
-                          {errors.q6_fatigue && <div className="invalid-feedback d-block mb-2">{errors.q6_fatigue}</div>}
                           {options1to19.map(option => (
                             <label key={option.value}>
                               <input 
@@ -532,9 +621,9 @@ function QolForm() {
                     <div className="row">
                       {/* Question 7 */}
                       <div className="col-12 mb-3">
-                        <label className="form-label">7. Making you feel you are a burden to your family or friends?</label>
+                        <label className="form-label">7. Making you feel you are a burden to your family or friends? <span className="text-danger">*</span></label>
+                        {errors.q7_burden_feeling && <div className="text-danger mb-2">{errors.q7_burden_feeling}</div>}
                         <div className="simple-radio-container">
-                          {errors.q7_burden_feeling && <div className="invalid-feedback d-block mb-2">{errors.q7_burden_feeling}</div>}
                           {options1to19.map(option => (
                             <label key={option.value}>
                               <input 
@@ -552,9 +641,9 @@ function QolForm() {
                       
                       {/* Question 8 */}
                       <div className="col-12 mb-3">
-                        <label className="form-label">8. Making you feel a loss of self-control in your life?</label>
+                        <label className="form-label">8. Making you feel a loss of self-control in your life? <span className="text-danger">*</span></label>
+                        {errors.q8_loss_of_control && <div className="text-danger mb-2">{errors.q8_loss_of_control}</div>}
                         <div className="simple-radio-container">
-                          {errors.q8_loss_of_control && <div className="invalid-feedback d-block mb-2">{errors.q8_loss_of_control}</div>}
                           {options1to19.map(option => (
                             <label key={option.value}>
                               <input 
@@ -572,9 +661,9 @@ function QolForm() {
                       
                       {/* Question 9 */}
                       <div className="col-12 mb-3">
-                        <label className="form-label">9. Making you worry?</label>
+                        <label className="form-label">9. Making you worry? <span className="text-danger">*</span></label>
+                        {errors.q9_worry && <div className="text-danger mb-2">{errors.q9_worry}</div>}
                         <div className="simple-radio-container">
-                          {errors.q9_worry && <div className="invalid-feedback d-block mb-2">{errors.q9_worry}</div>}
                           {options1to19.map(option => (
                             <label key={option.value}>
                               <input 
@@ -592,9 +681,9 @@ function QolForm() {
                       
                       {/* Question 10 */}
                       <div className="col-12 mb-3">
-                        <label className="form-label">10. Making it difficult for you to concentrate or remember things?</label>
+                        <label className="form-label">10. Making it difficult for you to concentrate or remember things? <span className="text-danger">*</span></label>
+                        {errors.q10_concentration_issue && <div className="text-danger mb-2">{errors.q10_concentration_issue}</div>}
                         <div className="simple-radio-container">
-                          {errors.q10_concentration_issue && <div className="invalid-feedback d-block mb-2">{errors.q10_concentration_issue}</div>}
                           {options1to19.map(option => (
                             <label key={option.value}>
                               <input 
@@ -612,9 +701,9 @@ function QolForm() {
                       
                       {/* Question 11 */}
                       <div className="col-12 mb-3">
-                        <label className="form-label">11. Making you feel depressed?</label>
+                        <label className="form-label">11. Making you feel depressed? <span className="text-danger">*</span></label>
+                        {errors.q11_depression && <div className="text-danger mb-2">{errors.q11_depression}</div>}
                         <div className="simple-radio-container">
-                          {errors.q11_depression && <div className="invalid-feedback d-block mb-2">{errors.q11_depression}</div>}
                           {options1to19.map(option => (
                             <label key={option.value}>
                               <input 
@@ -638,9 +727,9 @@ function QolForm() {
                     <div className="row">
                       {/* Question 12 */}
                       <div className="col-12 mb-3">
-                        <label className="form-label">12. Making your relating to or doing things with your friends or family difficult?</label>
+                        <label className="form-label">12. Making your relating to or doing things with your friends or family difficult? <span className="text-danger">*</span></label>
+                        {errors.q12_social_difficulty && <div className="text-danger mb-2">{errors.q12_social_difficulty}</div>}
                         <div className="simple-radio-container">
-                          {errors.q12_social_difficulty && <div className="invalid-feedback d-block mb-2">{errors.q12_social_difficulty}</div>}
                           {options1to19.map(option => (
                             <label key={option.value}>
                               <input 
@@ -658,9 +747,9 @@ function QolForm() {
                       
                       {/* Question 13 */}
                       <div className="col-12 mb-3">
-                        <label className="form-label">13. Making your working to earn a living difficult?</label>
+                        <label className="form-label">13. Making your working to earn a living difficult? <span className="text-danger">*</span></label>
+                        {errors.q13_work_difficulty && <div className="text-danger mb-2">{errors.q13_work_difficulty}</div>}
                         <div className="simple-radio-container">
-                          {errors.q13_work_difficulty && <div className="invalid-feedback d-block mb-2">{errors.q13_work_difficulty}</div>}
                           {options1to19.map(option => (
                             <label key={option.value}>
                               <input 
@@ -678,9 +767,9 @@ function QolForm() {
                       
                       {/* Question 14 */}
                       <div className="col-12 mb-3">
-                        <label className="form-label">14. Making your recreational pastimes, sports, or hobbies difficult?</label>
+                        <label className="form-label">14. Making your recreational pastimes, sports, or hobbies difficult? <span className="text-danger">*</span></label>
+                        {errors.q14_hobby_difficulty && <div className="text-danger mb-2">{errors.q14_hobby_difficulty}</div>}
                         <div className="simple-radio-container">
-                          {errors.q14_hobby_difficulty && <div className="invalid-feedback d-block mb-2">{errors.q14_hobby_difficulty}</div>}
                           {options1to19.map(option => (
                             <label key={option.value}>
                               <input 
@@ -698,9 +787,9 @@ function QolForm() {
                       
                       {/* Question 15 */}
                       <div className="col-12 mb-3">
-                        <label className="form-label">15. Making your sexual activities difficult?</label>
+                        <label className="form-label">15. Making your sexual activities difficult? <span className="text-danger">*</span></label>
+                        {errors.q15_sexual_difficulty && <div className="text-danger mb-2">{errors.q15_sexual_difficulty}</div>}
                         <div className="simple-radio-container">
-                          {errors.q15_sexual_difficulty && <div className="invalid-feedback d-block mb-2">{errors.q15_sexual_difficulty}</div>}
                           {options1to19.map(option => (
                             <label key={option.value}>
                               <input 
@@ -724,9 +813,9 @@ function QolForm() {
                     <div className="row">
                       {/* Question 16 */}
                       <div className="col-12 mb-3">
-                        <label className="form-label">16. Making your sleeping well at night difficult?</label>
+                        <label className="form-label">16. Making your sleeping well at night difficult? <span className="text-danger">*</span></label>
+                        {errors.q16_sleep_difficulty && <div className="text-danger mb-2">{errors.q16_sleep_difficulty}</div>}
                         <div className="simple-radio-container">
-                          {errors.q16_sleep_difficulty && <div className="invalid-feedback d-block mb-2">{errors.q16_sleep_difficulty}</div>}
                           {options1to19.map(option => (
                             <label key={option.value}>
                               <input 
@@ -750,9 +839,9 @@ function QolForm() {
                     <div className="row">
                       {/* Question 17 */}
                       <div className="col-12 mb-3">
-                        <label className="form-label">17. Making you stay in a hospital?</label>
+                        <label className="form-label">17. Making you stay in a hospital? <span className="text-danger">*</span></label>
+                        {errors.q17_hospitalization && <div className="text-danger mb-2">{errors.q17_hospitalization}</div>}
                         <div className="simple-radio-container">
-                          {errors.q17_hospitalization && <div className="invalid-feedback d-block mb-2">{errors.q17_hospitalization}</div>}
                           {options1to19.map(option => (
                             <label key={option.value}>
                               <input 
@@ -770,9 +859,9 @@ function QolForm() {
                       
                       {/* Question 18 */}
                       <div className="col-12 mb-3">
-                        <label className="form-label">18. Costing you money for medical care?</label>
+                        <label className="form-label">18. Costing you money for medical care? <span className="text-danger">*</span></label>
+                        {errors.q18_financial_burden && <div className="text-danger mb-2">{errors.q18_financial_burden}</div>}
                         <div className="simple-radio-container">
-                          {errors.q18_financial_burden && <div className="invalid-feedback d-block mb-2">{errors.q18_financial_burden}</div>}
                           {options1to19.map(option => (
                             <label key={option.value}>
                               <input 
@@ -790,9 +879,9 @@ function QolForm() {
                       
                       {/* Question 19 */}
                       <div className="col-12 mb-3">
-                        <label className="form-label">19. Giving you side effects from treatments?</label>
+                        <label className="form-label">19. Giving you side effects from treatments? <span className="text-danger">*</span></label>
+                        {errors.q19_treatment_side_effects && <div className="text-danger mb-2">{errors.q19_treatment_side_effects}</div>}
                         <div className="simple-radio-container">
-                          {errors.q19_treatment_side_effects && <div className="invalid-feedback d-block mb-2">{errors.q19_treatment_side_effects}</div>}
                           {options1to19.map(option => (
                             <label key={option.value}>
                               <input 
@@ -816,9 +905,9 @@ function QolForm() {
                     <div className="row">
                       {/* Question 20 */}
                       <div className="col-12 mb-3">
-                        <label className="form-label">20. In general, how well do you feel your heart failure is managed?</label>
+                        <label className="form-label">20. In general, how well do you feel your heart failure is managed? <span className="text-danger">*</span></label>
+                        {errors.q20_management_quality && <div className="text-danger mb-2">{errors.q20_management_quality}</div>}
                         <div className="simple-radio-container">
-                          {errors.q20_management_quality && <div className="invalid-feedback d-block mb-2">{errors.q20_management_quality}</div>}
                           {options20.map(option => (
                             <label key={option.value}>
                               <input 
@@ -836,9 +925,9 @@ function QolForm() {
                       
                       {/* Question 21 */}
                       <div className="col-12 mb-3">
-                        <label className="form-label">21. How would you rate your overall health?</label>
+                        <label className="form-label">21. How would you rate your overall health? <span className="text-danger">*</span></label>
+                        {errors.q21_overall_health && <div className="text-danger mb-2">{errors.q21_overall_health}</div>}
                         <div className="simple-radio-container">
-                          {errors.q21_overall_health && <div className="invalid-feedback d-block mb-2">{errors.q21_overall_health}</div>}
                           {options21.map(option => (
                             <label key={option.value}>
                               <input 
@@ -862,25 +951,25 @@ function QolForm() {
                     <p className="mb-3">Please share any other concerns or experiences related to your heart failure and its impact on your quality of life:</p>
                     <div className="row">
                       <div className="col-12 mb-3">
-                        <textarea
-                          className={`form-control ${errors.additional_comments ? 'is-invalid' : ''}`}
-                          id="additional_comments"
-                          name="additional_comments"
-                          value={formData.additional_comments}
-                          onChange={handleInputChange}
-                          rows="5"
-                        ></textarea>
-                        {errors.additional_comments && <div className="invalid-feedback">{errors.additional_comments}</div>}
+                        <Form.Group controlId="additional_comments">
+                          <Form.Control 
+                            as="textarea"
+                            rows={5}
+                            name="additional_comments"
+                            value={formData.additional_comments}
+                            onChange={handleInputChange}
+                          />
+                        </Form.Group>
                       </div>
                     </div>
                   </div>
                   
                   <div className="form-navigation mt-4 d-flex justify-content-center">
-                    <button type="submit" className="btn btn-success" disabled={isSubmitting}>
+                    <Button variant="success" type="submit" disabled={isSubmitting}>
                       {isSubmitting ? 'Submitting...' : 'Submit QOL Assessment'}
-                    </button>
+                    </Button>
                   </div>
-                </form>
+                </Form>
               )}
             </div>
           </div>

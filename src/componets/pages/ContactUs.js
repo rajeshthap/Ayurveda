@@ -19,6 +19,7 @@ const ContactUs = () => {
   });
 
   const [validated, setValidated] = useState(false);
+  const [submitMessage, setSubmitMessage] = useState("");
 
   const validateForm = () => {
     let newErrors = {
@@ -61,7 +62,26 @@ const ContactUs = () => {
   };
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type } = e.target;
+    
+    // For text fields, remove numbers
+    if (type === 'text') {
+      const textOnly = value.replace(/[0-9]/g, '');
+      setFormData(prev => ({
+        ...prev,
+        [name]: textOnly
+      }));
+      
+      // Clear error when user starts typing
+      if (errors[name]) {
+        setErrors(prev => ({
+          ...prev,
+          [name]: ''
+        }));
+      }
+      return;
+    }
+    
     setFormData(prev => ({
       ...prev,
       [name]: value
@@ -110,7 +130,7 @@ const ContactUs = () => {
     })
     .then(data => {
       console.log('Success:', data);
-      alert('Thank you for your message! We will contact you soon.');
+      setSubmitMessage("Thank you for your message! We will contact you soon.");
       setFormData({ full_name: '', email: '', subject: '', message: '' });
       setErrors({
         full_name: '',
@@ -122,7 +142,7 @@ const ContactUs = () => {
     })
     .catch(error => {
       console.error('Error:', error);
-      alert('There was an error sending your message. Please try again later.');
+      setSubmitMessage("There was an error sending your message. Please try again later.");
     });
   };
 
@@ -150,6 +170,12 @@ const ContactUs = () => {
             <div className='about-description'>Wellness Center and Speciality Clinic for Chronic Disorders</div>
                   
           </div>
+          
+          {submitMessage && (
+            <div className={`alert ${submitMessage.includes('Error') ? 'alert-danger' : 'alert-success'} my-4`}>
+              {submitMessage}
+            </div>
+          )}
           
           <div className="trilok-contact-content">
             <div className="trilok-contact-info">
@@ -194,6 +220,18 @@ const ContactUs = () => {
                   <p>270, Nirmal Block – B, Tehri Punarvas Sthal, Pashulok, Rishikesh – 249201 (UK)</p>
                   <p>Land mark: Near Shiv chowk, Tehri Visthapit</p>
                   <p>Google location:</p>
+                  <div className="map-container">
+                    <iframe 
+                      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4409.104768474175!2d78.27164757291504!3d30.05624125223899!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39093e37b557d6e1%3A0x7891ef3001bc900d!2sTrilok%20Ayurveda%20Wellness%20Center%20and%20Speciality%20Clinic%20for%20Chronic%20Disorders!5e0!3m2!1sen!2sin!4v1767973883641!5m2!1sen!2sin" 
+                      width="80%" 
+                      height="150" 
+                      style={{border:0}} 
+                      allowFullScreen="" 
+                      loading="lazy" 
+                      referrerPolicy="no-referrer-when-downgrade"
+                      title="Trilok Ayurveda Rishikesh Location"
+                    ></iframe>
+                  </div>
                 </div>
               </div>
               
@@ -224,6 +262,78 @@ const ContactUs = () => {
                   <p>cure@trilokayurveda.com</p>
                 </div>
               </div>
+              
+              {/* Clinic Hours Section */}
+              <div className="trilok-info-item">
+                <div className="trilok-info-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                </div>
+                <div className="trilok-info-content">
+                  <h4>🕒 Clinic Hours</h4>
+                  <div className="clinic-hours-table">
+                    <table className="table table-bordered">
+                      <thead>
+                        <tr>
+                          <th>Day</th>
+                          <th>Timing</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>Monday–Saturday</td>
+                          <td>9:00 AM – 1:00 PM & 4:00 PM – 7:00 PM</td>
+                        </tr>
+                        <tr>
+                          <td>Sunday</td>
+                          <td>Closed (Online consultations available)</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Online Consultations Section */}
+              <div className="trilok-info-item">
+                <div className="trilok-info-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14,2 14,8 20,8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                    <polyline points="10,9 9,9 8,9"></polyline>
+                  </svg>
+                </div>
+                <div className="trilok-info-content">
+                  <h4>💻 Online Consultations Available</h4>
+                  <p>We offer secure video consultations via WhatsApp</p>
+                </div>
+              </div>
+              
+              {/* Disclaimer Section */}
+              <div className="trilok-info-item">
+                <div className="trilok-info-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                    <line x1="12" y1="9" x2="12" y2="13"></line>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                  </svg>
+                </div>
+                <div className="trilok-info-content">
+                  <h4>Disclaimer:</h4>
+                  <ol>
+                    <li>For non-emergency administrative and clinical communication only.</li>
+                    <li>This contact section is intended for information, appointments, and documentation-related queries.</li>
+                    <li>No emergency medical services are provided through this platform.</li>
+                    <li>Responses are provided during official clinic working hours only.</li>
+                    <li>Communication through this section does not constitute medical advice.</li>
+                    <li>All communications are subject to clinic policies, consent, and applicable laws.</li>
+                  </ol>
+                </div>
+              </div>
             </div>
             
             <div className="trilok-contact-form">
@@ -237,6 +347,12 @@ const ContactUs = () => {
                     placeholder="Full Name" 
                     value={formData.full_name}
                     onChange={handleChange}
+                    onKeyPress={(e) => {
+                      // Prevent numbers from being typed
+                      if (/[0-9]/.test(e.key)) {
+                        e.preventDefault();
+                      }
+                    }}
                     required
                     isInvalid={!!errors.full_name}
                   />
@@ -269,6 +385,12 @@ const ContactUs = () => {
                     placeholder="Subject" 
                     value={formData.subject}
                     onChange={handleChange}
+                    onKeyPress={(e) => {
+                      // Prevent numbers from being typed
+                      if (/[0-9]/.test(e.key)) {
+                        e.preventDefault();
+                      }
+                    }}
                     required
                     isInvalid={!!errors.subject}
                   />
@@ -306,4 +428,4 @@ const ContactUs = () => {
   );
 };
 
-export default ContactUs;
+export default ContactUs; 
