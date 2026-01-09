@@ -2,8 +2,7 @@
   "name": "projectnew",
   "version": "0.1.0",
   "private": true,
-    "homepage": "/trilokayurveda",
-  
+  "homepage": "/trilokayurveda",
   "dependencies": {
     "@fontsource/poppins": "^5.2.7",
     "@fortawesome/fontawesome-free": "^7.1.0",
@@ -17,7 +16,9 @@
     "bootstrap": "^5.3.8",
     "bootstrap-icons": "^1.13.1",
     "flatpickr": "^4.6.13",
+    "html2canvas": "^1.4.1",
     "jquery": "^3.7.1",
+    "jspdf": "^4.0.0",
     "react": "^19.2.1",
     "react-bootstrap": "^2.10.10",
     "react-dom": "^19.2.1",

@@ -72,6 +72,7 @@ const menuItems = [
       active: true,
     },
     
+   
      {
       icon: <FaImages />,
       label: "Carousel",
@@ -260,6 +261,13 @@ const menuItems = [
       icon: <FaTachometerAlt />,
       label: "Footer",
       path: "/ManageFooter",
+      active: true,
+    },
+
+     {
+      icon: <FaTachometerAlt />,
+      label: "Manage Consent",
+      path: "/ManageConsent",
       active: true,
     },
 
