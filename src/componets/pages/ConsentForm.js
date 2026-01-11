@@ -332,7 +332,7 @@ function ConsentForm() {
                     <div className="clinic-info mb-4">
                       <div className="row align-items-center">
                         <div className="col-md-3">
-                          <img src={Logo1} alt="Trilok Ayurveda Logo" className="img-fluid" style={{maxHeight: '150px'}} />
+                          <img src={Logo1} alt="Trilok Ayurveda Logo" className="img-fluid logo-trilok" />
                         </div>
                         <div className="col-md-9 d-flex justify-content-end">
                           <div className="text-end">
@@ -609,7 +609,7 @@ function ConsentForm() {
                               <img 
                                 src={URL.createObjectURL(formData.attendee_signature)} 
                                 alt="Signature Preview" 
-                                style={{maxHeight: '100px'}}
+                                className="img-signature"
                               />
                             </div>
                           )}

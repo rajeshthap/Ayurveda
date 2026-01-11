@@ -40,3 +40,12 @@
   vertical-align: middle;
   width: calc(100% - 30px); /* Adjust width to account for radio button */
 }
+
+
+.logo-trilok{
+max-height: 150px;
+}
+
+.img-signature{
+max-height: 100px;
+}

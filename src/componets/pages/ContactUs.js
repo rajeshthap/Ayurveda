@@ -198,7 +198,7 @@ const ContactUs = () => {
                       src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d3443.3101874914964!2d78.02352577!3d30.34213321!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390929ff3110c039%3A0x5cded829d275e38c!2sTrilok%20Ayurveda%20Speciality%20Clinic%20for%20Chronic%20Disorders!5e0!3m2!1sen!2sin!4v1767613486738!5m2!1sen!2sin%22" 
                       width="80%" 
                       height="150" 
-                      style={{border:0}} 
+                      className='address-trilok'
                       allowFullScreen="" 
                       loading="lazy" 
                       referrerPolicy="no-referrer-when-downgrade"
@@ -225,7 +225,7 @@ const ContactUs = () => {
                       src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4409.104768474175!2d78.27164757291504!3d30.05624125223899!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39093e37b557d6e1%3A0x7891ef3001bc900d!2sTrilok%20Ayurveda%20Wellness%20Center%20and%20Speciality%20Clinic%20for%20Chronic%20Disorders!5e0!3m2!1sen!2sin!4v1767973883641!5m2!1sen!2sin" 
                       width="80%" 
                       height="150" 
-                      style={{border:0}} 
+                      className='address-trilok'
                       allowFullScreen="" 
                       loading="lazy" 
                       referrerPolicy="no-referrer-when-downgrade"
