@@ -1170,7 +1170,7 @@ className="d-flex align-items-center gap-2"
 {/* New layout with logo and address */}
 <div className="row align-items-center">
 <div className="col-md-3">
-<img src={Logo1} alt="Trilok Ayurveda Logo" className="img-fluid" style={{maxHeight: '150px'}} />
+<img src={Logo1} alt="Trilok Ayurveda Logo" className="img-fluid logo-trilok"  />
 </div>
 <div className="col-md-9 d-flex justify-content-end">
 <div className="text-end">
@@ -1375,7 +1375,6 @@ accept="image/*"
 <img
 src={attendeeSignaturePreview}
 alt="Signature Preview"
-style={{maxHeight: '100px', border: '1px solid #ccc', padding: '5px'}}
 className="signature-image"
 />
 </div>
@@ -1385,7 +1384,6 @@ className="signature-image"
 <img
 src={attendeeSignatureDataUrl}
 alt="Existing Signature"
-style={{maxHeight: '100px', border: '1px solid #ccc', padding: '5px', display: 'block'}}
 className="signature-image"
 />
 </div>
@@ -1395,7 +1393,6 @@ className="signature-image"
 <img
 src={`https://mahadevaaya.com/trilokayurveda/trilokabackend${existingAttendeeSignature}`}
 alt="Existing Signature"
-style={{maxHeight: '100px', border: '1px solid #ccc', padding: '5px', display: 'block'}}
 className="signature-image"
 onError={(e) => {
 console.error("Error loading signature image:", e);
@@ -1423,7 +1420,6 @@ attendeeSignatureDataUrl ? (
 <img
 src={attendeeSignatureDataUrl}
 alt="Existing Signature"
-style={{maxHeight: '100px', border: '1px solid #ccc', padding: '5px', display: 'block'}}
 className="signature-image"
 />
 </div>
@@ -1433,7 +1429,6 @@ className="signature-image"
 <img
 src={`https://mahadevaaya.com/trilokayurveda/trilokabackend${existingAttendeeSignature}`}
 alt="Existing Signature"
-style={{maxHeight: '100px', border: '1px solid #ccc', padding: '5px', display: 'block'}}
 className="signature-image"
 onError={(e) => {
 console.error("Error loading signature image:", e);
@@ -1481,7 +1476,6 @@ accept="image/*"
 <img
 src={physicianSignaturePreview}
 alt="Physician Signature Preview"
-style={{maxHeight: '100px', border: '1px solid #ccc', padding: '5px'}}
 className="signature-image"
 />
 </div>
@@ -1491,7 +1485,6 @@ className="signature-image"
 <img
 src={physicianSignatureDataUrl}
 alt="Existing Physician Signature"
-style={{maxHeight: '100px', border: '1px solid #ccc', padding: '5px', display: 'block'}}
 className="signature-image"
 />
 </div>
@@ -1501,7 +1494,6 @@ className="signature-image"
 <img
 src={`https://mahadevaaya.com/trilokayurveda/trilokabackend${existingPhysicianSignature}`}
 alt="Existing Physician Signature"
-style={{maxHeight: '100px', border: '1px solid #ccc', padding: '5px', display: 'block'}}
 className="signature-image"
 onError={(e) => {
 console.error("Error loading physician signature image:", e);
@@ -1529,7 +1521,6 @@ physicianSignatureDataUrl ? (
 <img
 src={physicianSignatureDataUrl}
 alt="Existing Physician Signature"
-style={{maxHeight: '100px', border: '1px solid #ccc', padding: '5px', display: 'block'}}
 className="signature-image"
 />
 </div>
@@ -1539,7 +1530,6 @@ className="signature-image"
 <img
 src={`https://mahadevaaya.com/trilokayurveda/trilokabackend${existingPhysicianSignature}`}
 alt="Existing Physician Signature"
-style={{maxHeight: '100px', border: '1px solid #ccc', padding: '5px', display: 'block'}}
 className="signature-image"
 onError={(e) => {
 console.error("Error loading physician signature image:", e);
@@ -1663,7 +1653,7 @@ Generating PDF...
 {/* New layout with logo and address */}
 <div className="row align-items-center">
 <div className="col-md-3">
-<img src={Logo1} alt="Trilok Ayurveda Logo" className="img-fluid" style={{maxHeight: '150px'}} />
+<img src={Logo1} alt="Trilok Ayurveda Logo" className="img-fluid logo-trilok"  />
 </div>
 <div className="col-md-9 d-flex justify-content-end">
 <div className="text-end">
@@ -1838,14 +1828,12 @@ disabled
 <img
 src={attendeeSignatureDataUrl}
 alt="Patient Signature"
-style={{maxHeight: '100px', border: '1px solid #ccc', padding: '5px', display: 'block'}}
 className="signature-image"
 />
 ) : existingAttendeeSignature && (
 <img
 src={`https://mahadevaaya.com/trilokayurveda/trilokabackend${existingAttendeeSignature}`}
 alt="Patient Signature"
-style={{maxHeight: '100px', border: '1px solid #ccc', padding: '5px', display: 'block'}}
 className="signature-image"
 onError={(e) => {
 console.error("Error loading signature image:", e);
@@ -1879,14 +1867,12 @@ disabled
 <img
 src={physicianSignatureDataUrl}
 alt="Physician Signature"
-style={{maxHeight: '100px', border: '1px solid #ccc', padding: '5px', display: 'block'}}
 className="signature-image"
 />
 ) : existingPhysicianSignature && (
 <img
 src={`https://mahadevaaya.com/trilokayurveda/trilokabackend${existingPhysicianSignature}`}
 alt="Physician Signature"
-style={{maxHeight: '100px', border: '1px solid #ccc', padding: '5px', display: 'block'}}
 className="signature-image"
 onError={(e) => {
 console.error("Error loading physician signature image:", e);

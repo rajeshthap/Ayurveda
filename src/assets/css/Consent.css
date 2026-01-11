@@ -1,3 +1,13 @@
+.signature-image{
+max-height: '100px';
+border: '1px solid #ccc';
+ padding: '5px'; 
+display: 'block'
+}
+
+.logo-trilok{
+max-height: 150px;
+}
 
 @media print {
 .no-print {
