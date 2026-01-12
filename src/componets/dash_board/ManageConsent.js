@@ -12,6 +12,61 @@ import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import Logo1 from "../../assets/images/Logo1.jpeg";
 
+// Utility function to reliably convert image to data URL
+const loadImageAsDataUrl = async (imageUrl, maxRetries = 3) => {
+  if (!imageUrl) return null;
+
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    try {
+      // Add timestamp to prevent caching issues
+      const urlWithTimestamp = imageUrl.includes('?')
+        ? `${imageUrl}&_t=${Date.now()}`
+        : `${imageUrl}?_t=${Date.now()}`;
+
+      const img = new Image();
+      img.crossOrigin = 'Anonymous';
+
+      return new Promise((resolve, reject) => {
+        // Set a timeout for image loading
+        const timeout = setTimeout(() => {
+          reject(new Error('Image load timeout'));
+        }, 5000);
+
+        img.onload = () => {
+          clearTimeout(timeout);
+          try {
+            const canvas = document.createElement('canvas');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0);
+            resolve(canvas.toDataURL('image/png'));
+          } catch (error) {
+            reject(error);
+          }
+        };
+
+        img.onerror = () => {
+          clearTimeout(timeout);
+          reject(new Error('Image failed to load'));
+        };
+
+        img.src = urlWithTimestamp;
+      });
+    } catch (error) {
+      console.warn(`Attempt ${attempt + 1} failed to load image:`, imageUrl, error);
+      // Wait before retrying
+      if (attempt < maxRetries - 1) {
+        await new Promise(resolve => setTimeout(resolve, 500 * (attempt + 1)));
+      }
+    }
+  }
+
+  // If all retries fail, return null instead of a placeholder
+  console.error(`Failed to load image after ${maxRetries} attempts:`, imageUrl);
+  return null;
+};
+
 const ManageConsent = () => {
 const { auth, refreshAccessToken } = useAuth();
 const authFetch = useAuthFetch();
@@ -426,236 +481,246 @@ setShowAlert(false); // Hide any existing alerts when entering edit mode
 
 // Handle form submission (PUT request)
 const handleSubmit = async (e) => {
-e.preventDefault();
+  e.preventDefault();
 
-setIsSubmitting(true);
-setShowAlert(false);
+  setIsSubmitting(true);
+  setShowAlert(false);
 
-try {
-// Prepare the data for submission
-const payload = {
-id: formData.id,
-patient_name: formData.patient_name,
-date_of_birth: formData.date_of_birth,
-gender: formData.gender,
-address: formData.address,
-mobile_number: formData.mobile_number,
-diagnosis_name: formData.diagnosis_name,
-gurdian_name: formData.gurdian_name,
-relationship_to_patient: formData.relationship_to_patient,
-attendee_name: formData.attendee_name,
-attendee_physician_name: formData.attendee_physician_name,
-visit_date: formData.visit_date
-};
+  try {
+    // Prepare the data for submission
+    const payload = {
+      id: formData.id,
+      patient_name: formData.patient_name,
+      date_of_birth: formData.date_of_birth,
+      gender: formData.gender,
+      address: formData.address,
+      mobile_number: formData.mobile_number,
+      diagnosis_name: formData.diagnosis_name,
+      gurdian_name: formData.gurdian_name,
+      relationship_to_patient: formData.relationship_to_patient,
+      attendee_name: formData.attendee_name,
+      attendee_physician_name: formData.attendee_physician_name,
+      visit_date: formData.visit_date
+    };
 
-console.log("Submitting data for consent form ID:", formData.id);
-console.log("Payload:", payload);
+    console.log("Submitting data for consent form ID:", formData.id);
+    console.log("Payload:", payload);
 
-// If we have new signatures, we need to handle them with FormData
-if (formData.attendee_signature || formData.attendee_physician_signature) {
-const dataToSend = new FormData();
+    // If we have new signatures, we need to handle them with FormData
+    if (formData.attendee_signature || formData.attendee_physician_signature) {
+      const dataToSend = new FormData();
 
-// Add all text fields
-Object.keys(payload).forEach(key => {
-dataToSend.append(key, payload[key]);
-});
+      // Add all text fields
+      Object.keys(payload).forEach(key => {
+        dataToSend.append(key, payload[key]);
+      });
 
-// Add file fields if they exist
-if (formData.attendee_signature) {
-dataToSend.append('attendee_signature', formData.attendee_signature);
-}
+      // Add file fields if they exist
+      if (formData.attendee_signature) {
+        dataToSend.append('attendee_signature', formData.attendee_signature);
+      }
 
-if (formData.attendee_physician_signature) {
-dataToSend.append('attendee_physician_signature', formData.attendee_physician_signature);
-}
+      if (formData.attendee_physician_signature) {
+        dataToSend.append('attendee_physician_signature', formData.attendee_physician_signature);
+      }
 
-console.log("FormData content:");
-for (let pair of dataToSend.entries()) {
-console.log(pair[0] + ': ' + pair[1]);
-}
+      console.log("FormData content:");
+      for (let pair of dataToSend.entries()) {
+        console.log(pair[0] + ': ' + pair[1]);
+      }
 
-const url = `https://mahadevaaya.com/trilokayurveda/trilokabackend/api/consent-form/?id=${formData.id}`;
-console.log("PUT URL:", url);
+      const url = `https://mahadevaaya.com/trilokayurveda/trilokabackend/api/consent-form/?id=${formData.id}`;
+      console.log("PUT URL:", url);
 
-let response = await fetch(url, {
-method: "PUT",
-body: dataToSend,
-headers: {
-// Remove Content-Type to let browser set it automatically for FormData
-Authorization: `Bearer ${auth?.access}`,
-},
-});
+      let response = await fetch(url, {
+        method: "PUT",
+        body: dataToSend,
+        headers: {
+          // Remove Content-Type to let browser set it automatically for FormData
+          Authorization: `Bearer ${auth?.access}`,
+        },
+      });
 
-// If unauthorized, try refreshing token and retry once
-if (response.status === 401) {
-const newAccess = await refreshAccessToken();
-if (!newAccess) throw new Error("Session expired");
-response = await fetch(url, {
-method: "PUT",
-body: dataToSend,
-headers: {
-Authorization: `Bearer ${newAccess}`,
-},
-});
-}
+      // If unauthorized, try refreshing token and retry once
+      if (response.status === 401) {
+        const newAccess = await refreshAccessToken();
+        if (!newAccess) throw new Error("Session expired");
+        response = await fetch(url, {
+          method: "PUT",
+          body: dataToSend,
+          headers: {
+            Authorization: `Bearer ${newAccess}`,
+          },
+        });
+      }
 
-console.log("PUT Response status:", response.status);
+      console.log("PUT Response status:", response.status);
 
-if (!response.ok) {
-const errorText = await response.text();
-let errorData = null;
-try {
-errorData = JSON.parse(errorText);
-} catch (e) {
-/* not JSON */
-}
-console.error("Server error response:", errorData || errorText);
-throw new Error(
-(errorData && errorData.message) || 'Failed to update consent form'
-);
-}
+      if (!response.ok) {
+        const errorText = await response.text();
+        let errorData = null;
+        try {
+          errorData = JSON.parse(errorText);
+        } catch (e) {
+          /* not JSON */
+        }
+        console.error("Server error response:", errorData || errorText);
+        throw new Error(
+          (errorData && errorData.message) || 'Failed to update consent form'
+        );
+      }
 
-const result = await response.json();
-console.log("PUT Success response:", result);
+      const result = await response.json();
+      console.log("PUT Success response:", result);
 
-// Handle different response structures for PUT
-let isSuccess = false;
-let updatedItem = null;
+      // Handle different response structures for PUT
+      let isSuccess = false;
+      let updatedItem = null;
 
-if (Array.isArray(result)) {
-// Direct array response
-isSuccess = result.length > 0;
-updatedItem = result.find(item => item.id === formData.id) || result[0];
-} else if (result && typeof result === 'object') {
-if (result.success) {
-isSuccess = result.success;
-if (Array.isArray(result.data)) {
-updatedItem = result.data.find(item => item.id === formData.id) || result.data[0];
-} else {
-updatedItem = result.data;
-}
-} else if (result.id) {
-// Response without success flag but with ID
-isSuccess = true;
-updatedItem = result;
-}
-}
+      if (Array.isArray(result)) {
+        // Direct array response
+        isSuccess = result.length > 0;
+        updatedItem = result.find(item => item.id === formData.id) || result[0];
+      } else if (result && typeof result === 'object') {
+        if (result.success) {
+          isSuccess = result.success;
+          if (Array.isArray(result.data)) {
+            updatedItem = result.data.find(item => item.id === formData.id) || result.data[0];
+          } else {
+            updatedItem = result.data;
+          }
+        } else if (result.id) {
+          // Response without success flag but with ID
+          isSuccess = true;
+          updatedItem = result;
+        }
+      }
 
-if (isSuccess) {
-setMessage("Consent form updated successfully!");
-setVariant("success");
-setShowAlert(true);
-setIsEditing(false);
+      if (isSuccess) {
+        setMessage("Consent form updated successfully!");
+        setVariant("success");
+        setShowAlert(true);
+        setIsEditing(false);
 
-// Update existing signatures if new ones were uploaded
-if (formData.attendee_signature && updatedItem) {
-// Keep the data URL in state so it displays the uploaded image immediately
-// Don't clear it, just update the existing signature path for future loads
-setExistingAttendeeSignature(updatedItem.attendee_signature);
-setAttendeeSignaturePreview(null);
-setFormData((prev) => ({ ...prev, attendee_signature: null }));
-}
+        // Update existing signatures if new ones were uploaded
+        if (formData.attendee_signature && updatedItem) {
+          // Keep the data URL in state so it displays the uploaded image immediately
+          // Don't clear it, just update the existing signature path for future loads
+          setExistingAttendeeSignature(updatedItem.attendee_signature);
+          setAttendeeSignaturePreview(null);
+          setFormData((prev) => ({ ...prev, attendee_signature: null }));
+        }
 
-if (formData.attendee_physician_signature && updatedItem) {
-// Keep the data URL in state so it displays the uploaded image immediately
-// Don't clear it, just update the existing signature path for future loads
-setExistingPhysicianSignature(updatedItem.attendee_physician_signature);
-setPhysicianSignaturePreview(null);
-setFormData((prev) => ({ ...prev, attendee_physician_signature: null }));
-}
+        if (formData.attendee_physician_signature && updatedItem) {
+          // Keep the data URL in state so it displays the uploaded image immediately
+          // Don't clear it, just update the existing signature path for future loads
+          setExistingPhysicianSignature(updatedItem.attendee_physician_signature);
+          setPhysicianSignaturePreview(null);
+          setFormData((prev) => ({ ...prev, attendee_physician_signature: null }));
+        }
 
-// Update the consent form in the list
-if (updatedItem) {
-setConsentForms(prevItems =>
-prevItems.map(item =>
-item.id === formData.id ? updatedItem : item
-)
-);
-}
-} else {
-throw new Error("Failed to update consent form");
-}
-} else {
-// For updates without new signatures, use JSON
-const url = `https://mahadevaaya.com/trilokayurveda/trilokabackend/api/consent-form/?id=${formData.id}`;
-console.log("PUT URL (JSON):", url);
+        // Update the consent form in the list
+        if (updatedItem) {
+          setConsentForms(prevItems =>
+            prevItems.map(item =>
+              item.id === formData.id ? updatedItem : item
+            )
+          );
+        }
 
-const response = await authFetch(url, {
-method: "PUT",
-body: JSON.stringify(payload),
-});
+        // Add hard refresh after successful save with signatures
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000); // Wait 2 seconds to show the success message before refreshing
+      } else {
+        throw new Error("Failed to update consent form");
+      }
+    } else {
+      // For updates without new signatures, use JSON
+      const url = `https://mahadevaaya.com/trilokayurveda/trilokabackend/api/consent-form/?id=${formData.id}`;
+      console.log("PUT URL (JSON):", url);
 
-console.log("PUT Response status:", response.status);
+      const response = await authFetch(url, {
+        method: "PUT",
+        body: JSON.stringify(payload),
+      });
 
-if (!response.ok) {
-const errorData = await response.json();
-console.error("Server error response:", errorData);
-throw new Error(
-errorData.message || "Failed to update consent form"
-);
-}
+      console.log("PUT Response status:", response.status);
 
-const result = await response.json();
-console.log("PUT Success response:", result);
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Server error response:", errorData);
+        throw new Error(
+          errorData.message || "Failed to update consent form"
+        );
+      }
 
-// Handle different response structures for PUT
-let isSuccess = false;
-let updatedItem = null;
+      const result = await response.json();
+      console.log("PUT Success response:", result);
 
-if (Array.isArray(result)) {
-// Direct array response
-isSuccess = result.length > 0;
-updatedItem = result.find(item => item.id === formData.id) || result[0];
-} else if (result && typeof result === 'object') {
-if (result.success) {
-isSuccess = result.success;
-if (Array.isArray(result.data)) {
-updatedItem = result.data.find(item => item.id === formData.id) || result.data[0];
-} else {
-updatedItem = result.data;
-}
-} else if (result.id) {
-// Response without success flag but with ID
-isSuccess = true;
-updatedItem = result;
-}
-}
+      // Handle different response structures for PUT
+      let isSuccess = false;
+      let updatedItem = null;
 
-if (isSuccess) {
-setMessage("Consent form updated successfully!");
-setVariant("success");
-setShowAlert(true);
-setIsEditing(false);
+      if (Array.isArray(result)) {
+        // Direct array response
+        isSuccess = result.length > 0;
+        updatedItem = result.find(item => item.id === formData.id) || result[0];
+      } else if (result && typeof result === 'object') {
+        if (result.success) {
+          isSuccess = result.success;
+          if (Array.isArray(result.data)) {
+            updatedItem = result.data.find(item => item.id === formData.id) || result.data[0];
+          } else {
+            updatedItem = result.data;
+          }
+        } else if (result.id) {
+          // Response without success flag but with ID
+          isSuccess = true;
+          updatedItem = result;
+        }
+      }
 
-// Update the consent form in the list
-if (updatedItem) {
-setConsentForms(prevItems =>
-prevItems.map(item =>
-item.id === formData.id ? updatedItem : item
-)
-);
-}
-} else {
-throw new Error("Failed to update consent form");
-}
-}
-} catch (error) {
-console.error('Error updating consent form:', error);
-let errorMessage = "An unexpected error occurred. Please try again.";
+      if (isSuccess) {
+        setMessage("Consent form updated successfully!");
+        setVariant("success");
+        setShowAlert(true);
+        setIsEditing(false);
 
-if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
-errorMessage = "Network error: Could not connect to the server. Please check the API endpoint.";
-} else if (error.message) {
-errorMessage = error.message;
-}
+        // Update the consent form in the list
+        if (updatedItem) {
+          setConsentForms(prevItems =>
+            prevItems.map(item =>
+              item.id === formData.id ? updatedItem : item
+            )
+          );
+        }
 
-setMessage(errorMessage);
-setVariant("danger");
-setShowAlert(true);
-setTimeout(() => setShowAlert(false), 5000);
-} finally {
-setIsSubmitting(false);
-}
+        // Add hard refresh after successful save without signatures
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000); // Wait 2 seconds to show the success message before refreshing
+      } else {
+        throw new Error("Failed to update consent form");
+      }
+    }
+  } catch (error) {
+    console.error('Error updating consent form:', error);
+    let errorMessage = "An unexpected error occurred. Please try again.";
+
+    if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
+      errorMessage = "Network error: Could not connect to the server. Please check the API endpoint.";
+    } else if (error.message) {
+      errorMessage = error.message;
+    }
+
+    setMessage(errorMessage);
+    setVariant("danger");
+    setShowAlert(true);
+    setTimeout(() => setShowAlert(false), 5000);
+  } finally {
+    setIsSubmitting(false);
+  }
 };
 
 // Handle delete request
@@ -778,278 +843,254 @@ const handleView = () => {
 setShowViewModal(true);
 };
 
-// Generate PDF from the form in modal
 const generatePDF = async () => {
-setIsGeneratingPDF(true);
-try {
-const element = viewFormRef.current;
-if (!element) {
-throw new Error("Form element not found for PDF generation");
-}
+  setIsGeneratingPDF(true);
+  try {
+    const element = viewFormRef.current;
+    if (!element) {
+      throw new Error("Form element not found for PDF generation");
+    }
 
-// Scroll to top to ensure all elements are visible
-element.scrollTop = 0;
+    // Scroll to top to ensure all elements are visible
+    element.scrollTop = 0;
 
-console.log("Starting PDF generation...");
+    console.log("Starting PDF generation...");
 
-// Function to convert image to data URL
-const imageToDataUrl = async (imageUrl) => {
-return new Promise((resolve) => {
-const img = new Image();
-img.crossOrigin = 'Anonymous';
+    // Function to convert image to data URL
+    const imageToDataUrl = async (imageUrl) => {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.crossOrigin = 'Anonymous';
 
-// Add timestamp to prevent caching issues
-const urlWithTimestamp = imageUrl.includes('?')
-? `${imageUrl}&_t=${Date.now()}`
-: `${imageUrl}?_t=${Date.now()}`;
+        // Add timestamp to prevent caching issues
+        const urlWithTimestamp = imageUrl.includes('?')
+          ? `${imageUrl}&_t=${Date.now()}`
+          : `${imageUrl}?_t=${Date.now()}`;
 
-img.onload = () => {
-const canvas = document.createElement('canvas');
-canvas.width = img.width;
-canvas.height = img.height;
-const ctx = canvas.getContext('2d');
-ctx.drawImage(img, 0, 0);
-resolve(canvas.toDataURL('image/png'));
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0);
+          resolve(canvas.toDataURL('image/png'));
+        };
+
+        img.onerror = () => {
+          console.warn('Failed to load image:', urlWithTimestamp);
+          // Instead of returning null, create a placeholder image
+          const canvas = document.createElement('canvas');
+          canvas.width = 200;
+          canvas.height = 100;
+          const ctx = canvas.getContext('2d');
+          ctx.fillStyle = '#f0f0f0';
+          ctx.fillRect(0, 0, 200, 100);
+          ctx.fillStyle = '#666';
+          ctx.font = '14px Arial';
+          ctx.textAlign = 'center';
+          ctx.fillText('Signature', 100, 50);
+          resolve(canvas.toDataURL('image/png'));
+        };
+
+        img.src = urlWithTimestamp;
+      });
+    };
+
+    // Create a temporary container to split content
+    const tempContainer = document.createElement('div');
+    tempContainer.style.position = 'absolute';
+    tempContainer.style.left = '-9999px';
+    tempContainer.style.top = '0';
+    tempContainer.style.width = element.scrollWidth + 'px';
+    tempContainer.style.backgroundColor = '#ffffff';
+    tempContainer.style.fontFamily = 'Arial, sans-serif';
+    document.body.appendChild(tempContainer);
+
+    // Clone the original element
+    const clonedElement = element.cloneNode(true);
+    tempContainer.appendChild(clonedElement);
+
+    // Get all sections
+    const sections = clonedElement.querySelectorAll('.consult-form-step');
+    
+    // Find the section with "7. EMERGENCY AND LIMITATION OF CARE" title
+    let pageBreakIndex = -1;
+    for (let i = 0; i < sections.length; i++) {
+      const sectionTitle = sections[i].querySelector('h3')?.textContent;
+      if (sectionTitle && sectionTitle.includes('7. EMERGENCY AND LIMITATION OF CARE')) {
+        pageBreakIndex = i;
+        break;
+      }
+    }
+
+    // Create two containers for the two pages
+    const page1Container = document.createElement('div');
+    page1Container.style.width = element.scrollWidth + 'px';
+    page1Container.style.backgroundColor = '#ffffff';
+    
+    const page2Container = document.createElement('div');
+    page2Container.style.width = element.scrollWidth + 'px';
+    page2Container.style.backgroundColor = '#ffffff';
+
+    // Add sections to the appropriate page containers
+    for (let i = 0; i < sections.length; i++) {
+      if (i <= pageBreakIndex) {
+        page1Container.appendChild(sections[i].cloneNode(true));
+      } else {
+        page2Container.appendChild(sections[i].cloneNode(true));
+      }
+    }
+
+    // Add the page containers to the temporary container
+    tempContainer.appendChild(page1Container);
+    tempContainer.appendChild(page2Container);
+
+    // Process images in the page containers using the same logic as your original function
+    const processImages = async (container) => {
+      const images = container.querySelectorAll('img');
+      const imageData = [];
+      
+      for (let i = 0; i < images.length; i++) {
+        const img = images[i];
+        const originalSrc = img.src;
+        console.log(`Processing image ${i + 1}:`, originalSrc);
+
+        // Skip the logo image as it's local and should work fine
+        if (originalSrc.includes('Logo1.jpeg')) {
+          console.log(`Skipping logo image ${i + 1}`);
+          continue;
+        }
+
+        try {
+          // Check if it's an external URL
+          if (originalSrc.startsWith('http')) {
+            // Show loading indicator
+            img.style.opacity = '0.5';
+
+            const dataUrl = await imageToDataUrl(originalSrc);
+            if (dataUrl) {
+              imageData.push({ element: img, originalSrc, dataUrl });
+              img.src = dataUrl;
+              img.style.opacity = '1';
+              console.log(`Image ${i + 1} converted to data URL`);
+            }
+          } else {
+            console.log(`Image ${i + 1} is already local or data URL`);
+          }
+        } catch (error) {
+          console.error(`Error processing image ${i + 1}:`, error);
+          img.style.opacity = '1';
+        }
+      }
+      
+      return imageData;
+    };
+
+    // Process images in both page containers
+    const page1ImageData = await processImages(page1Container);
+    const page2ImageData = await processImages(page2Container);
+
+    // Wait for images to update in DOM
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    // Generate canvas for page 1
+    const canvas1 = await html2canvas(page1Container, {
+      scale: 2,
+      logging: false,
+      useCORS: true,
+      allowTaint: true,
+      backgroundColor: '#ffffff',
+      width: page1Container.scrollWidth,
+      height: page1Container.scrollHeight,
+      onclone: (clonedDocument) => {
+        const clonedImages = clonedDocument.querySelectorAll('img');
+        clonedImages.forEach(img => {
+          img.style.display = 'block';
+          img.style.visibility = 'visible';
+          img.style.opacity = '1';
+          img.style.maxWidth = '100%';
+        });
+      }
+    });
+
+    // Generate canvas for page 2
+    const canvas2 = await html2canvas(page2Container, {
+      scale: 2,
+      logging: false,
+      useCORS: true,
+      allowTaint: true,
+      backgroundColor: '#ffffff',
+      width: page2Container.scrollWidth,
+      height: page2Container.scrollHeight,
+      onclone: (clonedDocument) => {
+        const clonedImages = clonedDocument.querySelectorAll('img');
+        clonedImages.forEach(img => {
+          img.style.display = 'block';
+          img.style.visibility = 'visible';
+          img.style.opacity = '1';
+          img.style.maxWidth = '100%';
+        });
+      }
+    });
+
+    // Clean up
+    document.body.removeChild(tempContainer);
+
+    // Restore original image sources
+    page1ImageData.forEach(({ element: img, originalSrc }) => {
+      img.src = originalSrc;
+    });
+    
+    page2ImageData.forEach(({ element: img, originalSrc }) => {
+      img.src = originalSrc;
+    });
+
+    // Create PDF
+    const pdf = new jsPDF('p', 'mm', 'a4');
+
+    // Define margins (in mm)
+    const leftMargin = 15;
+    const rightMargin = 15;
+    const topMargin = 15;
+    const bottomMargin = 15;
+
+    // Calculate available width and height within margins
+    const availableWidth = 210 - leftMargin - rightMargin;
+    const availableHeight = 295 - topMargin - bottomMargin;
+
+    // Add page 1
+    const imgData1 = canvas1.toDataURL('image/png', 1.0);
+    const imgWidth1 = availableWidth;
+    const imgHeight1 = (canvas1.height * imgWidth1) / canvas1.width;
+    
+    pdf.addImage(imgData1, 'PNG', leftMargin, topMargin, imgWidth1, imgHeight1);
+
+    // Add page 2
+    const imgData2 = canvas2.toDataURL('image/png', 1.0);
+    const imgWidth2 = availableWidth;
+    const imgHeight2 = (canvas2.height * imgWidth2) / canvas2.width;
+    
+    pdf.addPage();
+    pdf.addImage(imgData2, 'PNG', leftMargin, topMargin, imgWidth2, imgHeight2);
+
+    // Save the PDF
+    pdf.save(`consent-form-${formData.patient_name || 'patient'}-${new Date().toISOString().split('T')[0]}.pdf`);
+
+    setMessage("PDF downloaded successfully!");
+    setVariant("success");
+    setShowAlert(true);
+    setTimeout(() => setShowAlert(false), 3000);
+  } catch (error) {
+    console.error('Error generating PDF:', error);
+    setMessage("Failed to generate PDF. Please try again.");
+    setVariant("danger");
+    setShowAlert(true);
+    setTimeout(() => setShowAlert(false), 5000);
+  } finally {
+    setIsGeneratingPDF(false);
+  }
 };
 
-img.onerror = () => {
-console.warn('Failed to load image:', urlWithTimestamp);
-// Instead of returning null, create a placeholder image
-const canvas = document.createElement('canvas');
-canvas.width = 200;
-canvas.height = 100;
-const ctx = canvas.getContext('2d');
-ctx.fillStyle = '#f0f0f0';
-ctx.fillRect(0, 0, 200, 100);
-ctx.fillStyle = '#666';
-ctx.font = '14px Arial';
-ctx.textAlign = 'center';
-ctx.fillText('Signature', 100, 50);
-resolve(canvas.toDataURL('image/png'));
-};
-
-img.src = urlWithTimestamp;
-});
-};
-
-// Get all images in the form
-const images = element.querySelectorAll('img');
-console.log("Total images found:", images.length);
-
-// Store original sources and convert to data URLs
-const imageData = [];
-for (let i = 0; i < images.length; i++) {
-const img = images[i];
-const originalSrc = img.src;
-console.log(`Processing image ${i + 1}:`, originalSrc);
-
-// Skip the logo image as it's local and should work fine
-if (originalSrc.includes('Logo1.jpeg')) {
-console.log(`Skipping logo image ${i + 1}`);
-continue;
-}
-
-try {
-// Check if it's an external URL
-if (originalSrc.startsWith('http')) {
-// Show loading indicator
-img.style.opacity = '0.5';
-
-const dataUrl = await imageToDataUrl(originalSrc);
-if (dataUrl) {
-imageData.push({ element: img, originalSrc, dataUrl });
-img.src = dataUrl;
-img.style.opacity = '1';
-console.log(`Image ${i + 1} converted to data URL`);
-}
-} else {
-console.log(`Image ${i + 1} is already local or data URL`);
-}
-} catch (error) {
-console.error(`Error processing image ${i + 1}:`, error);
-img.style.opacity = '1';
-}
-}
-
-// Wait for images to update in DOM
-await new Promise(resolve => setTimeout(resolve, 1000)); // Increased timeout
-
-console.log("All images processed, generating canvas...");
-
-// Configure html2canvas for better quality
-const canvas = await html2canvas(element, {
-scale: 2,
-logging: false,
-useCORS: true,
-allowTaint: true,
-backgroundColor: '#ffffff',
-width: element.scrollWidth,
-height: element.scrollHeight,
-onclone: (clonedDocument) => {
-const clonedImages = clonedDocument.querySelectorAll('img');
-clonedImages.forEach(img => {
-img.style.display = 'block';
-img.style.visibility = 'visible';
-img.style.opacity = '1';
-img.style.maxWidth = '100%';
-});
-}
-});
-
-// Restore original image sources
-imageData.forEach(({ element: img, originalSrc }) => {
-img.src = originalSrc;
-});
-
-const imgData = canvas.toDataURL('image/png', 1.0);
-const pdf = new jsPDF('p', 'mm', 'a4');
-
-// Define margins (in mm)
-const leftMargin = 15;
-const rightMargin = 15;
-const topMargin = 15;
-const bottomMargin = 15;
-
-// Calculate available width and height within margins
-const availableWidth = 210 - leftMargin - rightMargin;
-const availableHeight = 295 - topMargin - bottomMargin;
-
-// Calculate image dimensions to fit within available space
-const imgWidth = availableWidth;
-const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-let heightLeft = imgHeight;
-let position = topMargin;
-
-// Add first page
-pdf.addImage(imgData, 'PNG', leftMargin, position, imgWidth, imgHeight);
-heightLeft -= availableHeight;
-
-// Add additional pages if needed
-while (heightLeft >= 0) {
-position = topMargin - (imgHeight - heightLeft);
-pdf.addPage();
-pdf.addImage(imgData, 'PNG', leftMargin, position, imgWidth, imgHeight);
-heightLeft -= availableHeight;
-}
-
-// Save the PDF
-pdf.save(`consent-form-${formData.patient_name || 'patient'}-${new Date().toISOString().split('T')[0]}.pdf`);
-
-setMessage("PDF downloaded successfully!");
-setVariant("success");
-setShowAlert(true);
-setTimeout(() => setShowAlert(false), 3000);
-} catch (error) {
-console.error('Error generating PDF:', error);
-setMessage("Failed to generate PDF. Please try again.");
-setVariant("danger");
-setShowAlert(true);
-setTimeout(() => setShowAlert(false), 5000);
-} finally {
-setIsGeneratingPDF(false);
-}
-};
-
-// Handle print
-const handlePrint = () => {
-const printContent = viewFormRef.current;
-if (!printContent) return;
-
-// Create a new window for printing
-const printWindow = window.open('', '_blank');
-
-// Get the HTML content
-const htmlContent = `
-<!DOCTYPE html>
-<html>
-<head>
-<title>Consent Form - ${formData.patient_name}</title>
-<style>
-@media print {
-body { margin: 0; }
-.no-print { display: none !important; }
-.print-break { page-break-after: always; }
-}
-body {
-font-family: Arial, sans-serif;
-line-height: 1.6;
-color: #333;
-max-width: 100%;
-margin: 0;
-padding: 20px;
-}
-.clinic-info {
-margin-bottom: 30px;
-border-bottom: 2px solid #333;
-padding-bottom: 20px;
-}
-.clinic-info img {
-max-height: 120px;
-margin-bottom: 10px;
-}
-.consult-form-step {
-margin-bottom: 30px;
-}
-.form-label {
-font-weight: bold;
-font-size: 18px;
-margin-bottom: 10px;
-color: #2c3e50;
-}
-.row {
-display: flex;
-flex-wrap: wrap;
-margin: 0 -10px;
-}
-.col-md-6 {
-flex: 0 0 50%;
-padding: 0 10px;
-margin-bottom: 15px;
-}
-.col-12 {
-flex: 0 0 100%;
-padding: 0 10px;
-margin-bottom: 15px;
-}
-.signature-image {
-max-height: 80px;
-border: 1px solid #ccc;
-padding: 5px;
-display: block;
-background: white;
-}
-ul {
-padding-left: 20px;
-}
-li {
-margin-bottom: 5px;
-}
-.text-end {
-text-align: right;
-}
-@page {
-margin: 20mm;
-}
-</style>
-</head>
-<body>
-${printContent.innerHTML}
-</body>
-</html>
-`;
-
-printWindow.document.write(htmlContent);
-printWindow.document.close();
-
-// Wait for images to load before printing
-printWindow.onload = () => {
-setTimeout(() => {
-printWindow.print();
-printWindow.close();
-}, 1000);
-};
-};
 
 // Format date for display
 const formatDate = (dateString) => {
@@ -1116,7 +1157,7 @@ onClick={() => handleItemClick(form.id)}
 {form.patient_name || "Unknown Patient"}
 </Card.Title>
 <Card.Text className="text-muted">
-<p><strong>ID:</strong> {form.id}</p>
+
 <p><strong>Date of Birth:</strong> {formatDate(form.date_of_birth)}</p>
 <p><strong>Gender:</strong> {form.gender || "N/A"}</p>
 <p><strong>Mobile:</strong> {form.mobile_number || "N/A"}</p>
@@ -1346,7 +1387,7 @@ disabled={!isEditing}
 </div>
 
 <div className="consult-form-step">
-<h3 className="form-label">10. DECLARATION AND CONSENT</h3>
+<h3 className="form-label">9. DECLARATION AND CONSENT</h3>
 <p className="mb-3">I certify that:</p>
 <ul>
 <li>I have read, understood, and been explained the contents of this consent form.</li>
@@ -1385,6 +1426,7 @@ className="signature-image"
 src={attendeeSignatureDataUrl}
 alt="Existing Signature"
 className="signature-image"
+
 />
 </div>
 ) : existingAttendeeSignature && (
@@ -1809,7 +1851,7 @@ disabled
 </div>
 
 <div className="consult-form-step">
-<h3 className="form-label">10. DECLARATION AND CONSENT</h3>
+<h3 className="form-label">9. DECLARATION AND CONSENT</h3>
 <p className="mb-3">I certify that:</p>
 <ul>
 <li>I have read, understood, and been explained the contents of this consent form.</li>
@@ -1868,12 +1910,14 @@ disabled
 src={physicianSignatureDataUrl}
 alt="Physician Signature"
 className="signature-image"
+
 />
 ) : existingPhysicianSignature && (
 <img
 src={`https://mahadevaaya.com/trilokayurveda/trilokabackend${existingPhysicianSignature}`}
 alt="Physician Signature"
 className="signature-image"
+
 onError={(e) => {
 console.error("Error loading physician signature image:", e);
 // Create a placeholder
