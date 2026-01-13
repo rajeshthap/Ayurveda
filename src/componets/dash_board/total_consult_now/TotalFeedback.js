@@ -267,7 +267,7 @@ const TotalFeedback = () => {
                                   </div>
                                   <div className="flex-grow-1">
                                     <h5 className="mb-0">{entry.name}</h5>
-                                    <small>Age: {entry.age}</small>
+                                    <small>DOB: {entry.age}</small>
                                   </div>
                                   <div className="text-end me-3">
                                     <FaCalendarAlt className="me-1" />
@@ -292,7 +292,7 @@ const TotalFeedback = () => {
                                             <span className="info-value">{entry.name}</span>
                                           </div>
                                           <div className="info-item">
-                                            <span className="info-label">Age:</span>
+                                            <span className="info-label">DOB:</span>
                                             <span className="info-value">{entry.age}</span>
                                           </div>
                                           <div className="info-item">
