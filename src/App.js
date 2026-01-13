@@ -104,6 +104,8 @@ import ConsentForm from './componets/pages/ConsentForm';
 import QolForm from './componets/pages/QolForm';
 import TotalQol from './componets/dash_board/total_consult_now/TotalQol';
 import ManageConsent from './componets/dash_board/ManageConsent';
+import ManageContactUs from './componets/dash_board/ManageContactUs';
+import TotalContact from './componets/dash_board/total_consult_now/TotalContact';
 
 
 
@@ -163,7 +165,9 @@ function App() {
       "/ManageWebinars",
       "/TotalFeedback",
       "/TotalQol",
-      "/ManageConsent"
+      "/ManageConsent",
+      "/ManageContactUs",
+      "/TotalContact"
 
 
      ]);
@@ -219,7 +223,9 @@ function App() {
     "/ManageWebinars",
     "/TotalFeedback",
     "/TotalQol",
-    "/ManageConsent"
+    "/ManageConsent",
+     "/ManageContactUs",
+     "/TotalContact"
     
 
   ]);
@@ -326,6 +332,8 @@ function App() {
 <Route path="/QolForm" element={<QolForm/>} />
 <Route path="/TotalQol" element={<TotalQol/>} />
 <Route path="/ManageConsent" element={<ManageConsent/>} />
+<Route path="/ManageContactUs" element={<ManageContactUs/>} />
+<Route path="/TotalContact" element={<TotalContact/>} />
 {/* <Route path="*" element={<NotFound />} />  */}
 </Routes>
 

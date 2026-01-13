@@ -71,6 +71,13 @@ const menuItems = [
       path: "/TotalQol",
       active: true,
     },
+
+     {
+      icon: <FaTachometerAlt />,
+      label: "Contact Us",
+      path: "/TotalContact",
+      active: true,
+    },
     
    
      {
@@ -310,6 +317,13 @@ const menuItems = [
       icon: <FaTachometerAlt />,
       label: "Manage Hero Section",
       path: "/ManageHeroSection",
+      active: true,
+    },
+
+     {
+      icon: <FaTachometerAlt />,
+      label: "Manage Contact Us",
+      path: "/ManageContactUs",
       active: true,
     },
     
