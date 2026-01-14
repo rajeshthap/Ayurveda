@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../../assets/css/blog.css';
 import { Link } from 'react-router-dom';
-import { FaCalendarAlt, FaSpinner } from 'react-icons/fa';
+import { FaCalendarAlt, FaSpinner, FaImage } from 'react-icons/fa';
 import BgShape2 from '../../assets/images/bg-shape2.png';
 import BgLeaf2 from '../../assets/images/bg-leaf2.png';
 
@@ -93,6 +93,22 @@ const Blogs = () => {
     fetchBlogPosts();
   }, []);
 
+  // Handle image error
+  const handleImageError = (e) => {
+    e.target.onerror = null; // Prevent infinite loop
+    e.target.style.display = 'none';
+    const parent = e.target.parentElement;
+    const fallback = document.createElement('div');
+    fallback.className = 'no-image-placeholder';
+    fallback.innerHTML = `
+      <div class="no-image-content">
+        <FaImage size={40} />
+        <p>No Image Available</p>
+      </div>
+    `;
+    parent.appendChild(fallback);
+  };
+
   return (
     <div className="ayur-bgcover ayur-about-sec">
       {/* Breadcrumb Section */}
@@ -141,18 +157,17 @@ const Blogs = () => {
                           <div key={post.id} className="blog-card">
                             <div className="blog-image">
                               {post.image ? (
-
                                 <img
                                   src={post.fullImageUrl || getImageUrl(post.image)}
                                   alt={post.title}
-                                  onError={(e) => {
-                                    // Fallback to a default image if the image fails to load
-                                    e.target.src = '/path/to/default/image.jpg';
-                                  }}
+                                  onError={handleImageError}
                                 />
                               ) : (
                                 <div className="no-image-placeholder">
-                                  <span>No Image Available</span>
+                                  <div className="no-image-content">
+                                    <FaImage size={40} />
+                                    <p>No Image Available</p>
+                                  </div>
                                 </div>
                               )}
                             </div>

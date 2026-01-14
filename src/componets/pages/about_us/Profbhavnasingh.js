@@ -192,7 +192,7 @@ function Profbhavnasingh() {
                   ))}
 
                   {educationalQualification && (
-                    <div className="pt-4">
+                    <div className="pt-2">
                       <h5>{educationalQualification.content}</h5>
                       {formatEducationText(educationalQualification.description)}
                     </div>
@@ -203,7 +203,7 @@ function Profbhavnasingh() {
                 <div>
                   {thesisTitle && (
                     <>
-                      <h5 className="pt-4">{thesisTitle.content}</h5>
+                      <h5 className="pt-2">{thesisTitle.content}</h5>
                       {thesisTitle.description.split('\n\n').map((thesis, index) => (
                         <p key={index}>{thesis}</p>
                       ))}

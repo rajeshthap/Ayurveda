@@ -97,6 +97,30 @@
   background-color: #1b5e20;
 }
 
+.no-image-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  min-height: 200px;
+}
+
+.no-image-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #6c757d;
+  text-align: center;
+}
+
+.no-image-content p {
+  margin-top: 10px;
+  font-size: 14px;
+}
+
 @media (max-width: 768px) {
   .blogs-container {
     padding: 20px 15px;

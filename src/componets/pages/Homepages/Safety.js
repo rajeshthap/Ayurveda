@@ -54,7 +54,7 @@ function Safety() {
         {safetyData.module.map((module, index) => {
           // For the Safety API, module is a string (not an array like other components)
           return (
-            <div key={index} className="module-item mb-4 p-3 bg-light rounded">
+            <div key={index} className="module-item mb-2 p-3 bg-light rounded">
               <p className="module-text">
                 {module}
               </p>

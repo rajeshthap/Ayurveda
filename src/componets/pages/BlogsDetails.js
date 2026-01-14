@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../../assets/css/blog.css';
 import { Link, useLocation } from 'react-router-dom';
-import { FaCalendarAlt, FaSpinner, FaArrowLeft } from 'react-icons/fa';
+import { FaCalendarAlt, FaSpinner, FaArrowLeft, FaImage } from 'react-icons/fa';
 import { Container, Row, Col, Card } from 'react-bootstrap';
 import BgShape2 from '../../assets/images/bg-shape2.png';
 import BgLeaf2 from '../../assets/images/bg-leaf2.png';
@@ -32,6 +32,22 @@ const BlogsDetails = () => {
     
     // Otherwise, prepend the base URL with a slash
     return `${API_BASE_URL}/${imagePath}`;
+  };
+
+  // Handle image error
+  const handleImageError = (e) => {
+    e.target.onerror = null; // Prevent infinite loop
+    e.target.style.display = 'none';
+    const parent = e.target.parentElement;
+    const fallback = document.createElement('div');
+    fallback.className = 'no-image-placeholder';
+    fallback.innerHTML = `
+      <div class="no-image-content">
+        <FaImage size={40} />
+        <p>No Image Available</p>
+      </div>
+    `;
+    parent.appendChild(fallback);
   };
 
   // Fetch the specific blog post from API
@@ -167,14 +183,14 @@ const BlogsDetails = () => {
                                 src={blogPost.fullImageUrl || getImageUrl(blogPost.image)}
                                 alt={blogPost.title}
                                 className="img-fluid rounded"
-                                onError={(e) => {
-                                  // Fallback to a default image if the image fails to load
-                                  e.target.src = '/path/to/default/image.jpg';
-                                }}
+                                onError={handleImageError}
                               />
                             ) : (
                               <div className="no-image-placeholder">
-                                <span>No Image Available</span>
+                                <div className="no-image-content">
+                                  <FaImage size={40} />
+                                  <p>No Image Available</p>
+                                </div>
                               </div>
                             )}
                           </div>
@@ -190,13 +206,10 @@ const BlogsDetails = () => {
                             
                             <div 
                               className="about-description"
-                            
                               dangerouslySetInnerHTML={{ 
                                 __html: blogPost.description.replace(/\n/g, '<br />') 
                               }}
                             />
-                            
-
                             
                             <div className="blog-detail-actions mt-4">
                               <Link to="/Blogs" className="btn btn-outline-primary">

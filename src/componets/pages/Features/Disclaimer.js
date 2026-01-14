@@ -87,7 +87,7 @@ const Disclaimer = () => {
                   <h4>"Important Information About Our Services</h4>
                   <div>
                     {formattedPoints.map((point) => (
-                      <div key={point.id} className="pt-3">
+                      <div key={point.id} >
                         {/* <h5> {point.id}:</h5> */}
                         <p>{point.content}</p>
                       </div>

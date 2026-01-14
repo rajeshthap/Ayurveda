@@ -787,7 +787,7 @@ li.ayur-has-menu a svg {
 
 .ayur-heading-wrap {
   text-align: center;
-  margin: 0 0 44px;
+  margin: 0 0 8px;
 }
 
 .ayur-heading-wrap h5 {
@@ -1008,7 +1008,7 @@ a.likeproduct img.like {
 }
 
 .ayur-about-head p {
-  padding: 10px 0 2px;
+  padding: 4px 0 2px;
 }
 
 .ayur-about-img {
@@ -1380,7 +1380,7 @@ a.likeproduct img.like {
 }
 
 .ayur-test-head {
-  margin: 0 0 24px;
+  margin: 0 0 8px;
 }
 
 .swiper.ayur-testimonial-slider {

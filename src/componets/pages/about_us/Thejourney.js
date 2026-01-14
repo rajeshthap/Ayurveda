@@ -59,7 +59,7 @@ function Thejourney() {
           const moduleDescription = isModuleObject ? module.description : "";
 
           return (
-            <div key={index} className="module-item mb-4 p-3 bg-light rounded">
+            <div key={index} className="module-item mb-2 p-3 bg-light rounded">
               <h5 className="module-title-text">{moduleContent}</h5>
               {moduleDescription && (
                 <p
@@ -120,7 +120,7 @@ function Thejourney() {
                   ) : journeyData ? (
                     <>
                       {/* Two-column layout for image and content */}
-                      <Row className="mt-4">
+                      <Row>
                         <Col lg={4} md={12} sm={12}>
                           <div className="about-image-container">
                             <img
@@ -151,7 +151,7 @@ function Thejourney() {
                       </Row>
 
                       {/* Full-width row for modules */}
-                      <Row className="mt-4">
+                      <Row >
                         <Col lg={12} md={12} sm={12}>
                           <div className="modules-section">
                             {renderModules()}

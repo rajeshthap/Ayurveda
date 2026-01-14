@@ -253,7 +253,7 @@ function Vaidyaharshsehgal() {
                   ))}
 
                   {educationalQualification && (
-                    <div className="pt-4">
+                    <div className="pt-2">
                       <h5>{educationalQualification.content}</h5>
                       {formatEducationText(
                         educationalQualification.description
@@ -267,7 +267,7 @@ function Vaidyaharshsehgal() {
                 <div>
                   {thesisTitle && (
                     <>
-                      <h5 className="pt-4">{thesisTitle.content}</h5>
+                      <h5 className="pt-2">{thesisTitle.content}</h5>
                       <p>{thesisTitle.description}</p>
                     </>
                   )}

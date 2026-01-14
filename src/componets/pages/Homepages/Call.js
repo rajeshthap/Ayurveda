@@ -57,7 +57,7 @@ function Call() {
           const moduleDescription = module[1];
           
           return (
-            <div key={index} className="module-item mb-4 p-3 bg-light rounded">
+            <div key={index} className="module-item mb-2 p-3 bg-light rounded">
               <h5 className="module-title-text">{moduleTitle}</h5>
               <p className="module-description-text mt-2">
                 {moduleDescription}

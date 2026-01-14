@@ -156,7 +156,7 @@ function SuccessStories() {
                     successStories.filter(story => story.video_link).map((story) => (
                       <Col md={6} lg={4} className="mb-4" key={story.id}>
                         <Card className="h-100">
-                          <Card.Header className='ayur-tpro-text-web'>
+                          <Card.Header className='ayur-tpro-text-web card-header'>
                             <h4 >{story.title}</h4>
                           </Card.Header>
                           <Card.Body>
@@ -240,7 +240,7 @@ function SuccessStories() {
                     successStories.filter(story => story.pdf_file).map((story) => (
                       <Col md={6} lg={4} className="mb-4" key={story.id}>
                         <Card className="h-100">
-                          <div className='ayur-tpro-text-web'>
+                          <div className='ayur-tpro-text-web card-header'>
                             <h4>{story.title}</h4>
                           </div>
                           <Card.Body>
