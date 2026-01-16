@@ -106,6 +106,7 @@ import TotalQol from './componets/dash_board/total_consult_now/TotalQol';
 import ManageConsent from './componets/dash_board/ManageConsent';
 import ManageContactUs from './componets/dash_board/ManageContactUs';
 import TotalContact from './componets/dash_board/total_consult_now/TotalContact';
+import MedicalDisclaimer from './componets/dash_board/Disclaimer/MedicalDisclaimer';
 
 
 
@@ -167,7 +168,8 @@ function App() {
       "/TotalQol",
       "/ManageConsent",
       "/ManageContactUs",
-      "/TotalContact"
+      "/TotalContact",
+      "/MedicalDisclaimer"
 
 
      ]);
@@ -225,7 +227,8 @@ function App() {
     "/TotalQol",
     "/ManageConsent",
      "/ManageContactUs",
-     "/TotalContact"
+     "/TotalContact",
+     "/MedicalDisclaimer"
     
 
   ]);
@@ -334,6 +337,7 @@ function App() {
 <Route path="/ManageConsent" element={<ManageConsent/>} />
 <Route path="/ManageContactUs" element={<ManageContactUs/>} />
 <Route path="/TotalContact" element={<TotalContact/>} />
+<Route path="/MedicalDisclaimer" element={<MedicalDisclaimer/>} />
 {/* <Route path="*" element={<NotFound />} />  */}
 </Routes>
 

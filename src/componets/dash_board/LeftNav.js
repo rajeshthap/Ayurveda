@@ -285,6 +285,13 @@ const menuItems = [
       active: true,
     },
 
+    {
+      icon: <FaTachometerAlt />,
+      label: "Medical Disclaimer",
+      path: "/MedicalDisclaimer",
+      active: true,
+    },
+
      {
       icon: <FaTachometerAlt />,
       label: "Manage Care",

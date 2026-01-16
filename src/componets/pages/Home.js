@@ -26,6 +26,7 @@ import CareHome from "./Homepages/CareHome";
 import AimHome from "./Homepages/AimHome";
 import CallHome from "./Homepages/CallHome";
 import SafetyHome from "./Homepages/SafetyHome";
+import MedicalHome from "./Homepages/MedicalHome";
 
 
 function Home() {
@@ -51,6 +52,7 @@ function Home() {
   
     */}
       <OurTeam />
+      <MedicalHome/>
     </>
   );
 }
