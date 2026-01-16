@@ -90,15 +90,16 @@
       margin-top: auto;
     }
 
-    .ayur-btn {
-      display: inline-block;
-      padding: 8px 16px;
-      background-color: #28a745;
-      color: white;
-      border-radius: 4px;
-      text-decoration: none;
-      transition: background-color 0.3s ease;
-    }
+.ayur-btn {
+    display: inline-block;
+    padding: 8px 8px;
+    background-color: #28a745;
+    color: white;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+    font-size: 12px;
+}
 
     .ayur-btn:hover {
       background-color: #218838;
