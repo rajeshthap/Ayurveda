@@ -8,11 +8,12 @@ import DashBoardHeader from "../DashBoardHeader";
 import { FaPlus, FaTrash, FaEdit, FaSave, FaTimes, FaCalendarAlt, FaFilePdf } from "react-icons/fa";
 
 const ManageResearches = () => {
-  const { auth, refreshAccessToken } = useAuth();
+  const { auth, logout, refreshAccessToken, checkAuthentication, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
   const [isTablet, setIsTablet] = useState(false);
+  const [authChecked, setAuthChecked] = useState(false);
 
   // State for research items
   const [items, setItems] = useState([]);
@@ -78,10 +79,56 @@ const ManageResearches = () => {
     return () => window.removeEventListener("resize", checkDevice);
   }, []);
 
+  // Check authentication status on component mount
+  useEffect(() => {
+    const checkAuth = async () => {
+      // Wait for auth context to finish initializing
+      if (authLoading) return;
+      
+      try {
+        // Check if user is authenticated using the new method
+        const isAuth = await checkAuthentication();
+        
+        if (!isAuth) {
+          // If not authenticated, redirect to login
+          setMessage("Your session has expired. Please log in again.");
+          setVariant("danger");
+          setShowAlert(true);
+          setTimeout(() => {
+            navigate("/login");
+          }, 3000);
+          return;
+        }
+        
+        setAuthChecked(true);
+      } catch (error) {
+        console.error("Authentication check failed:", error);
+        setMessage("Authentication error. Please log in again.");
+        setVariant("danger");
+        setShowAlert(true);
+        setTimeout(() => {
+          navigate("/login");
+        }, 3000);
+      }
+    };
+
+    checkAuth();
+  }, [authLoading, checkAuthentication, navigate]);
+
+  // Fetch research items when auth is checked
+  useEffect(() => {
+    if (authChecked && auth.access) {
+      fetchItems();
+    }
+  }, [authChecked, auth.access]);
+
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
   // Fetch research items from API
   const fetchItems = async () => {
+    // Don't fetch if auth is not checked yet
+    if (!authChecked || !auth.access) return;
+    
     setIsLoading(true);
     setIsFetching(true);
     try {
@@ -89,14 +136,24 @@ const ManageResearches = () => {
       let response = await fetch(url, {
         method: "GET",
         headers: {
-          Authorization: `Bearer ${auth?.access}`,
+          Authorization: `Bearer ${auth.access}`,
         },
       });
 
       // If unauthorized, try refreshing token and retry once
       if (response.status === 401) {
         const newAccess = await refreshAccessToken();
-        if (!newAccess) throw new Error("Session expired");
+        if (!newAccess) {
+          // If refresh fails, redirect to login
+          setMessage("Your session has expired. Please log in again.");
+          setVariant("danger");
+          setShowAlert(true);
+          setTimeout(() => {
+            navigate("/login");
+          }, 3000);
+          return;
+        }
+        
         response = await fetch(url, {
           method: "GET",
           headers: {
@@ -160,11 +217,6 @@ const ManageResearches = () => {
     }
   };
 
-  // Fetch research items on component mount
-  useEffect(() => {
-    fetchItems();
-  }, []);
-
   // Start editing an item
   const startEditing = (item) => {
     setCurrentEditItem(item);
@@ -224,7 +276,7 @@ const ManageResearches = () => {
       let response = await fetch(url, {
         method: "PUT",
         headers: {
-          Authorization: `Bearer ${auth?.access}`,
+          Authorization: `Bearer ${auth.access}`,
         },
         body: dataToSend,
       });
@@ -232,7 +284,17 @@ const ManageResearches = () => {
       // If unauthorized, try refreshing token and retry once
       if (response.status === 401) {
         const newAccess = await refreshAccessToken();
-        if (!newAccess) throw new Error("Session expired");
+        if (!newAccess) {
+          // If refresh fails, redirect to login
+          setMessage("Your session has expired. Please log in again.");
+          setVariant("danger");
+          setShowAlert(true);
+          setTimeout(() => {
+            navigate("/login");
+          }, 3000);
+          return;
+        }
+        
         response = await fetch(url, {
           method: "PUT",
           headers: {
@@ -302,7 +364,7 @@ const ManageResearches = () => {
       let response = await fetch(url, {
         method: "DELETE",
         headers: {
-          Authorization: `Bearer ${auth?.access}`,
+          Authorization: `Bearer ${auth.access}`,
         },
         body: dataToSend,
       });
@@ -310,7 +372,17 @@ const ManageResearches = () => {
       // If unauthorized, try refreshing token and retry once
       if (response.status === 401) {
         const newAccess = await refreshAccessToken();
-        if (!newAccess) throw new Error("Session expired");
+        if (!newAccess) {
+          // If refresh fails, redirect to login
+          setMessage("Your session has expired. Please log in again.");
+          setVariant("danger");
+          setShowAlert(true);
+          setTimeout(() => {
+            navigate("/login");
+          }, 3000);
+          return;
+        }
+        
         response = await fetch(url, {
           method: "DELETE",
           headers: {
@@ -369,6 +441,20 @@ const ManageResearches = () => {
   const totalPages = Math.ceil(items.length / itemsPerPage);
   
   const handlePageChange = (pageNumber) => setCurrentPage(pageNumber);
+
+  // Show loading while checking authentication
+  if (authLoading || !authChecked) {
+    return (
+      <div className="d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
+        <div className="text-center">
+          <Spinner animation="border" role="status" className="mb-3">
+            <span className="visually-hidden">Checking authentication...</span>
+          </Spinner>
+          <p>Verifying your session...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>

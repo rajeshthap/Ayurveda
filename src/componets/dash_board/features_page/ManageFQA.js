@@ -9,7 +9,7 @@ import DashBoardHeader from "../DashBoardHeader";
 import { FaPlus, FaTrash, FaEdit, FaSave, FaTimes } from "react-icons/fa";
 
 const ManageFAQ = () => {
-  const { auth, logout, refreshAccessToken } = useAuth();
+  const { auth, logout, refreshAccessToken, checkAuthentication, isLoading: authLoading } = useAuth();
   const admin_id = auth?.unique_id;
 
   console.log("Admin ID:", admin_id);
@@ -29,6 +29,7 @@ const ManageFAQ = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [editingItemId, setEditingItemId] = useState(null);
   const [editingItemData, setEditingItemData] = useState(null);
+  const [authChecked, setAuthChecked] = useState(false);
 
   // Submission state
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -57,29 +58,80 @@ const ManageFAQ = () => {
     return () => window.removeEventListener("resize", checkDevice);
   }, []);
 
-  // Fetch FAQ items on component mount
+  // Check authentication status on component mount
   useEffect(() => {
-    fetchFaqItems();
-  }, []);
+    const checkAuth = async () => {
+      // Wait for auth context to finish initializing
+      if (authLoading) return;
+      
+      try {
+        // Check if user is authenticated using the new method
+        const isAuth = await checkAuthentication();
+        
+        if (!isAuth) {
+          // If not authenticated, redirect to login
+          setMessage("Your session has expired. Please log in again.");
+          setVariant("danger");
+          setShowAlert(true);
+          setTimeout(() => {
+            navigate("/login");
+          }, 3000);
+          return;
+        }
+        
+        setAuthChecked(true);
+      } catch (error) {
+        console.error("Authentication check failed:", error);
+        setMessage("Authentication error. Please log in again.");
+        setVariant("danger");
+        setShowAlert(true);
+        setTimeout(() => {
+          navigate("/login");
+        }, 3000);
+      }
+    };
+
+    checkAuth();
+  }, [authLoading, checkAuthentication, navigate]);
+
+  // Fetch FAQ items when auth is checked
+  useEffect(() => {
+    if (authChecked && auth.access) {
+      fetchFaqItems();
+    }
+  }, [authChecked, auth.access]);
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
   // Fetch FAQ items from API
   const fetchFaqItems = async () => {
+    // Don't fetch if auth is not checked yet
+    if (!authChecked || !auth.access) return;
+    
     setIsLoading(true);
     try {
       const url = "https://mahadevaaya.com/trilokayurveda/trilokabackend/api/faq-items/";
       let response = await fetch(url, {
         method: "GET",
         headers: {
-          Authorization: `Bearer ${auth?.access}`,
+          Authorization: `Bearer ${auth.access}`,
         },
       });
 
       // If unauthorized, try refreshing token and retry once
       if (response.status === 401) {
         const newAccess = await refreshAccessToken();
-        if (!newAccess) throw new Error("Session expired");
+        if (!newAccess) {
+          // If refresh fails, redirect to login
+          setMessage("Your session has expired. Please log in again.");
+          setVariant("danger");
+          setShowAlert(true);
+          setTimeout(() => {
+            navigate("/login");
+          }, 3000);
+          return;
+        }
+        
         response = await fetch(url, {
           method: "GET",
           headers: {
@@ -245,14 +297,24 @@ const ManageFAQ = () => {
         method: "PUT",
         body: dataToSend,
         headers: {
-          Authorization: `Bearer ${auth?.access}`,
+          Authorization: `Bearer ${auth.access}`,
         },
       });
 
       // If unauthorized, try refreshing token and retry once
       if (response.status === 401) {
         const newAccess = await refreshAccessToken();
-        if (!newAccess) throw new Error("Session expired");
+        if (!newAccess) {
+          // If refresh fails, redirect to login
+          setMessage("Your session has expired. Please log in again.");
+          setVariant("danger");
+          setShowAlert(true);
+          setTimeout(() => {
+            navigate("/login");
+          }, 3000);
+          return;
+        }
+        
         response = await fetch(url, {
           method: "PUT",
           body: dataToSend,
@@ -320,14 +382,24 @@ const ManageFAQ = () => {
         method: "DELETE",
         body: dataToSend, // Include the FormData in the body
         headers: {
-          Authorization: `Bearer ${auth?.access}`,
+          Authorization: `Bearer ${auth.access}`,
         },
       });
 
       // If unauthorized, try refreshing token and retry once
       if (response.status === 401) {
         const newAccess = await refreshAccessToken();
-        if (!newAccess) throw new Error("Session expired");
+        if (!newAccess) {
+          // If refresh fails, redirect to login
+          setMessage("Your session has expired. Please log in again.");
+          setVariant("danger");
+          setShowAlert(true);
+          setTimeout(() => {
+            navigate("/login");
+          }, 3000);
+          return;
+        }
+        
         response = await fetch(url, {
           method: "DELETE",
           body: dataToSend, // Include the FormData in the body
@@ -405,7 +477,7 @@ const ManageFAQ = () => {
       let response = await fetch(url, {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${auth?.access}`,
+          Authorization: `Bearer ${auth.access}`,
         },
         body: dataToSend,
       });
@@ -413,7 +485,17 @@ const ManageFAQ = () => {
       // If unauthorized, try refreshing token and retry once
       if (response.status === 401) {
         const newAccess = await refreshAccessToken();
-        if (!newAccess) throw new Error("Session expired");
+        if (!newAccess) {
+          // If refresh fails, redirect to login
+          setMessage("Your session has expired. Please log in again.");
+          setVariant("danger");
+          setShowAlert(true);
+          setTimeout(() => {
+            navigate("/login");
+          }, 3000);
+          return;
+        }
+        
         response = await fetch(url, {
           method: "POST",
           headers: {
@@ -477,6 +559,20 @@ const ManageFAQ = () => {
   const totalPages = Math.ceil(faqItems.length / itemsPerPage);
   
   const handlePageChange = (pageNumber) => setCurrentPage(pageNumber);
+
+  // Show loading while checking authentication
+  if (authLoading || !authChecked) {
+    return (
+      <div className="d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
+        <div className="text-center">
+          <Spinner animation="border" role="status" className="mb-3">
+            <span className="visually-hidden">Checking authentication...</span>
+          </Spinner>
+          <p>Verifying your session...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>

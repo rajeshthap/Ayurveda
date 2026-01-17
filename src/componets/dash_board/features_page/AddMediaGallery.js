@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Container, Row, Col, Form, Button, Alert, Image } from "react-bootstrap";
+import { Container, Row, Col, Form, Button, Alert, Image, Spinner } from "react-bootstrap";
 import "../../../assets/css/dashboard.css";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
@@ -9,7 +9,7 @@ import DashBoardHeader from "../DashBoardHeader";
 import { FaPlus, FaTrash, FaTimes, FaImage } from "react-icons/fa";
 
 const AddMediaGallery = () => {
-  const { auth, logout, refreshAccessToken } = useAuth();
+  const { auth, logout, refreshAccessToken, checkAuthentication, isLoading: authLoading } = useAuth();
   const admin_id = auth?.unique_id;
 
   console.log("Admin ID:", admin_id);
@@ -30,6 +30,7 @@ const AddMediaGallery = () => {
   // State for media gallery items from API
   const [items, setItems] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [authChecked, setAuthChecked] = useState(false);
 
   // Image preview state
   const [imagePreviews, setImagePreviews] = useState({});
@@ -53,10 +54,48 @@ const AddMediaGallery = () => {
     return () => window.removeEventListener("resize", checkDevice);
   }, []);
 
-  // Fetch media gallery items on component mount
+  // Check authentication status on component mount
   useEffect(() => {
-    fetchItems();
-  }, []);
+    const checkAuth = async () => {
+      // Wait for auth context to finish initializing
+      if (authLoading) return;
+      
+      try {
+        // Check if user is authenticated using the new method
+        const isAuth = await checkAuthentication();
+        
+        if (!isAuth) {
+          // If not authenticated, redirect to login
+          setMessage("Your session has expired. Please log in again.");
+          setVariant("danger");
+          setShowAlert(true);
+          setTimeout(() => {
+            navigate("/login");
+          }, 3000);
+          return;
+        }
+        
+        setAuthChecked(true);
+      } catch (error) {
+        console.error("Authentication check failed:", error);
+        setMessage("Authentication error. Please log in again.");
+        setVariant("danger");
+        setShowAlert(true);
+        setTimeout(() => {
+          navigate("/login");
+        }, 3000);
+      }
+    };
+
+    checkAuth();
+  }, [authLoading, checkAuthentication, navigate]);
+
+  // Fetch media gallery items when auth is checked
+  useEffect(() => {
+    if (authChecked && auth.access) {
+      fetchItems();
+    }
+  }, [authChecked, auth.access]);
 
   // Create image preview when a new image is selected
   useEffect(() => {
@@ -81,20 +120,33 @@ const AddMediaGallery = () => {
 
   // Fetch media gallery items from API
   const fetchItems = async () => {
+    // Don't fetch if auth is not checked yet
+    if (!authChecked || !auth.access) return;
+    
     setIsLoading(true);
     try {
       const url = `${API_BASE_URL}/api/media-gallery-items/`;
       let response = await fetch(url, {
         method: "GET",
         headers: {
-          Authorization: `Bearer ${auth?.access}`,
+          Authorization: `Bearer ${auth.access}`,
         },
       });
 
       // If unauthorized, try refreshing token and retry once
       if (response.status === 401) {
         const newAccess = await refreshAccessToken();
-        if (!newAccess) throw new Error("Session expired");
+        if (!newAccess) {
+          // If refresh fails, redirect to login
+          setMessage("Your session has expired. Please log in again.");
+          setVariant("danger");
+          setShowAlert(true);
+          setTimeout(() => {
+            navigate("/login");
+          }, 3000);
+          return;
+        }
+        
         response = await fetch(url, {
           method: "GET",
           headers: {
@@ -281,7 +333,7 @@ const AddMediaGallery = () => {
       let response = await fetch(url, {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${auth?.access}`,
+          Authorization: `Bearer ${auth.access}`,
         },
         body: dataToSend,
       });
@@ -289,7 +341,17 @@ const AddMediaGallery = () => {
       // If unauthorized, try refreshing token and retry once
       if (response.status === 401) {
         const newAccess = await refreshAccessToken();
-        if (!newAccess) throw new Error("Session expired");
+        if (!newAccess) {
+          // If refresh fails, redirect to login
+          setMessage("Your session has expired. Please log in again.");
+          setVariant("danger");
+          setShowAlert(true);
+          setTimeout(() => {
+            navigate("/login");
+          }, 3000);
+          return;
+        }
+        
         response = await fetch(url, {
           method: "POST",
           headers: {
@@ -346,6 +408,20 @@ const AddMediaGallery = () => {
     }
   };
 
+  // Show loading while checking authentication
+  if (authLoading || !authChecked) {
+    return (
+      <div className="d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
+        <div className="text-center">
+          <Spinner animation="border" role="status" className="mb-3">
+            <span className="visually-hidden">Checking authentication...</span>
+          </Spinner>
+          <p>Verifying your session...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
       <div className="dashboard-container">
@@ -376,7 +452,6 @@ const AddMediaGallery = () => {
               </Alert>
             )}
 
-           
           
 
             {/* Add New Media Gallery Item Form */}

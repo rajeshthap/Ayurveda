@@ -17,7 +17,7 @@ import {
 } from "react-icons/fa";
 
 const TotalFeedback = () => {
-  const { auth, logout, refreshAccessToken } = useAuth();
+  const { auth, logout, refreshAccessToken, checkAuthentication, isLoading: authLoading } = useAuth();
   const admin_id = auth?.unique_id;
 
   console.log("Admin ID:", admin_id);
@@ -32,6 +32,7 @@ const TotalFeedback = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isFetching, setIsFetching] = useState(false);
   const [showTable, setShowTable] = useState(false);
+  const [authChecked, setAuthChecked] = useState(false);
 
   // Submission state
   const [message, setMessage] = useState("");
@@ -60,8 +61,47 @@ const TotalFeedback = () => {
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
+  // Check authentication status on component mount
+  useEffect(() => {
+    const checkAuth = async () => {
+      // Wait for auth context to finish initializing
+      if (authLoading) return;
+      
+      try {
+        // Check if user is authenticated using the new method
+        const isAuth = await checkAuthentication();
+        
+        if (!isAuth) {
+          // If not authenticated, redirect to login
+          setMessage("Your session has expired. Please log in again.");
+          setVariant("danger");
+          setShowAlert(true);
+          setTimeout(() => {
+            navigate("/login");
+          }, 3000);
+          return;
+        }
+        
+        setAuthChecked(true);
+      } catch (error) {
+        console.error("Authentication check failed:", error);
+        setMessage("Authentication error. Please log in again.");
+        setVariant("danger");
+        setShowAlert(true);
+        setTimeout(() => {
+          navigate("/login");
+        }, 3000);
+      }
+    };
+
+    checkAuth();
+  }, [authLoading, checkAuthentication, navigate]);
+
   // Fetch feedback entries from API
   const fetchEntries = async () => {
+    // Don't fetch if auth is not checked yet
+    if (!authChecked || !auth.access) return;
+    
     setIsLoading(true);
     setIsFetching(true);
     try {
@@ -69,14 +109,24 @@ const TotalFeedback = () => {
       let response = await fetch(url, {
         method: "GET",
         headers: {
-          Authorization: `Bearer ${auth?.access}`,
+          Authorization: `Bearer ${auth.access}`,
         },
       });
 
       // If unauthorized, try refreshing token and retry once
       if (response.status === 401) {
         const newAccess = await refreshAccessToken();
-        if (!newAccess) throw new Error("Session expired");
+        if (!newAccess) {
+          // If refresh fails, redirect to login
+          setMessage("Your session has expired. Please log in again.");
+          setVariant("danger");
+          setShowAlert(true);
+          setTimeout(() => {
+            navigate("/login");
+          }, 3000);
+          return;
+        }
+        
         response = await fetch(url, {
           method: "GET",
           headers: {
@@ -136,10 +186,12 @@ const TotalFeedback = () => {
     }
   };
 
-  // Fetch feedback entries on component mount
+  // Fetch feedback entries when auth is checked
   useEffect(() => {
-    fetchEntries();
-  }, []);
+    if (authChecked && auth.access) {
+      fetchEntries();
+    }
+  }, [authChecked, auth.access]);
 
   // Pagination calculations
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -176,6 +228,20 @@ const TotalFeedback = () => {
     
     return <div className="star-rating">{stars}</div>;
   };
+
+  // Show loading while checking authentication
+  if (authLoading || !authChecked) {
+    return (
+      <div className="d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
+        <div className="text-center">
+          <Spinner animation="border" role="status" className="mb-3">
+            <span className="visually-hidden">Checking authentication...</span>
+          </Spinner>
+          <p>Verifying your session...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>

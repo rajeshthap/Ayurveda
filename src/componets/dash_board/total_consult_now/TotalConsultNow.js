@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Container, Row, Col, Form, Button, Alert, Card, Modal, Spinner, Badge, Table, Image, Pagination, Accordion } from "react-bootstrap"; // 1. IMPORT ACCORDION
+import { Container, Row, Col, Alert, Card, Spinner, Pagination, Accordion } from "react-bootstrap"; 
 import "../../../assets/css/dashboard.css";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
@@ -9,17 +9,15 @@ import "../../../assets/css/totalconsultnow.css"
 import DashBoardHeader from "../DashBoardHeader";
 import {
   FaUserMd, FaPhone, FaEnvelope, FaHome, FaVenusMars, FaRulerVertical, FaWeight, FaCalendarAlt,
-  FaHospital, FaStethoscope, FaNotesMedical, FaUserClock, FaInfoCircle, FaExclamationTriangle,
-  FaHeartbeat, FaAppleAlt, FaBed, FaBrain, FaEye, FaTooth,
+   FaStethoscope, FaNotesMedical, FaUserClock, FaInfoCircle, 
+   FaAppleAlt, FaBed, FaBrain, FaEye, FaTooth,
   FaRunning, FaClipboardList, FaUserMd as FaUser, FaIdCard, FaBaby, FaCut, FaUserNurse,
-  FaFileMedical, FaAllergies, FaPills, FaThermometer, FaHandHoldingMedical
+   FaThermometer, FaHandHoldingMedical
 } from "react-icons/fa";
 
 const TotalConsultNow = () => {
-  const { auth, logout, refreshAccessToken } = useAuth();
+  const { auth, logout, refreshAccessToken, checkAuthentication, isLoading: authLoading } = useAuth();
   const admin_id = auth?.unique_id;
-
-  console.log("Admin ID:", admin_id);
   const authFetch = useAuthFetch();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -31,6 +29,7 @@ const TotalConsultNow = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isFetching, setIsFetching] = useState(false);
   const [showTable, setShowTable] = useState(false);
+  const [authChecked, setAuthChecked] = useState(false);
 
   // Submission state
   const [message, setMessage] = useState("");
@@ -59,8 +58,47 @@ const TotalConsultNow = () => {
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
+  // Check authentication status on component mount
+  useEffect(() => {
+    const checkAuth = async () => {
+      // Wait for auth context to finish initializing
+      if (authLoading) return;
+      
+      try {
+        // Check if user is authenticated using the new method
+        const isAuth = await checkAuthentication();
+        
+        if (!isAuth) {
+          // If not authenticated, redirect to login
+          setMessage("Your session has expired. Please log in again.");
+          setVariant("danger");
+          setShowAlert(true);
+          setTimeout(() => {
+            navigate("/login");
+          }, 3000);
+          return;
+        }
+        
+        setAuthChecked(true);
+      } catch (error) {
+        console.error("Authentication check failed:", error);
+        setMessage("Authentication error. Please log in again.");
+        setVariant("danger");
+        setShowAlert(true);
+        setTimeout(() => {
+          navigate("/login");
+        }, 3000);
+      }
+    };
+
+    checkAuth();
+  }, [authLoading, checkAuthentication, navigate]);
+
   // Fetch consultation entries from API
   const fetchEntries = async () => {
+    // Don't fetch if auth is not checked yet
+    if (!authChecked || !auth.access) return;
+    
     setIsLoading(true);
     setIsFetching(true);
     try {
@@ -68,14 +106,24 @@ const TotalConsultNow = () => {
       let response = await fetch(url, {
         method: "GET",
         headers: {
-          Authorization: `Bearer ${auth?.access}`,
+          Authorization: `Bearer ${auth.access}`,
         },
       });
 
       // If unauthorized, try refreshing token and retry once
       if (response.status === 401) {
         const newAccess = await refreshAccessToken();
-        if (!newAccess) throw new Error("Session expired");
+        if (!newAccess) {
+          // If refresh fails, redirect to login
+          setMessage("Your session has expired. Please log in again.");
+          setVariant("danger");
+          setShowAlert(true);
+          setTimeout(() => {
+            navigate("/login");
+          }, 3000);
+          return;
+        }
+        
         response = await fetch(url, {
           method: "GET",
           headers: {
@@ -151,10 +199,12 @@ const TotalConsultNow = () => {
     }
   };
 
-  // Fetch consultation entries on component mount
+  // Fetch consultation entries when auth is checked
   useEffect(() => {
-    fetchEntries();
-  }, []);
+    if (authChecked && auth.access) {
+      fetchEntries();
+    }
+  }, [authChecked, auth.access]);
 
   // Pagination calculations
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -163,6 +213,20 @@ const TotalConsultNow = () => {
   const totalPages = Math.ceil(entries.length / itemsPerPage);
   
   const handlePageChange = (pageNumber) => setCurrentPage(pageNumber);
+
+  // Show loading while checking authentication
+  if (authLoading || !authChecked) {
+    return (
+      <div className="d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
+        <div className="text-center">
+          <Spinner animation="border" role="status" className="mb-3">
+            <span className="visually-hidden">Checking authentication...</span>
+          </Spinner>
+          <p>Verifying your session...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
