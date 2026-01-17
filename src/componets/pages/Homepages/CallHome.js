@@ -124,11 +124,11 @@ const CallHome = () => {
                     {callData.module.length > 2 && <p>...</p>}
                   </div>
                 )}
-<div className='space-button'>
-                <Link to="/Call" className="ayur-btn" onClick={scrollToTop}>
+                <div className='space-button'>
+                <Link to="/Call" className="ayur-btn me-2" onClick={scrollToTop}>
                   Know More
                 </Link>
-                 <Link to="/ConsultNow" className="ayur-btn" onClick={scrollToTop}>
+                 <Link to="/ConsultNow" className="consult-button" onClick={scrollToTop}>
                   Book Consultation
                 </Link>
 

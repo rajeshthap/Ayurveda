@@ -1009,6 +1009,7 @@ a.likeproduct img.like {
 
 .ayur-about-head p {
   padding: 4px 0 2px;
+  text-align: justify;
 }
 
 .ayur-about-img {

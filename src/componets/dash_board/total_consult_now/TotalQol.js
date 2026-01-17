@@ -60,6 +60,33 @@ const TotalQol = () => {
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
+  // Function to get option text based on score and question
+  const getOptionText = (questionKey, score) => {
+    // For questions 20 and 21
+    if (questionKey === 'q20_management_quality' || questionKey === 'q21_overall_health') {
+      const options = {
+        1: "Very well",
+        2: "Well",
+        3: "Neutral",
+        4: "Poorly",
+        5: "Very poorly"
+      };
+      return options[score] || "N/A";
+    }
+    // For questions 1-19
+    else {
+      const options = {
+        1: "No",
+        2: "Very little",
+        3: "Little",
+        4: "Moderate",
+        5: "Quite a bit",
+        6: "Very much"
+      };
+      return options[score] || "N/A";
+    }
+  };
+
   // Fetch QoL entries from API
   const fetchEntries = async () => {
     setIsLoading(true);
@@ -335,14 +362,23 @@ const TotalQol = () => {
                                         <div className="info-group">
                                           <Row>
                                             {Object.entries(questionLabels).map(([key, label]) => (
-                                              <Col md={6} lg={4} key={key} className="mb-3">
-                                                <div className="info-item">
-                                                  <span className="info-label">{label}</span>
-                                                  <span className="info-value">
-                                                    <Badge bg="secondary" >
+                                              <Col md={6} key={key} className="mb-4">
+                                                <div className="question-container">
+                                                  <div className="question-text mb-2">
+                                                    {label}
+                                                  </div>
+                                                  <div className="score-option-item mb-1">
+                                                    <span className="me-2">Score:</span>
+                                                    <Badge bg="secondary">
                                                       {entry[key]}/{(key === 'q20_management_quality' || key === 'q21_overall_health') ? '5' : '6'}
                                                     </Badge>
-                                                  </span>
+                                                  </div>
+                                                  <div className="score-option-item">
+                                                    <span className="me-2">Option:</span>
+                                                    <Badge bg="success">
+                                                      {getOptionText(key, entry[key])}
+                                                    </Badge>
+                                                  </div>
                                                 </div>
                                               </Col>
                                             ))}
@@ -471,6 +507,8 @@ const TotalQol = () => {
           </Container>
         </div>
       </div>
+      
+      {/* Custom CSS for proper question layout */}
     </>
   );
 };

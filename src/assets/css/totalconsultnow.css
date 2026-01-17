@@ -82,3 +82,18 @@
           cursor: pointer;
         }
    
+
+           .question-container {
+          display: block;
+          width: 100%;
+        }
+        .question-text {
+          font-weight: 500;
+          margin-bottom: 8px;
+          display: block;
+        }
+        .score-option-item {
+          display: block;
+          margin-left: 0;
+          margin-bottom: 4px;
+        }
