@@ -21,15 +21,7 @@ function MetabolicDisorders() {
       return <FaNotesMedical className="me-2" />;
     } else if (keyLower.includes('symptom')) {
       return <MdOutlineSick className="me-2" />;
-    } else if (keyLower.includes('treatment') || keyLower.includes('therapy')) {
-      return <FaHeartbeat className="me-2 text-success" />;
-    } else if (keyLower.includes('cause')) {
-      return <FaHeartbeat className="me-2 text-danger" />;
-    } else if (keyLower.includes('prevention')) {
-      return <FaHeartbeat className="me-2 text-primary" />;
-    } else {
-      return <FaHeartbeat className="me-2 text-info" />;
-    }
+    } 
   };
 
   // Fetch all focus items on component mount
@@ -204,7 +196,7 @@ function MetabolicDisorders() {
                     <div className="ayur-heading-wrap ayur-about-head">
                       {/* Title with icon */}
                       <h3>
-                        <FaHeartbeat className="me-2 text-success" />
+                       
                         {selectedItem.title}
                       </h3>
 
