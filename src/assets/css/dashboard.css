@@ -3,11 +3,24 @@
     min-height: 100vh;
     background-color: #f8f9fa;
 }
-.dashboard-main-container{
+
+.dashboard-main-container {
     margin: 12px !important;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     padding: 8px;
 }
+
+.signature-image {
+    width: 100%;
+    object-fit: contain;
+    /* REMOVE THIS LINE */
+}
+
+.signature-image {
+    width: 100%;
+    /* object-fit removed */
+}
+
 /* Sidebar Styles */
 .sidebar {
     width: 260px;
@@ -22,34 +35,34 @@
     line-height: 8px !important;
 }
 
-.img-wrapper{
-  max-width: 200px;
-  max-height: 200px;
+.img-wrapper {
+    max-width: 200px;
+    max-height: 200px;
 }
 
-.img-current{
-    max-width: 300px; 
-   max-height: 200px;
+.img-current {
+    max-width: 300px;
+    max-height: 200px;
 }
 
-.profile-card{
+.profile-card {
     cursor: pointer;
 }
 
-.img-profile{
+.img-profile {
     width: 50px;
-     height: 50px; 
-   object-fit: cover;
+    height: 50px;
+    object-fit: cover;
 }
 
-.card-img-top{
+.card-img-top {
     height: 200px;
-   object-fit: cover;
+    object-fit: cover;
 }
 
-.profile-name{
+.profile-name {
     width: 50px;
-     height: 50px; 
+    height: 50px;
 }
 
 .sidebar-closed {
@@ -109,9 +122,11 @@
     position: relative;
     overflow: hidden;
 }
-.sidebar{
+
+.sidebar {
     overflow-y: auto !important;
 }
+
 .sidebar .nav-item:hover {
     color: white;
     background: #1a5332;
@@ -317,7 +332,7 @@
 
 
 
- 
+
 
 
 
@@ -391,8 +406,9 @@
     font-weight: 600;
     border: #278557 1px solid !important;
 }
-.br-stat-btn :hover{
-border: none !important;
+
+.br-stat-btn :hover {
+    border: none !important;
 }
 
 .btn-br-dgr {
@@ -461,11 +477,12 @@ border: none !important;
     overflow-x: auto;
 }
 
-.btn-emp{
+.btn-emp {
     font-size: 12px;
 }
+
 .sidebar-closed .submenu-container .br-text-sub {
-  font-size: 10px !important;
+    font-size: 10px !important;
 }
 
 /* Responsive Design */
@@ -568,7 +585,8 @@ border: none !important;
     .sidebar-closed+.main-content {
         margin-left: 0 !important;
     }
-      .sidebar {
+
+    .sidebar {
         overflow-x: auto;
         scroll-behavior: smooth;
         scrollbar-width: thin;
@@ -634,7 +652,7 @@ border: none !important;
 
 /* Mobile Sidebar */
 .mobile-sidebar {
-     background-color: #2ECC71 !important;
+    background-color: #2ECC71 !important;
 }
 
 .mobile-sidebar .nav-item {
