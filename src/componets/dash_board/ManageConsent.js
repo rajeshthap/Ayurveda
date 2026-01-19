@@ -1715,6 +1715,16 @@ const ManageConsent = () => {
         </Modal.Header>
         <Modal.Body>
           <div className="d-flex justify-content-end mb-3 gap-2">
+            {/* *** NEW PRINT BUTTON *** */}
+            <Button
+              variant="secondary"
+              onClick={handlePrint}
+              className="no-print1 "
+            >
+              <FaPrint className="me-2" /> Print
+            </Button>
+            {/* ************************* */}
+
             <Button
               variant="primary"
               onClick={generatePDF}
@@ -1733,15 +1743,6 @@ const ManageConsent = () => {
               )}
             </Button>
 
-            {/* *** NEW PRINT BUTTON *** */}
-            {/* <Button
-              variant="secondary"
-              onClick={handlePrint}
-              className="no-print"
-            >
-              <FaPrint className="me-2" /> Print1
-            </Button> */}
-            {/* ************************* */}
 
           </div>
           <div ref={viewFormRef} className="consent-form-container">

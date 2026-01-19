@@ -10,6 +10,11 @@
     padding: 8px;
 }
 
+.no-print1 {
+    background-color: #fff !important;
+    border: none !important;
+}
+
 .signature-image {
     width: 100%;
     object-fit: contain;
