@@ -16,7 +16,7 @@ const ManageCncds = () => {
 
   // State for all CNCD items
   const [cncdItems, setCncdItems] = useState([]);
-  
+
   // Form state for selected CNCD item
   const [formData, setFormData] = useState({
     id: null,
@@ -125,7 +125,7 @@ const ManageCncds = () => {
 
       if (result.success) {
         let itemData;
-        
+
         // Check if data is an array (like in the get all response) or a single object
         if (Array.isArray(result.data)) {
           // If it's an array, find the CNCD item with matching ID
@@ -311,11 +311,11 @@ const ManageCncds = () => {
         dataToSend.append("id", formData.id);
         dataToSend.append("title", formData.title);
         dataToSend.append("module", JSON.stringify(modulesArray));
-        
+
         if (formData.icon) {
           dataToSend.append("icon", formData.icon, formData.icon.name);
         }
-        
+
         if (formData.image) {
           dataToSend.append("image", formData.image, formData.image.name);
         }
@@ -327,7 +327,7 @@ const ManageCncds = () => {
 
         const url = `https://mahadevaaya.com/trilokayurveda/trilokabackend/api/ourfocus-othercndns-items/?id=${formData.id}`;
         console.log("PUT URL:", url);
-        
+
         let response = await fetch(url, {
           method: "PUT",
           body: dataToSend,
@@ -362,7 +362,7 @@ const ManageCncds = () => {
           console.error("Server error response:", errorData || errorText);
           throw new Error(
             (errorData && errorData.message) ||
-              "Failed to update CNCD item"
+            "Failed to update CNCD item"
           );
         }
 
@@ -400,10 +400,10 @@ const ManageCncds = () => {
             } else {
               updatedItem = result.data;
             }
-            
+
             if (updatedItem) {
-              setCncdItems(prevItems => 
-                prevItems.map(item => 
+              setCncdItems(prevItems =>
+                prevItems.map(item =>
                   item.id === formData.id ? updatedItem : item
                 )
               );
@@ -420,7 +420,7 @@ const ManageCncds = () => {
         // For updates without new images, use JSON
         const url = `https://mahadevaaya.com/trilokayurveda/trilokabackend/api/ourfocus-othercndns-items/?id=${formData.id}`;
         console.log("PUT URL (JSON):", url);
-        
+
         const response = await authFetch(url, {
           method: "PUT",
           body: JSON.stringify(payload),
@@ -444,7 +444,7 @@ const ManageCncds = () => {
           setVariant("success");
           setShowAlert(true);
           setIsEditing(false);
-          
+
           // Update the CNCD item in the list
           if (result.data) {
             let updatedItem;
@@ -453,16 +453,16 @@ const ManageCncds = () => {
             } else {
               updatedItem = result.data;
             }
-            
+
             if (updatedItem) {
-              setCncdItems(prevItems => 
-                prevItems.map(item => 
+              setCncdItems(prevItems =>
+                prevItems.map(item =>
                   item.id === formData.id ? updatedItem : item
                 )
               );
             }
           }
-          
+
           setTimeout(() => setShowAlert(false), 3000);
         } else {
           throw new Error(
@@ -505,10 +505,10 @@ const ManageCncds = () => {
     try {
       const url = `https://mahadevaaya.com/trilokayurveda/trilokabackend/api/ourfocus-othercndns-items/?id=${formData.id}`;
       console.log("DELETE URL:", url);
-      
+
       // Create request body with the ID
       const payload = { id: formData.id };
-      
+
       let response = await fetch(url, {
         method: "DELETE",
         headers: {
@@ -545,7 +545,7 @@ const ManageCncds = () => {
         console.error("Server error response:", errorData || errorText);
         throw new Error(
           (errorData && errorData.message) ||
-            "Failed to delete CNCD item"
+          "Failed to delete CNCD item"
         );
       }
 
@@ -556,12 +556,12 @@ const ManageCncds = () => {
         setMessage("CNCD item deleted successfully!");
         setVariant("success");
         setShowAlert(true);
-        
+
         // Remove the CNCD item from the list
-        setCncdItems(prevItems => 
+        setCncdItems(prevItems =>
           prevItems.filter(item => item.id !== formData.id)
         );
-        
+
         // Go back to the list view
         setTimeout(() => {
           backToItemList();
@@ -648,10 +648,10 @@ const ManageCncds = () => {
                           <Row>
                             {cncdItems.map((item) => (
                               <Col md={6} lg={4} className="mb-4" key={item.id}>
-                                <Card 
-                                  className="h-100 cncd-card profile-card" 
+                                <Card
+                                  className="h-100 cncd-card profile-card"
                                   onClick={() => handleItemClick(item.id)}
-                              
+
                                 >
                                   <Card.Body>
                                     <div className="d-flex align-items-center mb-3">
@@ -660,11 +660,11 @@ const ManageCncds = () => {
                                           src={`https://mahadevaaya.com/trilokayurveda/trilokabackend${item.icon}`}
                                           alt={item.title}
                                           className="rounded me-3 img-wrapper"
-                                        
+
                                         />
                                       ) : (
-                                        <div className="bg-secondary rounded d-flex align-items-center justify-content-center me-3 img-profile"  >
-                                           
+                                        <div className="rounded d-flex align-items-center justify-content-center me-3 img-profile"  >
+
                                           <span className="text-white">
                                             {item.title ? item.title.charAt(0) : 'C'}
                                           </span>
@@ -747,7 +747,7 @@ const ManageCncds = () => {
                                   <img
                                     src={`https://mahadevaaya.com/trilokayurveda/trilokabackend${existingIcon}`}
                                     alt="Current Icon"
-                                  className="img-wrapper"
+                                    className="img-wrapper"
                                   />
                                 </div>
                               )
@@ -759,7 +759,7 @@ const ManageCncds = () => {
                               <img
                                 src={`https://mahadevaaya.com/trilokayurveda/trilokabackend${existingIcon}`}
                                 alt="Current Icon"
-                              className="img-wrapper"
+                                className="img-wrapper"
                               />
                             </div>
                           )
@@ -782,7 +782,7 @@ const ManageCncds = () => {
                                 <img
                                   src={imagePreview}
                                   alt="Image Preview"
-                                className="img-wrapper"
+                                  className="img-wrapper"
                                 />
                               </div>
                             ) : (
@@ -860,9 +860,8 @@ const ManageCncds = () => {
                                 <Form.Control
                                   as="textarea"
                                   rows={3}
-                                  placeholder={`Enter module ${
-                                    index + 1
-                                  } value`}
+                                  placeholder={`Enter module ${index + 1
+                                    } value`}
                                   value={module.value || ""}
                                   onChange={(e) =>
                                     handleModuleChange(
