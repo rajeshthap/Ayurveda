@@ -30,6 +30,8 @@ import {
   FaPlusSquare,
   FaTasks
 } from "react-icons/fa";
+import {  useNavigate } from "react-router-dom"; // Add useNavigate import
+import { useAuth } from "../context/AuthContext"; // Import useAuth
 
 // import BRLogo from "../../assets/images/brainrock_logo.png";
 
@@ -37,9 +39,17 @@ import {
 
 
 const LeftNav = ({ sidebarOpen, setSidebarOpen, isMobile, isTablet }) => {
-    // const { logout } = useContext(AuthContext);
-    // const { user } = useContext(AuthContext);
-// const emp_id = user?.unique_id;  // This is the correct value
+      // Add these lines
+    const { logout } = useAuth();
+    const navigate = useNavigate();
+
+
+ // Add logout handler function
+    const handleLogout = () => {
+        logout();
+        navigate("/Login", { replace: true });
+    };
+
 
     const [userRole, setUserRole] = useState(null);
   const [openSubmenu, setOpenSubmenu] = useState(null);
@@ -47,9 +57,6 @@ const LeftNav = ({ sidebarOpen, setSidebarOpen, isMobile, isTablet }) => {
     setOpenSubmenu(openSubmenu === index ? null : index);
   };
   
-
-
-
 const menuItems = [
     {
       icon: <FaTachometerAlt />,
@@ -333,9 +340,6 @@ const menuItems = [
       path: "/ManageContactUs",
       active: true,
     },
-    
-    
-  
   {
       icon: <FaImages />,
       label: "Feature",
@@ -416,25 +420,10 @@ const menuItems = [
           label: "Manage Blogs",
           path: "/ManageBlog",
           icon: <FaImage />,
-        },
-        
-        
-       
+        },  
       ],
     },
-   
-
-    
-  
   ];
-
-
-  
-  
-
-  //  Auto-close sidebar when switching to mobile or tablet
-  
-
   return (
     <>
       {/* Desktop Sidebar */}
@@ -507,7 +496,7 @@ const menuItems = [
         <div className="sidebar-footer">
           <Nav.Link
             className="nav-item logout-btn"
-        //    onClick={logout}
+       onClick={handleLogout} // Use the handleLogout function
           >
             <span className="nav-icon">
               <FaSignOutAlt />
@@ -575,6 +564,18 @@ const menuItems = [
           )}
         </div>
       ))}
+
+      {/* Add logout button to mobile menu as well */}
+                        <Nav.Link
+                            className="nav-item logout-btn"
+                            onClick={handleLogout}
+                        >
+                            <span className="nav-icon">
+                                <FaSignOutAlt />
+                            </span>
+                            <span className="nav-text">Logout</span>
+                        </Nav.Link>
+
     </Nav>
   </Offcanvas.Body>
 </Offcanvas>
