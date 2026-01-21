@@ -337,7 +337,9 @@ function ConsultNow() {
       <h3 className="step-title">Personal Information</h3>
       <div className="row">
         <div className="col-md-6 mb-3">
-          <label htmlFor="name" className="form-label">Full Name</label>
+          <label htmlFor="name" className="form-label">
+            Full Name <span className="text-danger">*</span>
+          </label>
           <input
             type="text"
             className={`form-control ${errors.name ? 'is-invalid' : ''}`}
@@ -350,7 +352,9 @@ function ConsultNow() {
           {errors.name && <div className="invalid-feedback">{errors.name}</div>}
         </div>
         <div className="col-md-6 mb-3">
-          <label htmlFor="date" className="form-label">Date</label>
+          <label htmlFor="date" className="form-label">
+            Date <span className="text-danger">*</span>
+          </label>
           <input
             type="date"
             className={`form-control ${errors.date ? 'is-invalid' : ''}`}
@@ -364,7 +368,9 @@ function ConsultNow() {
           {errors.date && <div className="invalid-feedback">{errors.date}</div>}
         </div>
         <div className="col-md-6 mb-3">
-          <label htmlFor="gender" className="form-label">Gender</label>
+          <label htmlFor="gender" className="form-label">
+            Gender <span className="text-danger">*</span>
+          </label>
           <select
             className={`form-select ${errors.gender ? 'is-invalid' : ''}`}
             id="gender"
@@ -381,7 +387,9 @@ function ConsultNow() {
           {errors.gender && <div className="invalid-feedback">{errors.gender}</div>}
         </div>
         <div className="col-md-6 mb-3">
-          <label htmlFor="height" className="form-label">Height</label>
+          <label htmlFor="height" className="form-label">
+            Height <span className="text-danger">*</span>
+          </label>
           <input
             type="number"
             className={`form-control ${errors.height ? 'is-invalid' : ''}`}
@@ -394,7 +402,9 @@ function ConsultNow() {
           {errors.height && <div className="invalid-feedback">{errors.height}</div>}
         </div>
         <div className="col-md-6 mb-3">
-          <label htmlFor="weight" className="form-label">Weight</label>
+          <label htmlFor="weight" className="form-label">
+            Weight <span className="text-danger">*</span>
+          </label>
           <input
             type="number"
             className={`form-control ${errors.weight ? 'is-invalid' : ''}`}
@@ -407,7 +417,9 @@ function ConsultNow() {
           {errors.weight && <div className="invalid-feedback">{errors.weight}</div>}
         </div>
         <div className="col-md-6 mb-3">
-          <label htmlFor="email" className="form-label">Email</label>
+          <label htmlFor="email" className="form-label">
+            Email <span className="text-danger">*</span>
+          </label>
           <input
             type="email"
             className={`form-control ${errors.email ? 'is-invalid' : ''}`}
@@ -420,7 +432,9 @@ function ConsultNow() {
           {errors.email && <div className="invalid-feedback">{errors.email}</div>}
         </div>
         <div className="col-md-6 mb-3">
-          <label htmlFor="marital_status" className="form-label">Marital Status</label>
+          <label htmlFor="marital_status" className="form-label">
+            Marital Status <span className="text-danger">*</span>
+          </label>
           <select
             className={`form-select ${errors.marital_status ? 'is-invalid' : ''}`}
             id="marital_status"
@@ -437,7 +451,9 @@ function ConsultNow() {
           {errors.marital_status && <div className="invalid-feedback">{errors.marital_status}</div>}
         </div>
         <div className="col-md-6 mb-3">
-          <label htmlFor="occupation" className="form-label">Occupation</label>
+          <label htmlFor="occupation" className="form-label">
+            Occupation <span className="text-danger">*</span>
+          </label>
           <input
             type="text"
             className={`form-control ${errors.occupation ? 'is-invalid' : ''}`}
@@ -449,7 +465,9 @@ function ConsultNow() {
           {errors.occupation && <div className="invalid-feedback">{errors.occupation}</div>}
         </div>
         <div className="col-md-6 mb-3">
-          <label htmlFor="contact_number" className="form-label">Contact Number</label>
+          <label htmlFor="contact_number" className="form-label">
+            Contact Number <span className="text-danger">*</span>
+          </label>
           <input
             type="number"
             className={`form-control ${errors.contact_number ? 'is-invalid' : ''}`}
@@ -462,7 +480,9 @@ function ConsultNow() {
           {errors.contact_number && <div className="invalid-feedback">{errors.contact_number}</div>}
         </div>
         <div className="col-12 mb-3">
-          <label htmlFor="complete_address" className="form-label">Complete Address</label>
+          <label htmlFor="complete_address" className="form-label">
+            Complete Address <span className="text-danger">*</span>
+          </label>
           <textarea
             className={`form-control ${errors.complete_address ? 'is-invalid' : ''}`}
             id="complete_address"
@@ -474,7 +494,9 @@ function ConsultNow() {
           {errors.complete_address && <div className="invalid-feedback">{errors.complete_address}</div>}
         </div>
         <div className="col-md-6 mb-3">
-          <label htmlFor="chief_complaint" className="form-label">Chief Complaint</label>
+          <label htmlFor="chief_complaint" className="form-label">
+            Chief Complaint <span className="text-danger">*</span>
+          </label>
           <input
             type="text"
             className={`form-control ${errors.chief_complaint ? 'is-invalid' : ''}`}
@@ -486,7 +508,9 @@ function ConsultNow() {
           {errors.chief_complaint && <div className="invalid-feedback">{errors.chief_complaint}</div>}
         </div>
         <div className="col-md-6 mb-3">
-          <label htmlFor="complaint_duration" className="form-label">Complaint Duration</label>
+          <label htmlFor="complaint_duration" className="form-label">
+            Complaint Duration <span className="text-danger">*</span>
+          </label>
           <input
             type="text"
             className={`form-control ${errors.complaint_duration ? 'is-invalid' : ''}`}
@@ -500,7 +524,9 @@ function ConsultNow() {
         
         {/* New fields */}
         <div className="col-md-6 mb-3">
-          <label htmlFor="reference" className="form-label">Reference</label>
+          <label htmlFor="reference" className="form-label">
+            Reference <span className="text-danger">*</span>
+          </label>
           <select
             className={`form-select ${errors.reference ? 'is-invalid' : ''}`}
             id="reference"
@@ -517,7 +543,9 @@ function ConsultNow() {
           {errors.reference && <div className="invalid-feedback">{errors.reference}</div>}
         </div>
         <div className="col-md-6 mb-3">
-          <label htmlFor="complications" className="form-label">Other Health Conditions</label>
+          <label htmlFor="complications" className="form-label">
+            Other Health Conditions <span className="text-danger">*</span>
+          </label>
           <input
             type="text"
             className={`form-control ${errors.complications ? 'is-invalid' : ''}`}
