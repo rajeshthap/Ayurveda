@@ -105,3 +105,22 @@
       background-color: #218838;
       color: white;
     }
+
+    .media-modal .modal-content {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.media-modal .modal-header {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.media-modal .modal-body {
+  padding: 0;
+}
+
+.media-modal img {
+  width: 100%;
+  height: auto;
+}

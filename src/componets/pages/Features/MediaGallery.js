@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Row, Col, Container } from 'react-bootstrap';
+import { Row, Col, Container, Modal } from 'react-bootstrap';
 import BgShape2 from '../../../assets/images/bg-shape2.png';
 import BgLeaf2 from '../../../assets/images/bg-leaf2.png';
 import "../../../assets/css/MediaGallery.css"
@@ -10,9 +10,14 @@ const API_BASE = 'https://mahadevaaya.com/trilokayurveda/trilokabackend';
 const MediaGallery = ({ showBannerOnly = false }) => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
- useEffect(() => {
+  const [showModal, setShowModal] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedTitle, setSelectedTitle] = useState('');
+
+  useEffect(() => {
     window.scrollTo(0, 0);
   }, );
+  
   useEffect(() => {
     // Fetch data whenever the component mounts, as the cards are always needed.
     fetch(`${API_BASE}/api/media-gallery-items/`)
@@ -26,6 +31,20 @@ const MediaGallery = ({ showBannerOnly = false }) => {
         setLoading(false);
       });
   }, []); // Empty dependency array ensures this runs only once on mount
+
+  // Function to handle opening the modal
+  const handleViewMore = (item) => {
+    setSelectedImage(`${API_BASE}${item.image}`);
+    setSelectedTitle(item.title);
+    setShowModal(true);
+  };
+
+  // Function to handle closing the modal
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setSelectedImage(null);
+    setSelectedTitle('');
+  };
 
   return (
     <div className="ayur-bgcover ayur-about-sec">
@@ -121,9 +140,12 @@ const MediaGallery = ({ showBannerOnly = false }) => {
                                 </h3>
 
                                 <div className="media-card-btn">
-                                  <Link to="#" className="ayur-btn">
-                                    <span>View More</span>
-                                  </Link>
+                                  <button 
+                                    className="ayur-btn"
+                                    onClick={() => handleViewMore(item)}
+                                  >
+                                    <span>View </span>
+                                  </button>
                                 </div>
                               </div>
                             </div>
@@ -146,6 +168,29 @@ const MediaGallery = ({ showBannerOnly = false }) => {
           )}
         </div>
       </div>
+
+      {/* Image Modal */}
+      <Modal 
+        show={showModal} 
+        onHide={handleCloseModal} 
+        centered
+        size="lg"
+        className="media-modal"
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>{selectedTitle}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body className="text-center">
+          {selectedImage && (
+            <img 
+              src={selectedImage} 
+              alt={selectedTitle} 
+              className="img-fluid"
+              style={{ maxHeight: '70vh' }}
+            />
+          )}
+        </Modal.Body>
+      </Modal>
     </div>
   );
 };
