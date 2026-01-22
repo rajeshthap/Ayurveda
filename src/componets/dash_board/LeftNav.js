@@ -301,6 +301,13 @@ const menuItems = [
 
      {
       icon: <FaTachometerAlt />,
+      label: "Manage Media",
+      path: "/ManageMedia",
+      active: true,
+    },
+
+     {
+      icon: <FaTachometerAlt />,
       label: "Manage Care",
       path: "/ManageCare",
       active: true,

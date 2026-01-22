@@ -379,7 +379,7 @@ if (!formData.diagnosis_date) {
             <div className="consult-form-container">
               {/* Added heading with requested classes */}
               <div className="text-center mb-4">
-                <h4 className='heading-extend'>Heart Failure Quality of Life (QOL) Assessment Questionnaire</h4>
+                <h4 className='heading-extend'> Quality of Life (QOL) Assessment Questionnaire</h4>
                 <div className='about-description'>Wellness Center and Speciality Clinic for Chronic Disorders</div>
               </div>
               
@@ -471,7 +471,7 @@ if (!formData.diagnosis_date) {
                       </div>
                       <div className="col-12 mb-3">
                         <Form.Group controlId="current_medications">
-                          <Form.Label>Current Medications <span className="text-danger">*</span></Form.Label>
+                          <Form.Label>Diagnosis / Health Condition <span className="text-danger">*</span></Form.Label>
                           <Form.Control 
                             as="textarea"
                             rows={2}
@@ -905,7 +905,7 @@ if (!formData.diagnosis_date) {
                     <div className="row">
                       {/* Question 20 */}
                       <div className="col-12 mb-3">
-                        <label className="form-label">20. In general, how well do you feel your heart failure is managed? <span className="text-danger">*</span></label>
+                        <label className="form-label">20. In general, how well do you feel your health condition is managed? <span className="text-danger">*</span></label>
                         {errors.q20_management_quality && <div className="text-danger mb-2">{errors.q20_management_quality}</div>}
                         <div className="simple-radio-container">
                           {options20.map(option => (
