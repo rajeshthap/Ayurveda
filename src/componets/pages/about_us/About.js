@@ -22,10 +22,10 @@ function MediaGallery() {
                 data-tilt-speed="1000"
                 data-tilt-perspective="1000"
                 className='ayur-inneraboutimg'
-               
+
               />
               <div className="ayur-about-exp">
-                <p>10</p>
+                <p>25</p>
                 <p>Years of Experience</p>
               </div>
             </div>
