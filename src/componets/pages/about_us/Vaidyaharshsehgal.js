@@ -52,19 +52,65 @@ function Vaidyaharshsehgal() {
     );
   }
 
-  // Parse modules from the API response
+  // Function to get the correct image URL
+  const getImageUrl = (imagePath) => {
+    if (!imagePath) return team1;
+
+    if (imagePath.startsWith("http")) {
+      return imagePath;
+    }
+
+    if (imagePath.startsWith("/media/")) {
+      return `https://mahadevaaya.com/trilokayurveda/trilokabackend${imagePath}`;
+    }
+
+    return `https://mahadevaaya.com/trilokayurveda/trilokabackend/${imagePath}`;
+  };
+
+  // Parse the description to extract contact information
+  const descriptionLines = profileData.description
+    .split("\n")
+    .filter((line) => line.trim() !== "");
+
+  // Extract Educational Qualification module to display separately
   const educationalQualification = profileData.module.find(
-    (item) => item.content === "Educational Qualification"
+    (item) => item.content === "Educational Qualification:"
   );
-  const thesisTitle = profileData.module.find(
-    (item) => item.content === "Thesis Title :"
-  );
-  const researchPapers = profileData.module.find(
-    (item) => item.content === "Research Papers Published"
-  );
-  const professionalExperience = profileData.module.find(
-    (item) => item.content === "Professional Experience"
-  );
+
+  // Function to render module content dynamically
+  const renderModuleContent = (module, index) => {
+    if (!module.content && !module.description) return null;
+    
+    // Skip Educational Qualification as it's rendered separately
+    if (module.content === "Educational Qualification:") {
+      return null;
+    }
+    
+    // Special handling for modules with bullet points (like Unique Approach)
+    if (module.description && module.description.includes("•")) {
+      return (
+        <div key={index} className="pt-2">
+          <h5>{module.content}</h5>
+          {module.description.split("\n").map((paragraph, pIndex) => {
+            if (paragraph.startsWith("•")) {
+              return <li key={pIndex}>{paragraph.substring(1).trim()}</li>;
+            }
+            return <p key={pIndex}>{paragraph}</p>;
+          })}
+        </div>
+      );
+    }
+    
+    // Default handling for all other modules
+    return (
+      <div key={index} className="pt-2">
+        {module.content && <h5>{module.content}</h5>}
+        {module.description && module.description.split("\n").map((paragraph, pIndex) => (
+          <p key={pIndex}>{paragraph}</p>
+        ))}
+      </div>
+    );
+  };
 
   // Check if awards data exists in the API response
   const awardsModule = profileData.module.find(
@@ -116,80 +162,6 @@ function Vaidyaharshsehgal() {
       },
     ];
   }
-
-  // Parse the description to extract contact information
-  const descriptionLines = profileData.description
-    .split("\r\n")
-    .filter((line) => line.trim() !== "");
-
-  // Function to get the correct image URL
-  const getImageUrl = (imagePath) => {
-    if (!imagePath) return team1;
-
-    if (imagePath.startsWith("http")) {
-      return imagePath;
-    }
-
-    if (imagePath.startsWith("/media/")) {
-      return `https://mahadevaaya.com/trilokayurveda/trilokabackend${imagePath}`;
-    }
-
-    return `https://mahadevaaya.com/trilokayurveda/trilokabackend/${imagePath}`;
-  };
-
-  // Function to format educational qualification with green year
-  const formatEducationText = (text) => {
-    if (!text) return "";
-
-    // Extract MD information
-    const mdMatch = text.match(/M\.D\. \(Ayu\.\).*?([A-Za-z]+\.?\s?\d{4})/);
-    if (mdMatch) {
-      const mdText = text.substring(
-        0,
-        text.indexOf(mdMatch[1]) + mdMatch[1].length
-      );
-      const mdYear = mdMatch[1];
-      const mdWithoutYear = mdText.replace(mdYear, "").trim();
-
-      return (
-        <p>
-          {mdWithoutYear}
-          <span className="year-txt" >
-            {mdYear}
-          </span>
-        </p>
-      );
-    }
-
-    return <p>{text}</p>;
-  };
-
-  // Extract BAMS information separately
-  const extractBAMSInfo = (text) => {
-    if (!text) return null;
-
-    const lines = text.split("\n");
-    const bamsLine = lines.find((line) => line.includes("B.A.M.S."));
-
-    if (bamsLine) {
-      const bamsMatch = bamsLine.match(/B\.A\.M\.S\..*?([A-Za-z]+\.?\s?\d{4})/);
-      if (bamsMatch) {
-        const bamsYear = bamsMatch[1];
-        const bamsWithoutYear = bamsLine.replace(bamsYear, "").trim();
-
-        return (
-          <p>
-            {bamsWithoutYear}
-            <span className="year-txt" >
-              {bamsYear}
-            </span>
-          </p>
-        );
-      }
-    }
-
-    return null;
-  };
 
   return (
     <div className="ayur-bgcover ayur-about-sec">
@@ -251,60 +223,30 @@ function Vaidyaharshsehgal() {
                   {descriptionLines.map((line, index) => (
                     <p key={index}>{line}</p>
                   ))}
-
+                  
+                  {/* Educational Qualification module displayed right after description */}
                   {educationalQualification && (
                     <div className="pt-2">
                       <h5>{educationalQualification.content}</h5>
-                      {formatEducationText(
-                        educationalQualification.description
-                      )}
-                      {extractBAMSInfo(educationalQualification.description)}
+                      {educationalQualification.description.split("\n").map((paragraph, index) => (
+                        <p key={index}>{paragraph}</p>
+                      ))}
                     </div>
                   )}
                 </div>
               </div>
               <Row className="ayur-heading-wrap ayur-about-head">
                 <div>
-                  {thesisTitle && (
-                    <>
-                      <h5 className="pt-2">{thesisTitle.content}</h5>
-                      <p>{thesisTitle.description}</p>
-                    </>
-                  )}
-
-                  {researchPapers && (
-                    <>
-                      <h5 className="pt-2">{researchPapers.content}</h5>
-                      {researchPapers.description
-                        .split("\n")
-                        .map((paragraph, index) => (
-                          <p key={index}>{paragraph}</p>
-                        ))}
-                    </>
-                  )}
-
-                  {professionalExperience && (
-                    <>
-                      <h5 className="pt-2">{professionalExperience.content}</h5>
-                      <ul>
-                        <li>
-                          Ayurvedic consultant, with clinical practice since
-                          April 2000.
-                        </li>
-                        <li>
-                          Assistant Professor in the PG Department of
-                          DravyaGuna, Uttaranchal Ayurvedic Medical College,
-                          Rajpur Road, Dehradun, November 2018 onwards.
-                        </li>
-                      </ul>
-                      {professionalExperience.description
-                        .split("\n")
-                        .map((paragraph, index) => (
-                          <p key={index}>{paragraph}</p>
-                        ))}
-                    </>
-                  )}
-
+                  {/* Render all modules from the API dynamically, excluding Educational Qualification */}
+                  {profileData.module.map((module, index) => {
+                    // Skip Educational Qualification module as it's already rendered above
+                    if (module.content === "Educational Qualification:") {
+                      return null;
+                    }
+                    return renderModuleContent(module, index);
+                  })}
+                  
+                  {/* Awards section */}
                   <h5 className="pt-2">Felicitations/Awards</h5>
                   <p>
                     Felicitated for the exemplary work in the field of Ayurveda:
@@ -323,9 +265,8 @@ function Vaidyaharshsehgal() {
                       </div>
                     ))}
                   </div>
-                  <Link to="#" className="ayur-btn">
-                    Know More
-                  </Link>
+                  
+                 
                 </div>
               </Row>
             </div>

@@ -47,16 +47,6 @@ function Profbhavnasingh() {
     return <div className="ayur-bgcover ayur-about-sec">No profile data available</div>;
   }
 
-  // Parse modules from the API response
-  const educationalQualification = profileData.module.find(item => item.content === "Educational Qualification");
-  const thesisTitle = profileData.module.find(item => item.content === "Thesis Title :");
-  const researchPapers = profileData.module.find(item => item.content === "Research Papers Published");
-  const professionalExperience = profileData.module.find(item => item.content === "Professional Experience");
-  const publications = profileData.module.find(item => item.content === "Publications");
-
-  // Parse the description to extract contact information
-  const descriptionLines = profileData.description.split('\r\n').filter(line => line.trim() !== '');
-
   // Function to get the correct image URL
   const getImageUrl = (imagePath) => {
     if (!imagePath) return team3;
@@ -70,6 +60,82 @@ function Profbhavnasingh() {
     }
     
     return `https://mahadevaaya.com/trilokayurveda/trilokabackend/${imagePath}`;
+  };
+
+  // Parse the description to extract contact information
+  const descriptionLines = profileData.description
+    .split("\n")
+    .filter((line) => line.trim() !== "");
+
+  // Extract Educational Qualification module to display separately
+  const educationalQualification = profileData.module.find(
+    (item) => item.content === "Educational Qualification"
+  );
+
+  // Function to render module content dynamically
+  const renderModuleContent = (module, index) => {
+    if (!module.content && !module.description) return null;
+    
+    // Skip Educational Qualification as it's rendered separately
+    if (module.content === "Educational Qualification") {
+      return null;
+    }
+    
+    // Special handling for Research Papers Published to display as list
+    if (module.content === "Research Papers Published") {
+      return (
+        <div key={index} className="pt-2">
+          <h5>{module.content}</h5>
+          <ul>
+            {module.description.split("\n").map((paragraph, pIndex) => (
+              paragraph.trim() !== '' ? <li key={pIndex}>{paragraph}</li> : null
+            ))}
+          </ul>
+        </div>
+      );
+    }
+    
+    // Special handling for Professional Experience to display as list
+    if (module.content === "Professional Experience") {
+      return (
+        <div key={index} className="pt-2">
+          <h5>{module.content}</h5>
+          <ul>
+            {module.description.split("\n").map((paragraph, pIndex) => (
+              paragraph.trim() !== '' ? <li key={pIndex}>{paragraph}</li> : null
+            ))}
+          </ul>
+        </div>
+      );
+    }
+    
+    // Special handling for Publications to display as list
+    if (module.content === "Publications") {
+      const publicationParts = module.description.split("\n\n");
+      return (
+        <div key={index} className="pt-2">
+          <h5>{module.content}</h5>
+          {publicationParts[0] && <p>{publicationParts[0]}</p>}
+          {publicationParts[1] && (
+            <ul>
+              {publicationParts[1].split("\n").map((paragraph, pIndex) => (
+                paragraph.trim() !== '' ? <li key={pIndex}>{paragraph}</li> : null
+              ))}
+            </ul>
+          )}
+        </div>
+      );
+    }
+    
+    // Default handling for all other modules
+    return (
+      <div key={index} className="pt-2">
+        {module.content && <h5>{module.content}</h5>}
+        {module.description && module.description.split("\n\n").map((paragraph, pIndex) => (
+          paragraph.trim() !== '' ? <p key={pIndex}>{paragraph}</p> : null
+        ))}
+      </div>
+    );
   };
 
   // Function to format educational qualification with green year
@@ -89,54 +155,12 @@ function Profbhavnasingh() {
         return (
           <p key={index}>
             {qualificationWithoutYear}
-            <span className="year-txt" >{year}</span>
+            <span className="year-txt">{year}</span>
           </p>
         );
       }
       
       return <p key={index}>{qualification}</p>;
-    });
-  };
-
-  // Function to format research papers as list items
-  const formatResearchPapers = (text) => {
-    if (!text) return [];
-    
-    // Split text into separate papers
-    return text.split('\n').filter(paper => paper.trim() !== '').map((paper, index) => {
-      // Check if it starts with a number (like "1. Singh B...")
-      if (/^\d+\./.test(paper)) {
-        return <li key={index}>{paper}</li>;
-      }
-      return <li key={index}>{paper}</li>;
-    });
-  };
-
-  // Function to format professional experience as list items
-  const formatProfessionalExperience = (text) => {
-    if (!text) return [];
-    
-    // Split text into separate experiences
-    return text.split('\n').filter(exp => exp.trim() !== '').map((exp, index) => {
-      // Check if it starts with a dash or bullet point
-      if (/^[-•]/.test(exp)) {
-        return <li key={index}>{exp.substring(1).trim()}</li>;
-      }
-      return <li key={index}>{exp}</li>;
-    });
-  };
-
-  // Function to format publications as list items
-  const formatPublications = (text) => {
-    if (!text) return [];
-    
-    // Split text into separate publications
-    return text.split('\n').filter(pub => pub.trim() !== '').map((pub, index) => {
-      // Check if it starts with a dash or bullet point
-      if (/^[-•]/.test(pub)) {
-        return <li key={index}>{pub.substring(1).trim()}</li>;
-      }
-      return <li key={index}>{pub}</li>;
     });
   };
 
@@ -190,7 +214,8 @@ function Profbhavnasingh() {
                   {descriptionLines.map((line, index) => (
                     <p key={index}>{line}</p>
                   ))}
-
+                  
+                  {/* Educational Qualification module displayed right after description */}
                   {educationalQualification && (
                     <div className="pt-2">
                       <h5>{educationalQualification.content}</h5>
@@ -201,46 +226,16 @@ function Profbhavnasingh() {
               </div>
               <Row className="ayur-heading-wrap ayur-about-head">
                 <div>
-                  {thesisTitle && (
-                    <>
-                      <h5 className="pt-2">{thesisTitle.content}</h5>
-                      {thesisTitle.description.split('\n\n').map((thesis, index) => (
-                        <p key={index}>{thesis}</p>
-                      ))}
-                    </>
-                  )}
+                  {/* Render all modules from the API dynamically, excluding Educational Qualification */}
+                  {profileData.module.map((module, index) => {
+                    // Skip Educational Qualification module as it's already rendered above
+                    if (module.content === "Educational Qualification") {
+                      return null;
+                    }
+                    return renderModuleContent(module, index);
+                  })}
                   
-                  {researchPapers && (
-                    <>
-                      <h5 className="pt-2">{researchPapers.content}</h5>
-                      <ul>
-                        {formatResearchPapers(researchPapers.description)}
-                      </ul>
-                    </>
-                  )}
-                  
-                  {professionalExperience && (
-                    <>
-                      <h5 className="pt-2">{professionalExperience.content}</h5>
-                      <ul>
-                        {formatProfessionalExperience(professionalExperience.description)}
-                      </ul>
-                    </>
-                  )}
-
-                  {publications && (
-                    <>
-                      <h5 className="pt-2">{publications.content}</h5>
-                      <p>{publications.description.split('\n\n')[0]}</p>
-                      <ul>
-                        {formatPublications(publications.description.split('\n\n')[1])}
-                      </ul>
-                    </>
-                  )}
-
-                  <Link to="#" className="ayur-btn">
-                    Know More
-                  </Link>
+                 
                 </div>
               </Row>
             </div>

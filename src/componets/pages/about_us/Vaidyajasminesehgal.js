@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import BgShape2 from "../../../assets/images/bg-shape2.png";
 import BgLeaf2 from "../../../assets/images/bg-leaf2.png";
-import { FaAward } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import team2 from '../../../assets/images/team-2.png'
 import { Row } from "react-bootstrap";
@@ -48,32 +47,6 @@ function Vaidyajasminesehgal() {
     return <div className="ayur-bgcover ayur-about-sec">No profile data available</div>;
   }
 
-  // Parse modules from the API response
-  const thesisTitle = profileData.module.find(item => item.content === "Thesis Title :");
-  const professionalExperience = profileData.module.find(item => item.content === "Professional Experience");
-
- 
-
-  // Parse the description to extract contact information and education
-  const descriptionLines = profileData.description.split('\r\n').filter(line => line.trim() !== '');
-  
-  // Separate contact info and education
-  let contactInfo = [];
-  let educationInfo = [];
-  let foundEducation = false;
-  
-  descriptionLines.forEach(line => {
-    if (line === "Educational Qualification") {
-      foundEducation = true;
-      return;
-    }
-    if (foundEducation) {
-      educationInfo.push(line);
-    } else {
-      contactInfo.push(line);
-    }
-  });
-
   // Function to get the correct image URL
   const getImageUrl = (imagePath) => {
     if (!imagePath) return team2;
@@ -89,25 +62,49 @@ function Vaidyajasminesehgal() {
     return `https://mahadevaaya.com/trilokayurveda/trilokabackend/${imagePath}`;
   };
 
-  // Function to format education text with green year
-  const formatEducationText = (text) => {
-    if (!text) return "";
+  // Parse the description to extract contact information
+  const descriptionLines = profileData.description
+    .split("\n")
+    .filter((line) => line.trim() !== "");
+
+  // Extract Educational Qualification module to display separately
+  const educationalQualification = profileData.module.find(
+    (item) => item.content === "Educational Qualifications:"
+  );
+
+  // Function to render module content dynamically
+  const renderModuleContent = (module, index) => {
+    if (!module.content && !module.description) return null;
     
-    // Extract BAMS information
-    const bamsMatch = text.match(/B\.A\.M\.S\..*?([A-Za-z]+\s+\d{4})/);
-    if (bamsMatch) {
-      const bamsYear = bamsMatch[1];
-      const bamsWithoutYear = text.replace(bamsYear, "").trim();
-      
+    // Skip Educational Qualification as it's rendered separately
+    if (module.content === "Educational Qualifications:") {
+      return null;
+    }
+    
+    // Special handling for modules with bullet points (like Professional Experience)
+    if (module.description && module.description.includes("•")) {
       return (
-        <p>
-          {bamsWithoutYear}
-          <span className="year-txt" >{bamsYear}</span>
-        </p>
+        <div key={index} className="pt-2">
+          <h5>{module.content}</h5>
+          {module.description.split("\n").map((paragraph, pIndex) => {
+            if (paragraph.startsWith("•")) {
+              return <li key={pIndex}>{paragraph.substring(1).trim()}</li>;
+            }
+            return <p key={pIndex}>{paragraph}</p>;
+          })}
+        </div>
       );
     }
     
-    return <p>{text}</p>;
+    // Default handling for all other modules
+    return (
+      <div key={index} className="pt-2">
+        {module.content && <h5>{module.content}</h5>}
+        {module.description && module.description.split("\n").map((paragraph, pIndex) => (
+          <p key={pIndex}>{paragraph}</p>
+        ))}
+      </div>
+    );
   };
 
   return (
@@ -157,17 +154,16 @@ function Vaidyajasminesehgal() {
               <div className="col-lg-8 col-md-12 col-sm-12">
                 <div className="ayur-heading-wrap ayur-about-head">
                   <h3>Trilok Ayurveda</h3>
-                  {contactInfo.map((line, index) => (
+                  {descriptionLines.map((line, index) => (
                     <p key={index}>{line}</p>
                   ))}
-
-                  {educationInfo.length > 0 && (
+                  
+                  {/* Educational Qualification module displayed right after description */}
+                  {educationalQualification && (
                     <div className="pt-2">
-                      <h5>Educational Qualification</h5>
-                      {educationInfo.map((line, index) => (
-                        <div key={index}>
-                          {formatEducationText(line)}
-                        </div>
+                      <h5>{educationalQualification.content}</h5>
+                      {educationalQualification.description.split("\n").map((paragraph, index) => (
+                        <p key={index}>{paragraph}</p>
                       ))}
                     </div>
                   )}
@@ -175,27 +171,16 @@ function Vaidyajasminesehgal() {
               </div>
               <Row className="ayur-heading-wrap ayur-about-head">
                 <div>
-                  {thesisTitle && (
-                    <>
-                      <h5 className="pt-2">{thesisTitle.content}</h5>
-                      <p>{thesisTitle.description}</p>
-                    </>
-                  )}
+                  {/* Render all modules from the API dynamically, excluding Educational Qualification */}
+                  {profileData.module.map((module, index) => {
+                    // Skip Educational Qualification module as it's already rendered above
+                    if (module.content === "Educational Qualifications:") {
+                      return null;
+                    }
+                    return renderModuleContent(module, index);
+                  })}
                   
-                  {professionalExperience && (
-                    <>
-                      <h5 className="pt-2">{professionalExperience.content}</h5>
-                      {professionalExperience.description.split('\n').map((paragraph, index) => (
-                        paragraph.trim() !== '' ? <p key={index}>{paragraph}</p> : null
-                      ))}
-                    </>
-                  )}
-
-                
                  
-                  <Link to="#" className="ayur-btn">
-                    Know More
-                  </Link>
                 </div>
               </Row>
             </div>
