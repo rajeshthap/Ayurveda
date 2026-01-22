@@ -663,7 +663,7 @@ const ManageMetabolicDisorders = () => {
                                     
                                         />
                                       ) : (
-                                        <div className="bg-secondary rounded d-flex align-items-center justify-content-center me-3 img-profile" 
+                                        <div className=" rounded d-flex align-items-center justify-content-center me-3 img-profile" 
                                           >
                                           <span className="text-white">
                                             {item.title ? item.title.charAt(0) : 'M'}
