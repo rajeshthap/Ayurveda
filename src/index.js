@@ -12,7 +12,7 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 
 
 root.render(
-  <BrowserRouter basename="/trilokayurveda"  >
+  <BrowserRouter basename=""  >
     <AuthProvider>
       <App />
     </AuthProvider>
