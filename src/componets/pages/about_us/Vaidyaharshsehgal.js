@@ -246,25 +246,7 @@ function Vaidyaharshsehgal() {
                     return renderModuleContent(module, index);
                   })}
                   
-                  {/* Awards section */}
-                  <h5 className="pt-2">Felicitations/Awards</h5>
-                  <p>
-                    Felicitated for the exemplary work in the field of Ayurveda:
-                  </p>
-                  <div className="row g-4">
-                    {awards.map((award, index) => (
-                      <div key={index} className="col-12 col-md-6 col-lg-4">
-                        <div className="card h-100 shadow-sm award-card">
-                          <div className="card-body text-center p-4">
-                            <div className="award-icon mb-3">{award.icon}</div>
-                            <h5 className="card-title">{award.title}</h5>
-                            <div className="text-muted mb-2">{award.year}</div>
-                            <p className="card-text">{award.description}</p>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                 
                   
                  
                 </div>
