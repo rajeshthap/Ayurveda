@@ -75,11 +75,11 @@ const Faqs = () => {
                             <div className="col-lg-12 col-md-12 col-sm-12">
                                 <div className="ayur-heading-wrap ayur-about-head">
                                     <h3 className='ayur-about-heading-wrap' >
-                                        Frequently Asked Questions:
+                                        FAQs :
                                     </h3>
-                                    <h4 className='ayur-about-heading-wrap'>
+                                    {/* <h4 className='ayur-about-heading-wrap'>
                                         Wellness Center and Speciality Clinic for Chronic Disorders
-                                    </h4>
+                                    </h4> */}
 
                                     {/* Loading */}
                                     {loading && (

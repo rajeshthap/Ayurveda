@@ -175,23 +175,31 @@ function Internalwellnesssol() {
                 </div>
 
                 <div className="row ">
-                  {/* Image */}
-                  <div className="col-lg-6 col-md-12 mb-4">
-                    <div className="ayur-about-img ayur-img-hover">
-                      {selectedItem.image ? (
-                        <img
-                          src={`https://mahadevaaya.com/trilokayurveda/trilokabackend${selectedItem.image}`}
-                          alt={selectedItem.title}
-                          className="img-fluid rounded"
-                        />
-                      ) : (
-                        <div className="bg-light d-flex align-items-center justify-content-center rounded"
-                          >
-                          <p className="text-muted">No image available</p>
-                        </div>
-                      )}
+                  {/* Images */}
+                  {selectedItem.gallery_images && selectedItem.gallery_images.length > 0 ? (
+                    <div className="col-lg-6 col-md-12 mb-4">
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '30px' }}>
+                        {selectedItem.gallery_images.map((image, index) => (
+                          <div key={index} className="ayur-about-img ayur-img-hover">
+                            <img
+                              src={`https://mahadevaaya.com/trilokayurveda/trilokabackend${image}`}
+                              alt={`${selectedItem.title} - Gallery ${index + 1}`}
+                              className="img-fluid rounded"
+                              style={{ width: '100%', height: 'auto' }}
+                            />
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                  </div>
+                  ) : (
+                    <div className="col-lg-6 col-md-12 mb-4">
+                      <div className="ayur-about-img ayur-img-hover">
+                        <div className="bg-light d-flex align-items-center justify-content-center rounded" style={{ minHeight: '300px' }}>
+                          <p className="text-muted">No images available</p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
 
                   {/* Content */}
                   <div className="col-lg-6 col-md-12">

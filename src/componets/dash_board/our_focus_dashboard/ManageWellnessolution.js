@@ -1,5 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { Container, Row, Col, Form, Button, Alert, Card, Badge } from "react-bootstrap";
+import {
+  Container,
+  Row,
+  Col,
+  Form,
+  Button,
+  Alert,
+  Card,
+  Badge,
+} from "react-bootstrap";
 import "../../../assets/css/dashboard.css";
 import { useAuth } from "../../context/AuthContext";
 import { useAuthFetch } from "../../context/AuthFetch";
@@ -16,21 +25,24 @@ const ManageWellnessolution = () => {
 
   // State for all wellness solution items
   const [wellnessItems, setWellnessItems] = useState([]);
-  
+
   // Form state for selected wellness solution item
   const [formData, setFormData] = useState({
     id: null,
     title: "",
     icon: null,
-    image: null,
+    gallery_images: [], // Changed from image to gallery_images array
     modules: [{ key: "", value: "" }],
   });
 
   // State for image previews
   const [iconPreview, setIconPreview] = useState(null);
-  const [imagePreview, setImagePreview] = useState(null);
+  const [galleryPreviews, setGalleryPreviews] = useState([]); // Changed from imagePreview
   const [existingIcon, setExistingIcon] = useState(null);
-  const [existingImage, setExistingImage] = useState(null);
+  const [existingGalleryImages, setExistingGalleryImages] = useState([]); // Changed from existingImage
+  const [removedGalleryImageIndices, setRemovedGalleryImageIndices] = useState(
+    [],
+  ); // Track removed images by index
 
   // Submission state
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -65,9 +77,11 @@ const ManageWellnessolution = () => {
   useEffect(() => {
     return () => {
       if (iconPreview) URL.revokeObjectURL(iconPreview);
-      if (imagePreview) URL.revokeObjectURL(imagePreview);
+      if (galleryPreviews && galleryPreviews.length > 0) {
+        galleryPreviews.forEach((preview) => URL.revokeObjectURL(preview));
+      }
     };
-  }, [iconPreview, imagePreview]);
+  }, [iconPreview, galleryPreviews]);
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
@@ -79,7 +93,7 @@ const ManageWellnessolution = () => {
         "https://mahadevaaya.com/trilokayurveda/trilokabackend/api/ourfocus-wellnesssolutions-items/",
         {
           method: "GET",
-        }
+        },
       );
 
       if (!response.ok) {
@@ -113,11 +127,13 @@ const ManageWellnessolution = () => {
         `https://mahadevaaya.com/trilokayurveda/trilokabackend/api/ourfocus-wellnesssolutions-items/?id=${itemId}`,
         {
           method: "GET",
-        }
+        },
       );
 
       if (!response.ok) {
-        throw new Error(`Failed to fetch wellness solution item data. Status: ${response.status}`);
+        throw new Error(
+          `Failed to fetch wellness solution item data. Status: ${response.status}`,
+        );
       }
 
       const result = await response.json();
@@ -125,31 +141,39 @@ const ManageWellnessolution = () => {
 
       if (result.success) {
         let itemData;
-        
+
         // Check if data is an array (like in the get all response) or a single object
         if (Array.isArray(result.data)) {
           // If it's an array, find the wellness solution item with matching ID
-          itemData = result.data.find(item => item.id.toString() === itemId.toString());
+          itemData = result.data.find(
+            (item) => item.id.toString() === itemId.toString(),
+          );
           if (!itemData) {
-            throw new Error(`Wellness solution item with ID ${itemId} not found in response array`);
+            throw new Error(
+              `Wellness solution item with ID ${itemId} not found in response array`,
+            );
           }
         } else if (result.data && result.data.id) {
           // If data is a single object, check if it's the one we want
           if (result.data.id.toString() === itemId.toString()) {
             itemData = result.data;
           } else {
-            throw new Error(`Returned wellness solution item ID ${result.data.id} does not match requested ID ${itemId}`);
+            throw new Error(
+              `Returned wellness solution item ID ${result.data.id} does not match requested ID ${itemId}`,
+            );
           }
         } else {
-          throw new Error("Invalid wellness solution item data structure in response");
+          throw new Error(
+            "Invalid wellness solution item data structure in response",
+          );
         }
 
         // Convert modules from array of arrays to array of objects
         let modulesData = [];
         if (itemData.module && Array.isArray(itemData.module)) {
-          modulesData = itemData.module.map(item => ({
+          modulesData = itemData.module.map((item) => ({
             key: item[0] || "",
-            value: item[1] || ""
+            value: item[1] || "",
           }));
         } else {
           modulesData = [{ key: "", value: "" }];
@@ -159,21 +183,26 @@ const ManageWellnessolution = () => {
           id: itemData.id,
           title: itemData.title,
           icon: null,
-          image: null,
+          gallery_images: [],
           modules: modulesData,
         });
 
-        // Set existing image URLs for preview
+        // Set existing gallery images and icon URLs for preview
         setExistingIcon(itemData.icon);
-        setExistingImage(itemData.image);
+        setExistingGalleryImages(itemData.gallery_images || []);
         setSelectedItemId(itemId);
       } else {
         console.error("API Response issue:", result);
-        throw new Error(result.message || "No wellness solution item data found in response");
+        throw new Error(
+          result.message || "No wellness solution item data found in response",
+        );
       }
     } catch (error) {
       console.error("Error fetching wellness solution item data:", error);
-      setMessage(error.message || "An error occurred while fetching wellness solution item data");
+      setMessage(
+        error.message ||
+          "An error occurred while fetching wellness solution item data",
+      );
       setVariant("danger");
       setShowAlert(true);
     } finally {
@@ -204,19 +233,24 @@ const ManageWellnessolution = () => {
       } else {
         setIconPreview(null);
       }
-    } else if (name === "image") {
+    } else if (name === "gallery_images") {
+      // Handle single gallery image file (one by one)
       const file = files[0];
-      setFormData((prev) => ({
-        ...prev,
-        image: file,
-      }));
 
       if (file) {
+        // Add the new image to the gallery_images array
+        setFormData((prev) => ({
+          ...prev,
+          gallery_images: [...prev.gallery_images, file],
+        }));
+
+        // Add preview URL
         const previewUrl = URL.createObjectURL(file);
-        setImagePreview(previewUrl);
-      } else {
-        setImagePreview(null);
+        setGalleryPreviews((prev) => [...prev, previewUrl]);
       }
+
+      // Reset the file input so user can select the same file again if needed
+      e.target.value = "";
     } else {
       setFormData((prev) => ({
         ...prev,
@@ -225,11 +259,33 @@ const ManageWellnessolution = () => {
     }
   };
 
+  // Remove a single gallery image
+  const removeGalleryImage = (index) => {
+    setFormData((prev) => ({
+      ...prev,
+      gallery_images: prev.gallery_images.filter((_, i) => i !== index),
+    }));
+
+    // Revoke the preview URL to free up memory
+    if (galleryPreviews[index]) {
+      URL.revokeObjectURL(galleryPreviews[index]);
+    }
+
+    setGalleryPreviews((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  // Remove an existing gallery image
+  const removeExistingGalleryImage = (index) => {
+    setExistingGalleryImages((prev) => prev.filter((_, i) => i !== index));
+    // Track the removed image index
+    setRemovedGalleryImageIndices((prev) => [...prev, index]);
+  };
+
   // Handle module changes
   const handleModuleChange = (index, field, value) => {
     setFormData((prev) => {
       const newModules = [...prev.modules];
-      if (!newModules[index] || typeof newModules[index] !== 'object') {
+      if (!newModules[index] || typeof newModules[index] !== "object") {
         newModules[index] = { key: "", value: "" };
       }
       newModules[index] = {
@@ -266,7 +322,8 @@ const ManageWellnessolution = () => {
       fetchWellnessItemData(selectedItemId);
     }
     setIconPreview(null);
-    setImagePreview(null);
+    setGalleryPreviews([]);
+    setRemovedGalleryImageIndices([]);
     setIsEditing(false);
     setShowAlert(false);
   };
@@ -285,6 +342,46 @@ const ManageWellnessolution = () => {
     setShowAlert(false);
   };
 
+  // Delete gallery image via dedicated API endpoint
+  const deleteGalleryImageViaAPI = async (itemId, index) => {
+    const url = `https://mahadevaaya.com/trilokayurveda/trilokabackend/api/delete-wellness-gallery-image/?id=${itemId}&index=${index}`;
+    console.log("Deleting gallery image at index:", index, "URL:", url);
+
+    try {
+      let response = await fetch(url, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${auth?.access}`,
+        },
+      });
+
+      // If unauthorized, try refreshing token and retry once
+      if (response.status === 401) {
+        const newAccess = await refreshAccessToken();
+        if (!newAccess) throw new Error("Session expired");
+        response = await fetch(url, {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${newAccess}`,
+          },
+        });
+      }
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Error deleting gallery image:", errorText);
+        throw new Error(`Failed to delete gallery image at index ${index}`);
+      }
+
+      const result = await response.json();
+      console.log("Gallery image deleted successfully:", result);
+      return true;
+    } catch (error) {
+      console.error("Error deleting gallery image via API:", error);
+      throw error;
+    }
+  };
+
   // Handle form submission (PUT request)
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -292,8 +389,33 @@ const ManageWellnessolution = () => {
     setShowAlert(false);
 
     try {
+      // Delete removed gallery images first
+      if (removedGalleryImageIndices.length > 0) {
+        console.log(
+          "Deleting removed gallery images at indices:",
+          removedGalleryImageIndices,
+        );
+
+        for (const index of removedGalleryImageIndices) {
+          try {
+            await deleteGalleryImageViaAPI(formData.id, index);
+          } catch (error) {
+            console.error(
+              `Failed to delete gallery image at index ${index}:`,
+              error,
+            );
+            throw new Error(
+              `Failed to delete gallery image at index ${index}: ${error.message}`,
+            );
+          }
+        }
+      }
+
       // Convert modules from array of objects back to array of arrays
-      const modulesArray = formData.modules.map(module => [module.key, module.value]);
+      const modulesArray = formData.modules.map((module) => [
+        module.key,
+        module.value,
+      ]);
 
       // Prepare the data for submission
       const payload = {
@@ -302,22 +424,31 @@ const ManageWellnessolution = () => {
         module: modulesArray,
       };
 
-      console.log("Submitting data for wellness solution item ID:", formData.id);
+      console.log(
+        "Submitting data for wellness solution item ID:",
+        formData.id,
+      );
       console.log("Payload:", payload);
 
       // If we have new images, we need to handle them with FormData
-      if (formData.icon || formData.image) {
+      if (
+        formData.icon ||
+        (formData.gallery_images && formData.gallery_images.length > 0)
+      ) {
         const dataToSend = new FormData();
         dataToSend.append("id", formData.id);
         dataToSend.append("title", formData.title);
         dataToSend.append("module", JSON.stringify(modulesArray));
-        
+
         if (formData.icon) {
           dataToSend.append("icon", formData.icon, formData.icon.name);
         }
-        
-        if (formData.image) {
-          dataToSend.append("image", formData.image, formData.image.name);
+
+        // Add multiple gallery images
+        if (formData.gallery_images && formData.gallery_images.length > 0) {
+          formData.gallery_images.forEach((file, index) => {
+            dataToSend.append("gallery_images", file, file.name);
+          });
         }
 
         console.log("FormData content:");
@@ -325,9 +456,9 @@ const ManageWellnessolution = () => {
           console.log(pair[0] + ": " + pair[1]);
         }
 
-        const url = `https://mahadevaaya.com/trilokayurveda/trilokabackend/api/ourfocus-wellnesssolutions-items/?id=${formData.id}`;
+        const url = `https://mahadevaaya.com/trilokayurveda/trilokabackend/api/ourfocus-wellnesssolutions-items/`;
         console.log("PUT URL:", url);
-        
+
         let response = await fetch(url, {
           method: "PUT",
           body: dataToSend,
@@ -350,20 +481,28 @@ const ManageWellnessolution = () => {
         }
 
         console.log("PUT Response status:", response.status);
+        console.log("PUT Response headers:", response.headers);
 
         if (!response.ok) {
           const errorText = await response.text();
+          console.error("Raw error response text:", errorText);
+
           let errorData = null;
           try {
             errorData = JSON.parse(errorText);
+            console.error("Parsed JSON error data:", errorData);
           } catch (e) {
-            /* not JSON */
+            console.error("Could not parse error response as JSON:", e.message);
+            console.error("Raw error body:", errorText);
           }
-          console.error("Server error response:", errorData || errorText);
-          throw new Error(
+
+          const errorMessage =
             (errorData && errorData.message) ||
-              "Failed to update wellness solution item"
-          );
+            errorText ||
+            `HTTP ${response.status}: Failed to update wellness solution item`;
+
+          console.error("Final error message:", errorMessage);
+          throw new Error(errorMessage);
         }
 
         const result = await response.json();
@@ -374,6 +513,9 @@ const ManageWellnessolution = () => {
           setVariant("success");
           setShowAlert(true);
           setIsEditing(false);
+
+          // Clear removed gallery images tracker after successful update
+          setRemovedGalleryImageIndices([]);
 
           // Update existing images if new ones were uploaded
           if (formData.icon) {
@@ -384,28 +526,28 @@ const ManageWellnessolution = () => {
             setFormData((prev) => ({ ...prev, icon: null }));
           }
 
-          if (formData.image) {
-            if (result.data && result.data.image) {
-              setExistingImage(result.data.image);
+          if (formData.gallery_images && formData.gallery_images.length > 0) {
+            if (result.data && result.data.gallery_images) {
+              setExistingGalleryImages(result.data.gallery_images);
             }
-            setImagePreview(null);
-            setFormData((prev) => ({ ...prev, image: null }));
+            setGalleryPreviews([]);
+            setFormData((prev) => ({ ...prev, gallery_images: [] }));
           }
 
           // Update the wellness solution item in the list
           if (result.data) {
             let updatedItem;
             if (Array.isArray(result.data)) {
-              updatedItem = result.data.find(item => item.id === formData.id);
+              updatedItem = result.data.find((item) => item.id === formData.id);
             } else {
               updatedItem = result.data;
             }
-            
+
             if (updatedItem) {
-              setWellnessItems(prevItems => 
-                prevItems.map(item => 
-                  item.id === formData.id ? updatedItem : item
-                )
+              setWellnessItems((prevItems) =>
+                prevItems.map((item) =>
+                  item.id === formData.id ? updatedItem : item,
+                ),
               );
             }
           }
@@ -413,27 +555,42 @@ const ManageWellnessolution = () => {
           setTimeout(() => setShowAlert(false), 3000);
         } else {
           throw new Error(
-            result.message || "Failed to update wellness solution item"
+            result.message || "Failed to update wellness solution item",
           );
         }
       } else {
         // For updates without new images, use JSON
-        const url = `https://mahadevaaya.com/trilokayurveda/trilokabackend/api/ourfocus-wellnesssolutions-items/?id=${formData.id}`;
+        const url = `https://mahadevaaya.com/trilokayurveda/trilokabackend/api/ourfocus-wellnesssolutions-items/`;
         console.log("PUT URL (JSON):", url);
-        
+
         const response = await authFetch(url, {
           method: "PUT",
           body: JSON.stringify(payload),
         });
 
         console.log("PUT Response status:", response.status);
+        console.log("PUT Response headers:", response.headers);
 
         if (!response.ok) {
-          const errorData = await response.json();
-          console.error("Server error response:", errorData);
-          throw new Error(
-            errorData.message || "Failed to update wellness solution item"
-          );
+          const errorText = await response.text();
+          console.error("Raw error response text:", errorText);
+
+          let errorData = null;
+          try {
+            errorData = JSON.parse(errorText);
+            console.error("Parsed JSON error data:", errorData);
+          } catch (e) {
+            console.error("Could not parse error response as JSON:", e.message);
+            console.error("Raw error body:", errorText);
+          }
+
+          const errorMessage =
+            (errorData && errorData.message) ||
+            errorText ||
+            `HTTP ${response.status}: Failed to update wellness solution item`;
+
+          console.error("Final error message:", errorMessage);
+          throw new Error(errorMessage);
         }
 
         const result = await response.json();
@@ -444,34 +601,41 @@ const ManageWellnessolution = () => {
           setVariant("success");
           setShowAlert(true);
           setIsEditing(false);
-          
+
+          // Clear removed gallery images tracker after successful update
+          setRemovedGalleryImageIndices([]);
+
           // Update the wellness solution item in the list
           if (result.data) {
             let updatedItem;
             if (Array.isArray(result.data)) {
-              updatedItem = result.data.find(item => item.id === formData.id);
+              updatedItem = result.data.find((item) => item.id === formData.id);
             } else {
               updatedItem = result.data;
             }
-            
+
             if (updatedItem) {
-              setWellnessItems(prevItems => 
-                prevItems.map(item => 
-                  item.id === formData.id ? updatedItem : item
-                )
+              setWellnessItems((prevItems) =>
+                prevItems.map((item) =>
+                  item.id === formData.id ? updatedItem : item,
+                ),
               );
             }
           }
-          
+
           setTimeout(() => setShowAlert(false), 3000);
         } else {
           throw new Error(
-            result.message || "Failed to update wellness solution item"
+            result.message || "Failed to update wellness solution item",
           );
         }
       }
     } catch (error) {
-      console.error("Error updating wellness solution item:", error);
+      console.error("=== ERROR UPDATING WELLNESS SOLUTION ITEM ===");
+      console.error("Error object:", error);
+      console.error("Error message:", error?.message);
+      console.error("Error stack:", error?.stack);
+
       let errorMessage = "An unexpected error occurred. Please try again.";
 
       if (
@@ -479,11 +643,16 @@ const ManageWellnessolution = () => {
         error.message.includes("Failed to fetch")
       ) {
         errorMessage =
-          "Network error: Could not connect to the server. Please check the API endpoint.";
+          "Network error: Could not connect to the server. Please check your internet connection and that the API endpoint is accessible.";
+        console.error("Network error detected");
+      } else if (error instanceof SyntaxError) {
+        errorMessage = "Invalid response format from server. Please try again.";
+        console.error("JSON parsing error:", error.message);
       } else if (error.message) {
         errorMessage = error.message;
       }
 
+      console.error("Final error message to display:", errorMessage);
       setMessage(errorMessage);
       setVariant("danger");
       setShowAlert(true);
@@ -495,7 +664,11 @@ const ManageWellnessolution = () => {
 
   // Handle delete request
   const handleDelete = async () => {
-    if (!window.confirm("Are you sure you want to delete this wellness solution item?")) {
+    if (
+      !window.confirm(
+        "Are you sure you want to delete this wellness solution item?",
+      )
+    ) {
       return;
     }
 
@@ -505,10 +678,10 @@ const ManageWellnessolution = () => {
     try {
       const url = `https://mahadevaaya.com/trilokayurveda/trilokabackend/api/ourfocus-wellnesssolutions-items/?id=${formData.id}`;
       console.log("DELETE URL:", url);
-      
+
       // Create request body with the ID
       const payload = { id: formData.id };
-      
+
       let response = await fetch(url, {
         method: "DELETE",
         headers: {
@@ -545,7 +718,7 @@ const ManageWellnessolution = () => {
         console.error("Server error response:", errorData || errorText);
         throw new Error(
           (errorData && errorData.message) ||
-            "Failed to delete wellness solution item"
+            "Failed to delete wellness solution item",
         );
       }
 
@@ -556,12 +729,12 @@ const ManageWellnessolution = () => {
         setMessage("Wellness solution item deleted successfully!");
         setVariant("success");
         setShowAlert(true);
-        
+
         // Remove the wellness solution item from the list
-        setWellnessItems(prevItems => 
-          prevItems.filter(item => item.id !== formData.id)
+        setWellnessItems((prevItems) =>
+          prevItems.filter((item) => item.id !== formData.id),
         );
-        
+
         // Go back to the list view
         setTimeout(() => {
           backToItemList();
@@ -569,7 +742,7 @@ const ManageWellnessolution = () => {
         }, 2000);
       } else {
         throw new Error(
-          result.message || "Failed to delete wellness solution item"
+          result.message || "Failed to delete wellness solution item",
         );
       }
     } catch (error) {
@@ -639,19 +812,21 @@ const ManageWellnessolution = () => {
                   <>
                     <Row className="mb-4">
                       <Col>
-                        <h2 className="mb-4">Select a Wellness Solution Item to Edit</h2>
+                        <h2 className="mb-4">
+                          Select a Wellness Solution Item to Edit
+                        </h2>
                         {wellnessItems.length === 0 ? (
                           <Alert variant="info">
-                            No wellness solution items found. Please create wellness solution items first.
+                            No wellness solution items found. Please create
+                            wellness solution items first.
                           </Alert>
                         ) : (
                           <Row>
                             {wellnessItems.map((item) => (
                               <Col md={6} lg={4} className="mb-4" key={item.id}>
-                                <Card 
-                                  className="h-100 wellness-card profile-card" 
+                                <Card
+                                  className="h-100 wellness-card profile-card"
                                   onClick={() => handleItemClick(item.id)}
-                              
                                 >
                                   <Card.Body>
                                     <div className="d-flex align-items-center mb-3">
@@ -660,13 +835,13 @@ const ManageWellnessolution = () => {
                                           src={`https://mahadevaaya.com/trilokayurveda/trilokabackend${item.icon}`}
                                           alt={item.title}
                                           className="rounded me-3 img-profile"
-                                        
                                         />
                                       ) : (
-                                        <div className="bg-secondary rounded d-flex align-items-center justify-content-center me-3 img-profile" 
-                                            >
+                                        <div className="bg-secondary rounded d-flex align-items-center justify-content-center me-3 img-profile">
                                           <span className="text-white">
-                                            {item.title ? item.title.charAt(0) : 'W'}
+                                            {item.title
+                                              ? item.title.charAt(0)
+                                              : "W"}
                                           </span>
                                         </div>
                                       )}
@@ -678,9 +853,13 @@ const ManageWellnessolution = () => {
                                     </div>
                                     <div className="d-flex justify-content-between align-items-center">
                                       <Badge bg="primary" pill>
-                                        {item.module ? item.module.length : 0} Modules
+                                        {item.module ? item.module.length : 0}{" "}
+                                        Modules
                                       </Badge>
-                                      <Button variant="outline-primary" size="sm">
+                                      <Button
+                                        variant="outline-primary"
+                                        size="sm"
+                                      >
                                         <FaEdit /> Edit
                                       </Button>
                                     </div>
@@ -697,11 +876,18 @@ const ManageWellnessolution = () => {
                   // Wellness Solution Item Edit View
                   <>
                     <div className="d-flex justify-content-between align-items-center mb-4">
-                      <Button variant="outline-secondary" onClick={backToItemList}>
+                      <Button
+                        variant="outline-secondary"
+                        onClick={backToItemList}
+                      >
                         <FaArrowLeft /> Back to Wellness Solution Items
                       </Button>
                       {!isEditing && (
-                        <Button variant="danger" onClick={handleDelete} disabled={isSubmitting}>
+                        <Button
+                          variant="danger"
+                          onClick={handleDelete}
+                          disabled={isSubmitting}
+                        >
                           <FaTrash /> Delete Item
                         </Button>
                       )}
@@ -737,7 +923,7 @@ const ManageWellnessolution = () => {
                                 <img
                                   src={iconPreview}
                                   alt="Icon Preview"
-                                 className="img-wrapper"
+                                  className="img-wrapper"
                                 />
                               </div>
                             ) : (
@@ -747,7 +933,7 @@ const ManageWellnessolution = () => {
                                   <img
                                     src={`https://mahadevaaya.com/trilokayurveda/trilokabackend${existingIcon}`}
                                     alt="Current Icon"
-                                  className="img-wrapper"
+                                    className="img-wrapper"
                                   />
                                 </div>
                               )
@@ -759,7 +945,7 @@ const ManageWellnessolution = () => {
                               <img
                                 src={`https://mahadevaaya.com/trilokayurveda/trilokabackend${existingIcon}`}
                                 alt="Current Icon"
-                              className="img-wrapper"
+                                className="img-wrapper"
                               />
                             </div>
                           )
@@ -767,45 +953,192 @@ const ManageWellnessolution = () => {
                       </Form.Group>
 
                       <Form.Group className="mb-3">
-                        <Form.Label>Image</Form.Label>
+                        <Form.Label>
+                          Gallery Images (Select One by One)
+                        </Form.Label>
                         {isEditing ? (
                           <>
                             <Form.Control
                               type="file"
-                              name="image"
+                              name="gallery_images"
                               onChange={handleChange}
                               accept="image/*"
                             />
-                            {imagePreview ? (
+
+                            {/* New Gallery Images Preview */}
+                            {galleryPreviews && galleryPreviews.length > 0 && (
                               <div className="mt-3">
-                                <p>New Image Preview:</p>
-                                <img
-                                  src={imagePreview}
-                                  alt="Image Preview"
-                                 className="img-wrapper"
-                                />
-                              </div>
-                            ) : (
-                              existingImage && (
-                                <div className="mt-3">
-                                  <p>Current Image:</p>
-                                  <img
-                                    src={`https://mahadevaaya.com/trilokayurveda/trilokabackend${existingImage}`}
-                                    alt="Current Image"
-                                   className="img-wrapper"
-                                  />
+                                <p>
+                                  <strong>
+                                    New Images ({galleryPreviews.length}):
+                                  </strong>
+                                </p>
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    flexWrap: "wrap",
+                                    gap: "15px",
+                                  }}
+                                >
+                                  {galleryPreviews.map((preview, index) => (
+                                    <div
+                                      key={index}
+                                      style={{
+                                        position: "relative",
+                                        marginBottom: "10px",
+                                      }}
+                                    >
+                                      <img
+                                        src={preview}
+                                        alt={`New Gallery ${index + 1}`}
+                                        className="img-wrapper"
+                                        style={{
+                                          maxWidth: "150px",
+                                          height: "150px",
+                                          objectFit: "cover",
+                                          borderRadius: "5px",
+                                        }}
+                                      />
+                                      <p
+                                        style={{
+                                          fontSize: "12px",
+                                          margin: "8px 0 0 0",
+                                          textAlign: "center",
+                                        }}
+                                      >
+                                        New {index + 1}
+                                      </p>
+                                      <Button
+                                        variant="outline-danger"
+                                        size="sm"
+                                        style={{
+                                          position: "absolute",
+                                          top: "-8px",
+                                          right: "-8px",
+                                        }}
+                                        onClick={() =>
+                                          removeGalleryImage(index)
+                                        }
+                                      >
+                                        <FaTrash size={14} />
+                                      </Button>
+                                    </div>
+                                  ))}
                                 </div>
-                              )
+                              </div>
                             )}
+
+                            {/* Existing Gallery Images */}
+                            {existingGalleryImages &&
+                              existingGalleryImages.length > 0 && (
+                                <div className="mt-4">
+                                  <p>
+                                    <strong>
+                                      Current Images (
+                                      {existingGalleryImages.length}):
+                                    </strong>
+                                  </p>
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                      flexWrap: "wrap",
+                                      gap: "15px",
+                                    }}
+                                  >
+                                    {existingGalleryImages.map(
+                                      (image, index) => (
+                                        <div
+                                          key={index}
+                                          style={{
+                                            position: "relative",
+                                            marginBottom: "10px",
+                                          }}
+                                        >
+                                          <img
+                                            src={`https://mahadevaaya.com/trilokayurveda/trilokabackend${image}`}
+                                            alt={`Gallery ${index + 1}`}
+                                            className="img-wrapper"
+                                            style={{
+                                              maxWidth: "150px",
+                                              height: "150px",
+                                              objectFit: "cover",
+                                              borderRadius: "5px",
+                                              border: "2px solid #ddd",
+                                            }}
+                                          />
+                                          <p
+                                            style={{
+                                              fontSize: "12px",
+                                              margin: "8px 0 0 0",
+                                              textAlign: "center",
+                                            }}
+                                          >
+                                            Image {index + 1}
+                                          </p>
+                                          <Button
+                                            variant="outline-danger"
+                                            size="sm"
+                                            style={{
+                                              position: "absolute",
+                                              top: "-8px",
+                                              right: "-8px",
+                                            }}
+                                            onClick={() =>
+                                              removeExistingGalleryImage(index)
+                                            }
+                                          >
+                                            <FaTrash size={14} />
+                                          </Button>
+                                        </div>
+                                      ),
+                                    )}
+                                  </div>
+                                </div>
+                              )}
                           </>
                         ) : (
-                          existingImage && (
+                          existingGalleryImages &&
+                          existingGalleryImages.length > 0 && (
                             <div className="mt-3">
-                              <img
-                                src={`https://mahadevaaya.com/trilokayurveda/trilokabackend${existingImage}`}
-                                alt="Current Image"
-                              className="img-wrapper"
-                              />
+                              <p>
+                                <strong>
+                                  Gallery Images ({existingGalleryImages.length}
+                                  ):
+                                </strong>
+                              </p>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  flexWrap: "wrap",
+                                  gap: "15px",
+                                }}
+                              >
+                                {existingGalleryImages.map((image, index) => (
+                                  <div key={index}>
+                                    <img
+                                      src={`https://mahadevaaya.com/trilokayurveda/trilokabackend${image}`}
+                                      alt={`Gallery ${index + 1}`}
+                                      className="img-wrapper"
+                                      style={{
+                                        maxWidth: "150px",
+                                        height: "150px",
+                                        objectFit: "cover",
+                                        borderRadius: "5px",
+                                        border: "2px solid #ddd",
+                                      }}
+                                    />
+                                    <p
+                                      style={{
+                                        fontSize: "12px",
+                                        margin: "8px 0 0 0",
+                                        textAlign: "center",
+                                      }}
+                                    >
+                                      Image {index + 1}
+                                    </p>
+                                  </div>
+                                ))}
+                              </div>
                             </div>
                           )
                         )}
@@ -846,7 +1179,7 @@ const ManageWellnessolution = () => {
                                     handleModuleChange(
                                       index,
                                       "key",
-                                      e.target.value
+                                      e.target.value,
                                     )
                                   }
                                   required
@@ -868,7 +1201,7 @@ const ManageWellnessolution = () => {
                                     handleModuleChange(
                                       index,
                                       "value",
-                                      e.target.value
+                                      e.target.value,
                                     )
                                   }
                                   required

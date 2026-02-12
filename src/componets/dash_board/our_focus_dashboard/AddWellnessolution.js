@@ -23,12 +23,12 @@ const AddWellnessolution = () => {
   const [formData, setFormData] = useState({
     title: "",
     icon: null,
-    image: null,
+    gallery_images: [], // Changed from image to gallery_images array
     modules: [["", ""]] // Initialize with one empty module array [title, description]
   });
   
   // State for image and icon previews
-  const [imagePreview, setImagePreview] = useState(null);
+  const [galleryPreviews, setGalleryPreviews] = useState([]); // Changed from imagePreview
   const [iconPreview, setIconPreview] = useState(null);
   
   // Submission state
@@ -53,14 +53,14 @@ const AddWellnessolution = () => {
   // Cleanup object URLs to avoid memory leaks
   useEffect(() => {
     return () => {
-      if (imagePreview) {
-        URL.revokeObjectURL(imagePreview);
+      if (galleryPreviews && galleryPreviews.length > 0) {
+        galleryPreviews.forEach(preview => URL.revokeObjectURL(preview));
       }
       if (iconPreview) {
         URL.revokeObjectURL(iconPreview);
       }
     };
-  }, [imagePreview, iconPreview]);
+  }, [galleryPreviews, iconPreview]);
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
@@ -68,21 +68,24 @@ const AddWellnessolution = () => {
   const handleChange = (e) => {
     const { name, files } = e.target;
     
-    if (name === "image") {
-      // Handle file input for image
+    if (name === "gallery_images") {
+      // Handle single file input for gallery images (one by one)
       const file = files[0];
-      setFormData(prev => ({
-        ...prev,
-        image: file
-      }));
       
-      // Create a preview URL for selected image
       if (file) {
+        // Add the new image to the gallery_images array
+        setFormData(prev => ({
+          ...prev,
+          gallery_images: [...prev.gallery_images, file]
+        }));
+        
+        // Add preview URL
         const previewUrl = URL.createObjectURL(file);
-        setImagePreview(previewUrl);
-      } else {
-        setImagePreview(null);
+        setGalleryPreviews(prev => [...prev, previewUrl]);
       }
+      
+      // Reset the file input so user can select the same file again if needed
+      e.target.value = '';
     } else if (name === "icon") {
       // Handle file input for icon
       const file = files[0];
@@ -105,6 +108,21 @@ const AddWellnessolution = () => {
         [name]: e.target.value
       }));
     }
+  };
+
+  // Remove a single gallery image
+  const removeGalleryImage = (index) => {
+    setFormData(prev => ({
+      ...prev,
+      gallery_images: prev.gallery_images.filter((_, i) => i !== index)
+    }));
+    
+    // Revoke the preview URL to free up memory
+    if (galleryPreviews[index]) {
+      URL.revokeObjectURL(galleryPreviews[index]);
+    }
+    
+    setGalleryPreviews(prev => prev.filter((_, i) => i !== index));
   };
 
   // Handle module changes - module is an array of [title, description]
@@ -148,10 +166,10 @@ const AddWellnessolution = () => {
     setFormData({
       title: "",
       icon: null,
-      image: null,
+      gallery_images: [],
       modules: [["", ""]]
     });
-    setImagePreview(null);
+    setGalleryPreviews([]);
     setIconPreview(null);
     setMessage("");
     setShowAlert(false);
@@ -173,9 +191,11 @@ const AddWellnessolution = () => {
         dataToSend.append('icon', formData.icon, formData.icon.name);
       }
       
-      // Add image if it exists
-      if (formData.image) {
-        dataToSend.append('image', formData.image, formData.image.name);
+      // Add multiple gallery images
+      if (formData.gallery_images && formData.gallery_images.length > 0) {
+        formData.gallery_images.forEach((file, index) => {
+          dataToSend.append('gallery_images', file, file.name);
+        });
       }
       
       // Add modules as JSON string
@@ -330,21 +350,37 @@ const AddWellnessolution = () => {
                 
                 <Col md={6}>
                   <Form.Group className="mb-3">
-                    <Form.Label>Image</Form.Label>
+                    <Form.Label>Gallery Images (Select One by One)</Form.Label>
                     <Form.Control
                       type="file"
-                      name="image"
+                      name="gallery_images"
                       onChange={handleChange}
                       accept="image/*"
                     />
-                    {imagePreview && (
+                    {galleryPreviews && galleryPreviews.length > 0 && (
                       <div className="mt-3">
-                        <p>Image Preview:</p>
-                        <img
-                          src={imagePreview}
-                          alt="Image Preview"
-                        className="img-wrapper"
-                        />
+                        <p>Selected Gallery Images ({galleryPreviews.length} images):</p>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '15px' }}>
+                          {galleryPreviews.map((preview, index) => (
+                            <div key={index} style={{ position: 'relative', marginBottom: '10px' }}>
+                              <img
+                                src={preview}
+                                alt={`Gallery ${index + 1}`}
+                                className="img-wrapper"
+                                style={{ maxWidth: '150px', height: '150px', objectFit: 'cover', borderRadius: '5px' }}
+                              />
+                              <p style={{ fontSize: '12px', margin: '8px 0 0 0', textAlign: 'center' }}>Image {index + 1}</p>
+                              <Button
+                                variant="outline-danger"
+                                size="sm"
+                                style={{ position: 'absolute', top: '-8px', right: '-8px' }}
+                                onClick={() => removeGalleryImage(index)}
+                              >
+                                <FaTrash size={14} />
+                              </Button>
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     )}
                   </Form.Group>

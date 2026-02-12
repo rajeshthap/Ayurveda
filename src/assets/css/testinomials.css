@@ -1,3 +1,193 @@
 .ayur-testquoteright{
     opacity: 0.1 
 }
+
+/* Read More Button Styles */
+.ayur-test-button-sec {
+    margin: 15px 0;
+    text-align: center;
+}
+
+.ayur-readmore-btn {
+    background: linear-gradient(135deg, #CD8973, #B8726B);
+    color: white;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 25px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(205, 137, 115, 0.3);
+}
+
+.ayur-readmore-btn:hover {
+    background: linear-gradient(135deg, #B8726B, #9F6B63);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(205, 137, 115, 0.4);
+    color: white;
+}
+
+.ayur-readmore-btn:active {
+    transform: translateY(0);
+}
+
+/* Testimonial Details Page Styles */
+.ayur-testimonial-detail-page {
+    padding: 60px 0;
+    min-height: calc(100vh - 200px);
+}
+
+.ayur-back-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: none;
+    border: none;
+    color: #CD8973;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 40px;
+    transition: all 0.3s ease;
+    padding: 0;
+}
+
+.ayur-back-btn:hover {
+    gap: 12px;
+    color: #B8726B;
+}
+
+/* Detail Box Container */
+.ayur-testimonial-detail-box {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    padding: 50px;
+    animation: slideInUp 0.6s ease-out;
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Image Section */
+.ayur-detail-image-sec {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.ayur-detail-image {
+    width: 250px;
+    height: 250px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 5px solid #CD8973;
+    box-shadow: 0 10px 30px rgba(205, 137, 115, 0.3);
+}
+
+/* Content Section */
+.ayur-detail-content-sec {
+    text-align: center;
+}
+
+.ayur-detail-header {
+    position: relative;
+    margin-bottom: 30px;
+}
+
+.ayur-detail-header h2 {
+    font-size: 32px;
+    color: #333;
+    margin-bottom: 15px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.ayur-detail-quote-icon {
+    opacity: 0.2;
+    margin-top: 15px;
+}
+
+/* Description Text */
+.ayur-detail-description {
+    margin: 30px 0;
+}
+
+.ayur-detail-description p {
+    font-size: 16px;
+    line-height: 1.8;
+    color: #555;
+    text-align: justify;
+    margin: 0;
+    word-spacing: 0.5px;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .ayur-testimonial-detail-box {
+        padding: 30px 20px;
+    }
+
+    .ayur-detail-image {
+        width: 180px;
+        height: 180px;
+        border-width: 4px;
+    }
+
+    .ayur-detail-header h2 {
+        font-size: 24px;
+    }
+
+    .ayur-detail-description p {
+        font-size: 15px;
+        text-align: left;
+    }
+
+    .ayur-back-btn {
+        margin-bottom: 30px;
+        font-size: 15px;
+    }
+
+    .ayur-testimonial-detail-page {
+        padding: 30px 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .ayur-testimonial-detail-box {
+        padding: 20px 15px;
+        border-radius: 10px;
+    }
+
+    .ayur-detail-image {
+        width: 150px;
+        height: 150px;
+    }
+
+    .ayur-detail-header h2 {
+        font-size: 20px;
+    }
+
+    .ayur-detail-description p {
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    .ayur-back-btn {
+        font-size: 14px;
+    }
+
+    .ayur-readmore-btn {
+        padding: 8px 20px;
+        font-size: 13px;
+    }
+}

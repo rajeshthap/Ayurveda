@@ -206,7 +206,7 @@ function OwnManufacturing() {
                               {getModuleIcon(module[0])}
                               {module[0].toUpperCase()}
                             </h5>
-                            <ul className="ayur-icon-list">
+                            <ul className="ayur-icon-list" type='none'>
                               {module[1].split('\n').map((line, lineIndex) => (
                                 <li key={lineIndex}>{line}</li>
                               ))}

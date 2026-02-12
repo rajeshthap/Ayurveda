@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper/modules';
+import { useNavigate } from 'react-router-dom';
 import '../../assets/css/testinomials.css';
 
 // Import Swiper styles
@@ -14,6 +15,7 @@ import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 function OurTestimonial() {
   const [testimonials, setTestimonials] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   //   refs for navigation
   const prevRef = useRef(null);
@@ -42,7 +44,7 @@ function OurTestimonial() {
 
   if (loading) {
     return (
-      <div className="ayur-bgcover ayur-testimonial-sec">
+      <div className="ayur-bgcover ayur-testimonial-sec" id="testimonial-section">
         <div className="container">
           <p>Loading testimonials...</p>
         </div>
@@ -52,8 +54,18 @@ function OurTestimonial() {
 
   const baseURL = 'https://mahadevaaya.com/trilokayurveda/trilokabackend';
 
+  // Function to truncate text to a specific character count
+  const truncateText = (text, charLimit = 150) => {
+    if (text.length <= charLimit) return text;
+    return text.substring(0, charLimit) + '...';
+  };
+
+  const handleReadMore = (id) => {
+    navigate(`/testimonial-details/${id}`);
+  };
+
   return (
-    <div className="ayur-bgcover ayur-testimonial-sec">
+    <div className="ayur-bgcover ayur-testimonial-sec" id="testimonial-section">
       <div className="container">
         <div className="row">
           <div className="col-lg-12">
@@ -88,7 +100,16 @@ function OurTestimonial() {
               <SwiperSlide key={testimonial.id}>
                 <div className="ayur-test-box">
                   <div className="ayur-test-text">
-                    <p>{testimonial.description}</p>
+                    <p>{truncateText(testimonial.description, 150)}</p>
+                  </div>
+
+                  <div className="ayur-test-button-sec">
+                    <button 
+                      className="ayur-readmore-btn"
+                      onClick={() => handleReadMore(testimonial.id)}
+                    >
+                      Read More
+                    </button>
                   </div>
 
                   <div className="ayur-test-namesec">

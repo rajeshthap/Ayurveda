@@ -96,13 +96,13 @@ function PresentationsAwards() {
                       </Link>
                     </h3>
 
-                    <div className="ayur-tpro-price"></div>
+                    {/* <div className="ayur-tpro-price"></div>
 
                     <div className="ayur-tpro-btn">
                       <Link to="#" className="ayur-btn">
                         <span>read more</span>
                       </Link>
-                    </div>
+                    </div> */}
                   </div>
                 </div>
               </div>
