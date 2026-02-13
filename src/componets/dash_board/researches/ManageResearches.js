@@ -1,14 +1,41 @@
 import React, { useState, useEffect } from "react";
-import { Container, Row, Col, Form, Button, Alert, Card, Modal, Spinner, Badge, Pagination } from "react-bootstrap";
+import {
+  Container,
+  Row,
+  Col,
+  Form,
+  Button,
+  Alert,
+  Card,
+  Modal,
+  Spinner,
+  Badge,
+  Pagination,
+} from "react-bootstrap";
 import "../../../assets/css/dashboard.css";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import LeftNav from "../LeftNav";
 import DashBoardHeader from "../DashBoardHeader";
-import { FaPlus, FaTrash, FaEdit, FaSave, FaTimes, FaCalendarAlt, FaFilePdf } from "react-icons/fa";
+import {
+  FaPlus,
+  FaTrash,
+  FaEdit,
+  FaSave,
+  FaTimes,
+  FaCalendarAlt,
+  FaFilePdf,
+  FaImage,
+} from "react-icons/fa";
 
 const ManageResearches = () => {
-  const { auth, logout, refreshAccessToken, checkAuthentication, isLoading: authLoading } = useAuth();
+  const {
+    auth,
+    logout,
+    refreshAccessToken,
+    checkAuthentication,
+    isLoading: authLoading,
+  } = useAuth();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
@@ -38,8 +65,13 @@ const ManageResearches = () => {
   const [editFormData, setEditFormData] = useState({
     title: "",
     description: "",
-    pdf_files: null
+    pdf_files: null,
+    image: null,
   });
+
+  // Image preview state
+  const [imagePreview, setImagePreview] = useState(null);
+  const [existingImage, setExistingImage] = useState(null);
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
@@ -51,19 +83,34 @@ const ManageResearches = () => {
   // Function to get the full PDF URL
   const getPdfUrl = (pdfPath) => {
     if (!pdfPath) return null;
-    
+
     // If the PDF path already includes the full URL, return as is
-    if (pdfPath.startsWith('http')) {
+    if (pdfPath.startsWith("http")) {
       return pdfPath;
     }
-    
+
     // If the PDF path starts with a slash, prepend the base URL
-    if (pdfPath.startsWith('/')) {
+    if (pdfPath.startsWith("/")) {
       return `${API_BASE_URL}${pdfPath}`;
     }
-    
+
     // Otherwise, prepend the base URL with a slash
     return `${API_BASE_URL}/${pdfPath}`;
+  };
+
+  // Function to get the full image URL
+  const getImageUrl = (imagePath) => {
+    if (!imagePath) return null;
+    // If the image path already includes the full URL, return as is
+    if (imagePath.startsWith("http")) {
+      return imagePath;
+    }
+    // If the image path starts with a slash, combine with base URL (no extra slash)
+    if (imagePath.startsWith("/")) {
+      return `${API_BASE_URL}${imagePath}`;
+    }
+    // Otherwise, add slash between base URL and path
+    return `${API_BASE_URL}/${imagePath}`;
   };
 
   // Check device width
@@ -84,11 +131,11 @@ const ManageResearches = () => {
     const checkAuth = async () => {
       // Wait for auth context to finish initializing
       if (authLoading) return;
-      
+
       try {
         // Check if user is authenticated using the new method
         const isAuth = await checkAuthentication();
-        
+
         if (!isAuth) {
           // If not authenticated, redirect to login
           setMessage("Your session has expired. Please log in again.");
@@ -99,7 +146,7 @@ const ManageResearches = () => {
           }, 3000);
           return;
         }
-        
+
         setAuthChecked(true);
       } catch (error) {
         console.error("Authentication check failed:", error);
@@ -128,7 +175,7 @@ const ManageResearches = () => {
   const fetchItems = async () => {
     // Don't fetch if auth is not checked yet
     if (!authChecked || !auth.access) return;
-    
+
     setIsLoading(true);
     setIsFetching(true);
     try {
@@ -153,7 +200,7 @@ const ManageResearches = () => {
           }, 3000);
           return;
         }
-        
+
         response = await fetch(url, {
           method: "GET",
           headers: {
@@ -171,34 +218,40 @@ const ManageResearches = () => {
 
       if (result.success && result.data) {
         // Process data to format dates
-        const processedItems = result.data.map(item => {
+        const processedItems = result.data.map((item) => {
           const processedItem = { ...item };
-          
+
           // Format created_at date
           if (item.created_at) {
             const createdDate = new Date(item.created_at);
-            processedItem.formatted_created_at = createdDate.toLocaleDateString('en-US', {
-              year: 'numeric',
-              month: 'short',
-              day: 'numeric'
-            });
+            processedItem.formatted_created_at = createdDate.toLocaleDateString(
+              "en-US",
+              {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+              },
+            );
           }
-          
+
           // Format updated_at date
           if (item.updated_at) {
             const updatedDate = new Date(item.updated_at);
-            processedItem.formatted_updated_at = updatedDate.toLocaleDateString('en-US', {
-              year: 'numeric',
-              month: 'short',
-              day: 'numeric'
-            });
+            processedItem.formatted_updated_at = updatedDate.toLocaleDateString(
+              "en-US",
+              {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+              },
+            );
           }
-          
+
           // Add full PDF URL
           if (item.pdf_files) {
             processedItem.fullPdfUrl = getPdfUrl(item.pdf_files);
           }
-          
+
           return processedItem;
         });
 
@@ -208,7 +261,9 @@ const ManageResearches = () => {
       }
     } catch (error) {
       console.error("Error fetching research items:", error);
-      setMessage(error.message || "An error occurred while fetching research items");
+      setMessage(
+        error.message || "An error occurred while fetching research items",
+      );
       setVariant("danger");
       setShowAlert(true);
     } finally {
@@ -223,26 +278,45 @@ const ManageResearches = () => {
     setEditFormData({
       title: item.title,
       description: item.description,
-      pdf_files: null
+      pdf_files: null,
+      image: null,
     });
+    setImagePreview(null);
+    setExistingImage(item.image || null);
     setShowEditModal(true);
   };
 
   // Handle form input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setEditFormData(prev => ({
+    setEditFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
   // Handle file change
   const handleFileChange = (e) => {
-    setEditFormData(prev => ({
+    setEditFormData((prev) => ({
       ...prev,
-      pdf_files: e.target.files[0]
+      pdf_files: e.target.files[0],
     }));
+  };
+
+  // Handle image change
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+      setEditFormData((prev) => ({
+        ...prev,
+        image: file,
+      }));
+    }
   };
 
   // Cancel editing
@@ -252,8 +326,11 @@ const ManageResearches = () => {
     setEditFormData({
       title: "",
       description: "",
-      pdf_files: null
+      pdf_files: null,
+      image: null,
     });
+    setImagePreview(null);
+    setExistingImage(null);
   };
 
   // Save edited item
@@ -267,11 +344,15 @@ const ManageResearches = () => {
       dataToSend.append("id", currentEditItem.id);
       dataToSend.append("title", editFormData.title);
       dataToSend.append("description", editFormData.description);
-      
+
       if (editFormData.pdf_files) {
         dataToSend.append("pdf_files", editFormData.pdf_files);
       }
-      
+
+      if (editFormData.image) {
+        dataToSend.append("image", editFormData.image);
+      }
+
       const url = `${API_BASE_URL}/api/researches-items/`;
       let response = await fetch(url, {
         method: "PUT",
@@ -294,7 +375,7 @@ const ManageResearches = () => {
           }, 3000);
           return;
         }
-        
+
         response = await fetch(url, {
           method: "PUT",
           headers: {
@@ -313,13 +394,13 @@ const ManageResearches = () => {
           /* not JSON */
         }
         throw new Error(
-          (errorData && errorData.message) || "Failed to update research item"
+          (errorData && errorData.message) || "Failed to update research item",
         );
       }
 
       const result = await response.json();
       console.log("Response data:", result);
-      
+
       if (result.success) {
         setMessage("Research item updated successfully!");
         setVariant("success");
@@ -359,7 +440,7 @@ const ManageResearches = () => {
     try {
       const dataToSend = new FormData();
       dataToSend.append("id", itemToDelete);
-      
+
       const url = `${API_BASE_URL}/api/researches-items/`;
       let response = await fetch(url, {
         method: "DELETE",
@@ -382,7 +463,7 @@ const ManageResearches = () => {
           }, 3000);
           return;
         }
-        
+
         response = await fetch(url, {
           method: "DELETE",
           headers: {
@@ -401,13 +482,13 @@ const ManageResearches = () => {
           /* not JSON */
         }
         throw new Error(
-          (errorData && errorData.message) || "Failed to delete research item"
+          (errorData && errorData.message) || "Failed to delete research item",
         );
       }
 
       const result = await response.json();
       console.log("Response data:", result);
-      
+
       if (result.success) {
         setMessage("Research item deleted successfully!");
         setVariant("success");
@@ -439,13 +520,16 @@ const ManageResearches = () => {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = items.slice(indexOfFirstItem, indexOfLastItem);
   const totalPages = Math.ceil(items.length / itemsPerPage);
-  
+
   const handlePageChange = (pageNumber) => setCurrentPage(pageNumber);
 
   // Show loading while checking authentication
   if (authLoading || !authChecked) {
     return (
-      <div className="d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
+      <div
+        className="d-flex justify-content-center align-items-center"
+        style={{ height: "100vh" }}
+      >
         <div className="text-center">
           <Spinner animation="border" role="status" className="mb-3">
             <span className="visually-hidden">Checking authentication...</span>
@@ -474,7 +558,6 @@ const ManageResearches = () => {
           <Container fluid className="dashboard-body dashboard-main-container">
             <div className="d-flex justify-content-between align-items-center mb-4">
               <h1 className="page-title mb-0">Manage Research Items</h1>
-             
             </div>
 
             {/* Alert for success/error messages */}
@@ -505,7 +588,7 @@ const ManageResearches = () => {
                     </Spinner>
                   </div>
                 )}
-                
+
                 <Row>
                   {currentItems.length === 0 ? (
                     <Col xs={12} className="text-center my-5">
@@ -513,25 +596,28 @@ const ManageResearches = () => {
                     </Col>
                   ) : (
                     currentItems.map((item) => (
-                      <Col lg={6} md={12} sm={12} className="mb-4" key={item.id}>
+                      <Col
+                        lg={6}
+                        md={12}
+                        sm={12}
+                        className="mb-4"
+                        key={item.id}
+                      >
                         <Card className="h-100">
                           <Card.Body>
-                           
-                               <div className="d-flex justify-content-between">
-                               <h3> {item.title}</h3>
-                                  <a 
-                                    href={item.fullPdfUrl} 
-                                    target="_blank" 
-                                    rel="noopener noreferrer"
-                                    className="btn btn-sm btn-outline-primary"
-                                  >
-                                    View PDF
-                                  </a>
-                                </div>
-                            <Card.Text>
-                              {item.description}
-                            </Card.Text>
-                            
+                            <div className="d-flex justify-content-between">
+                              <h3> {item.title}</h3>
+                              <a
+                                href={item.fullPdfUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="btn btn-sm btn-outline-primary"
+                              >
+                                View PDF
+                              </a>
+                            </div>
+                            <Card.Text>{item.description}</Card.Text>
+
                             <div className="d-flex justify-content-between align-items-center mb-3">
                               <small className="text-muted">
                                 <FaCalendarAlt className="me-1" />
@@ -543,14 +629,9 @@ const ManageResearches = () => {
                                 </small>
                               )}
                             </div>
-                            
-                            {item.pdf_files && (
-                              <div className="mb-3">
-                              
-                             
-                              </div>
-                            )}
-                               <div className="d-flex justify-content-between">
+
+                            {item.pdf_files && <div className="mb-3"></div>}
+                            <div className="d-flex justify-content-between">
                               <Button
                                 variant="outline-primary"
                                 size="sm"
@@ -569,36 +650,33 @@ const ManageResearches = () => {
                               </Button>
                             </div>
                           </Card.Body>
-                          
+
                           {/* Edit and Delete Buttons */}
-                        
-                         
-                        
                         </Card>
                       </Col>
                     ))
                   )}
                 </Row>
-                
+
                 {/* Pagination */}
                 {totalPages > 1 && (
                   <div className="d-flex justify-content-center mt-4">
                     <Pagination>
-                      <Pagination.Prev 
-                        onClick={() => handlePageChange(currentPage - 1)} 
+                      <Pagination.Prev
+                        onClick={() => handlePageChange(currentPage - 1)}
                         disabled={currentPage === 1}
                       />
-                      {[...Array(totalPages).keys()].map(page => (
-                        <Pagination.Item 
-                          key={page + 1} 
+                      {[...Array(totalPages).keys()].map((page) => (
+                        <Pagination.Item
+                          key={page + 1}
                           active={page + 1 === currentPage}
                           onClick={() => handlePageChange(page + 1)}
                         >
                           {page + 1}
                         </Pagination.Item>
                       ))}
-                      <Pagination.Next 
-                        onClick={() => handlePageChange(currentPage + 1)} 
+                      <Pagination.Next
+                        onClick={() => handlePageChange(currentPage + 1)}
                         disabled={currentPage === totalPages}
                       />
                     </Pagination>
@@ -628,7 +706,7 @@ const ManageResearches = () => {
                 required
               />
             </Form.Group>
-            
+
             <Form.Group className="mb-3">
               <Form.Label>Description</Form.Label>
               <Form.Control
@@ -641,7 +719,7 @@ const ManageResearches = () => {
                 required
               />
             </Form.Group>
-            
+
             <Form.Group className="mb-3">
               <Form.Label>PDF File</Form.Label>
               <Form.Control
@@ -652,27 +730,61 @@ const ManageResearches = () => {
               {currentEditItem?.pdf_files && (
                 <div className="mt-2">
                   <small className="text-muted">
-                    Current file: <a href={getPdfUrl(currentEditItem.pdf_files)} target="_blank" rel="noopener noreferrer">
-                      {currentEditItem.pdf_files.split('/').pop()}
+                    Current file:{" "}
+                    <a
+                      href={getPdfUrl(currentEditItem.pdf_files)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {currentEditItem.pdf_files.split("/").pop()}
                     </a>
                   </small>
                 </div>
               )}
             </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label>Research Image</Form.Label>
+              <Form.Control
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+              />
+              {imagePreview && (
+                <div className="mt-3">
+                  <p className="text-muted">New image preview:</p>
+                  <img
+                    src={imagePreview}
+                    alt="Preview"
+                    style={{
+                      maxWidth: "200px",
+                      maxHeight: "200px",
+                      borderRadius: "4px",
+                    }}
+                  />
+                </div>
+              )}
+              {existingImage && !imagePreview && (
+                <div className="mt-3">
+                  <p className="text-muted">Current image:</p>
+                  <img
+                    src={getImageUrl(existingImage)}
+                    alt="Current"
+                    style={{
+                      maxWidth: "200px",
+                      maxHeight: "200px",
+                      borderRadius: "4px",
+                    }}
+                  />
+                </div>
+              )}
+            </Form.Group>
           </Modal.Body>
           <Modal.Footer>
-            <Button
-              variant="secondary"
-              onClick={cancelEditing}
-              type="button"
-            >
+            <Button variant="secondary" onClick={cancelEditing} type="button">
               <FaTimes /> Cancel
             </Button>
-            <Button
-              variant="primary"
-              type="submit"
-              disabled={isSubmitting}
-            >
+            <Button variant="primary" type="submit" disabled={isSubmitting}>
               <FaSave /> {isSubmitting ? "Saving..." : "Save Changes"}
             </Button>
           </Modal.Footer>
@@ -685,7 +797,8 @@ const ManageResearches = () => {
           <Modal.Title>Confirm Delete</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          Are you sure you want to delete this research item? This action cannot be undone.
+          Are you sure you want to delete this research item? This action cannot
+          be undone.
         </Modal.Body>
         <Modal.Footer>
           <Button
@@ -695,14 +808,16 @@ const ManageResearches = () => {
           >
             Cancel
           </Button>
-          <Button
-            variant="danger"
-            onClick={deleteItem}
-            disabled={isSubmitting}
-          >
+          <Button variant="danger" onClick={deleteItem} disabled={isSubmitting}>
             {isSubmitting ? (
               <>
-                <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
+                <Spinner
+                  as="span"
+                  animation="border"
+                  size="sm"
+                  role="status"
+                  aria-hidden="true"
+                />
                 Deleting...
               </>
             ) : (

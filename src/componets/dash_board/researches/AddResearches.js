@@ -4,10 +4,13 @@ import "../../../assets/css/dashboard.css";
 import { useAuth } from "../../context/AuthContext";
 import LeftNav from "../LeftNav";
 import DashBoardHeader from "../DashBoardHeader";
-import { FaFilePdf } from "react-icons/fa";
+import { FaFilePdf, FaImage } from "react-icons/fa";
 
 const AddResearches = () => {
   const { auth, refreshAccessToken } = useAuth();
+
+  // Base URL for API
+  const API_BASE_URL = "https://mahadevaaya.com/trilokayurveda/trilokabackend";
 
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
@@ -18,7 +21,11 @@ const AddResearches = () => {
     title: "",
     description: "",
     pdf_files: null, // Single file for PDF upload
+    image: null, // Image file for research
   });
+
+  // Image preview state
+  const [imagePreview, setImagePreview] = useState(null);
 
   // Submission state
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -42,6 +49,21 @@ const AddResearches = () => {
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
+  // Function to get the full image URL
+  const getImageUrl = (imagePath) => {
+    if (!imagePath) return null;
+    // If the image path already includes the full URL, return as is
+    if (imagePath.startsWith("http")) {
+      return imagePath;
+    }
+    // If the image path starts with a slash, combine with base URL (no extra slash)
+    if (imagePath.startsWith("/")) {
+      return `${API_BASE_URL}${imagePath}`;
+    }
+    // Otherwise, add slash between base URL and path
+    return `${API_BASE_URL}/${imagePath}`;
+  };
+
   // Handle title change
   const handleTitleChange = (value) => {
     setFormData((prev) => ({ ...prev, title: value }));
@@ -58,11 +80,26 @@ const AddResearches = () => {
     }
   };
 
-  // Handle file change
+  // Handle PDF file change
   const handleFileChange = (file) => {
     setFormData((prev) => ({ ...prev, pdf_files: file }));
     if (formErrors.pdf_files) {
       setFormErrors((prev) => ({ ...prev, pdf_files: "" }));
+    }
+  };
+
+  // Handle image file change
+  const handleImageChange = (file) => {
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+      setFormData((prev) => ({ ...prev, image: file }));
+      if (formErrors.image) {
+        setFormErrors((prev) => ({ ...prev, image: "" }));
+      }
     }
   };
 
@@ -72,7 +109,9 @@ const AddResearches = () => {
       title: "",
       description: "",
       pdf_files: null,
+      image: null,
     });
+    setImagePreview(null);
     setShowAlert(false);
     setFormErrors({});
   };
@@ -114,7 +153,7 @@ const AddResearches = () => {
 
     try {
       // API endpoint
-      const url = "https://mahadevaaya.com/trilokayurveda/trilokabackend/api/researches-items/";
+      const url = `${API_BASE_URL}/api/researches-items/`;
       const dataToSend = new FormData();
 
       // Append data to match the API structure
@@ -123,10 +162,18 @@ const AddResearches = () => {
       if (formData.pdf_files) {
         dataToSend.append("pdf_files", formData.pdf_files);
       }
+      if (formData.image) {
+        dataToSend.append("image", formData.image);
+      }
 
       console.log("--- Final FormData Payload ---");
       for (let [key, value] of dataToSend.entries()) {
-        console.log(`${key}:`, value instanceof File ? `File: ${value.name} (Size: ${value.size} bytes)` : value);
+        console.log(
+          `${key}:`,
+          value instanceof File
+            ? `File: ${value.name} (Size: ${value.size} bytes)`
+            : value,
+        );
       }
       console.log("----------------------------");
 
@@ -141,7 +188,8 @@ const AddResearches = () => {
 
       if (response.status === 401) {
         const newAccess = await refreshAccessToken();
-        if (!newAccess) throw new Error("Session expired. Please log in again.");
+        if (!newAccess)
+          throw new Error("Session expired. Please log in again.");
         response = await fetch(url, {
           method: "POST",
           headers: { Authorization: `Bearer ${newAccess}` },
@@ -160,18 +208,27 @@ const AddResearches = () => {
             throw new Error(`Server returned ${response.status}: ${text}`);
           }
         } catch (e) {
-          throw new Error(`Server returned ${response.status} but couldn't parse the response`);
+          throw new Error(
+            `Server returned ${response.status} but couldn't parse the response`,
+          );
         }
 
         // Error handling for the API structure
         if (errorData.errors) {
-          console.error("Detailed API Errors:", JSON.stringify(errorData.errors, null, 2));
-          const errorMessages = Object.values(errorData.errors).flat().join(" | ");
+          console.error(
+            "Detailed API Errors:",
+            JSON.stringify(errorData.errors, null, 2),
+          );
+          const errorMessages = Object.values(errorData.errors)
+            .flat()
+            .join(" | ");
           throw new Error(errorMessages);
         } else if (errorData.message) {
           throw new Error(errorData.message);
         } else {
-          throw new Error(`Server returned ${response.status} with no specific error message`);
+          throw new Error(
+            `Server returned ${response.status} with no specific error message`,
+          );
         }
       }
 
@@ -194,7 +251,7 @@ const AddResearches = () => {
       // Success handling with fallbacks
       const title = researchData.title || formData.title;
       const id = researchData.id || "unknown";
-      
+
       setMessage(`Success! Research "${title}" (ID: ${id}) has been added.`);
       setVariant("success");
       setShowAlert(true);
@@ -287,6 +344,32 @@ const AddResearches = () => {
                   <div className="mt-2 file-selected">
                     <FaFilePdf className="me-2" />
                     <span>{formData.pdf_files.name}</span>
+                  </div>
+                )}
+              </Form.Group>
+
+              <Form.Group className="mb-4">
+                <Form.Label>Research Image</Form.Label>
+                <Form.Control
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => handleImageChange(e.target.files[0])}
+                  isInvalid={!!formErrors.image}
+                />
+                <Form.Control.Feedback type="invalid">
+                  {formErrors.image}
+                </Form.Control.Feedback>
+                {imagePreview && (
+                  <div className="mt-3 image-preview">
+                    <img
+                      src={imagePreview}
+                      alt="Preview"
+                      style={{
+                        maxWidth: "200px",
+                        maxHeight: "200px",
+                        borderRadius: "4px",
+                      }}
+                    />
                   </div>
                 )}
               </Form.Group>

@@ -234,22 +234,23 @@ const ManageWellnessolution = () => {
         setIconPreview(null);
       }
     } else if (name === "gallery_images") {
-      // Handle single gallery image file (one by one)
-      const file = files[0];
+      // Handle multiple gallery images
+      if (files && files.length > 0) {
+        // Convert FileList to Array
+        const filesArray = Array.from(files);
 
-      if (file) {
-        // Add the new image to the gallery_images array
+        // Add all new images to the gallery_images array
         setFormData((prev) => ({
           ...prev,
-          gallery_images: [...prev.gallery_images, file],
+          gallery_images: [...prev.gallery_images, ...filesArray],
         }));
 
-        // Add preview URL
-        const previewUrl = URL.createObjectURL(file);
-        setGalleryPreviews((prev) => [...prev, previewUrl]);
+        // Add preview URLs for all files
+        const previewUrls = filesArray.map((file) => URL.createObjectURL(file));
+        setGalleryPreviews((prev) => [...prev, ...previewUrls]);
       }
 
-      // Reset the file input so user can select the same file again if needed
+      // Reset the file input so user can select more files if needed
       e.target.value = "";
     } else {
       setFormData((prev) => ({
@@ -954,7 +955,7 @@ const ManageWellnessolution = () => {
 
                       <Form.Group className="mb-3">
                         <Form.Label>
-                          Gallery Images (Select One by One)
+                          Gallery Images (Select Multiple)
                         </Form.Label>
                         {isEditing ? (
                           <>
@@ -963,6 +964,7 @@ const ManageWellnessolution = () => {
                               name="gallery_images"
                               onChange={handleChange}
                               accept="image/*"
+                              multiple
                             />
 
                             {/* New Gallery Images Preview */}
