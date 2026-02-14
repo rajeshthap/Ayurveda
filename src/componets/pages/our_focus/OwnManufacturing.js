@@ -128,7 +128,7 @@ function OwnManufacturing() {
             {!selectedItem ? (
               // List View - Show all cards
               <>
-                {/* <h3>Our Manufacturing Products</h3> */}
+                <h3>IN-HOUSE MANUFACTURING</h3>
                 <h5>Wellness Center and Speciality Clinic for Chronic Disorders</h5>
                 <Row className="ayur-cards-row">
                   {focusItems.map((item) => (

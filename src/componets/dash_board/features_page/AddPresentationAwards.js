@@ -119,7 +119,7 @@ const AddPresentationAwards = () => {
 
     try {
       // Prepare the data for submission
-      const url = "https://mahadevaaya.com/trilokayurveda/trilokabackend/api/media-gallery-items/";
+      const url = "https://mahadevaaya.com/trilokayurveda/trilokabackend/api/presentationandaward-items/";
       
       // Create FormData for the API
       const dataToSend = new FormData();
@@ -127,11 +127,11 @@ const AddPresentationAwards = () => {
       // Add admin_id
       dataToSend.append("admin_id", admin_id);
       
-      // Add each item to the FormData
+      // Add each item to the FormData with correct field names (flat structure, not nested)
       formData.items.forEach((item, index) => {
-        if (item.title) dataToSend.append(`items[${index}][title]`, item.title);
-        if (item.image) dataToSend.append(`items[${index}][image]`, item.image);
-        if (item.date) dataToSend.append(`items[${index}][date]`, item.date);
+        if (item.title) dataToSend.append(`title`, item.title);
+        if (item.image) dataToSend.append(`image`, item.image);
+        if (item.date) dataToSend.append(`date`, item.date);
       });
       
       // Log the FormData content for debugging

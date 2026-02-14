@@ -80,9 +80,9 @@ function Thejourney() {
   // Hardcoded journey milestones to display in Col(8)
   const journeyMilestones = (
     <div className="journey-milestones mt-4">
-      <p>A Seed is sown.... and a Dream unfolds...:</p>
+      {/* <p>A Seed is sown.... and a Dream unfolds...:</p>
       <p>.... 1993 - A young aspiring Harsh Sehgal, with a strong desire to serve humanity, joins B.A.M.S. (Bachelor of Ayurvedic Medicine and Surgery).</p>
-      <p>.... 2000 - A modest beginning with a saving of just INR 3,000/-(saved during his college days) led him to open his first clinic in the garage of his home.</p>
+      <p>.... 2000 - A modest beginning with a saving of just INR 3,000/-(saved during his college days) led him to open his first clinic in the garage of his home.</p> */}
     </div>
   );
 

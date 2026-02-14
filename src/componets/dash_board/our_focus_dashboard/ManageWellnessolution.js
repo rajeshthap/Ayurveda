@@ -104,7 +104,13 @@ const ManageWellnessolution = () => {
       console.log("GET All Wellness Solution Items API Response:", result);
 
       if (result.success && result.data && result.data.length > 0) {
-        setWellnessItems(result.data);
+        // Ensure all gallery_images arrays are properly initialized
+        const itemsWithGallery = result.data.map(item => ({
+          ...item,
+          gallery_images: item.gallery_images || []
+        }));
+        setWellnessItems(itemsWithGallery);
+        console.log("Wellness items with gallery images:", itemsWithGallery);
       } else {
         throw new Error("No wellness solution items found");
       }
@@ -189,7 +195,9 @@ const ManageWellnessolution = () => {
 
         // Set existing gallery images and icon URLs for preview
         setExistingIcon(itemData.icon);
-        setExistingGalleryImages(itemData.gallery_images || []);
+        const galleryImages = itemData.gallery_images || [];
+        setExistingGalleryImages(galleryImages);
+        console.log("Fetched gallery images for item", itemId, ":", galleryImages);
         setSelectedItemId(itemId);
       } else {
         console.error("API Response issue:", result);
@@ -238,6 +246,7 @@ const ManageWellnessolution = () => {
       if (files && files.length > 0) {
         // Convert FileList to Array
         const filesArray = Array.from(files);
+        console.log("Selected gallery images:", filesArray);
 
         // Add all new images to the gallery_images array
         setFormData((prev) => ({
@@ -248,6 +257,7 @@ const ManageWellnessolution = () => {
         // Add preview URLs for all files
         const previewUrls = filesArray.map((file) => URL.createObjectURL(file));
         setGalleryPreviews((prev) => [...prev, ...previewUrls]);
+        console.log("Gallery previews updated:", [...galleryPreviews, ...previewUrls]);
       }
 
       // Reset the file input so user can select more files if needed
@@ -277,9 +287,11 @@ const ManageWellnessolution = () => {
 
   // Remove an existing gallery image
   const removeExistingGalleryImage = (index) => {
+    console.log("Removing existing gallery image at index:", index);
     setExistingGalleryImages((prev) => prev.filter((_, i) => i !== index));
     // Track the removed image index
     setRemovedGalleryImageIndices((prev) => [...prev, index]);
+    console.log("Removed gallery image indices:", [...removedGalleryImageIndices, index]);
   };
 
   // Handle module changes
@@ -376,6 +388,14 @@ const ManageWellnessolution = () => {
 
       const result = await response.json();
       console.log("Gallery image deleted successfully:", result);
+      
+      // Update wellness items with the new data from the API response
+      if (result.success && result.data) {
+        const updatedItems = result.data;
+        setWellnessItems(updatedItems);
+        console.log("Wellness items updated after gallery image deletion:", updatedItems);
+      }
+      
       return true;
     } catch (error) {
       console.error("Error deleting gallery image via API:", error);
@@ -447,7 +467,9 @@ const ManageWellnessolution = () => {
 
         // Add multiple gallery images
         if (formData.gallery_images && formData.gallery_images.length > 0) {
+          console.log("Adding gallery images to FormData:", formData.gallery_images);
           formData.gallery_images.forEach((file, index) => {
+            console.log(`Adding file ${index + 1}:`, file.name, file.size, file.type);
             dataToSend.append("gallery_images", file, file.name);
           });
         }
@@ -530,6 +552,7 @@ const ManageWellnessolution = () => {
           if (formData.gallery_images && formData.gallery_images.length > 0) {
             if (result.data && result.data.gallery_images) {
               setExistingGalleryImages(result.data.gallery_images);
+              console.log("Updated gallery images from API:", result.data.gallery_images);
             }
             setGalleryPreviews([]);
             setFormData((prev) => ({ ...prev, gallery_images: [] }));
@@ -545,11 +568,18 @@ const ManageWellnessolution = () => {
             }
 
             if (updatedItem) {
+              // Ensure gallery_images is always an array
+              const itemWithGallery = {
+                ...updatedItem,
+                gallery_images: updatedItem.gallery_images || []
+              };
+              
               setWellnessItems((prevItems) =>
                 prevItems.map((item) =>
-                  item.id === formData.id ? updatedItem : item,
+                  item.id === formData.id ? itemWithGallery : item,
                 ),
               );
+              console.log("Updated item in wellnessItems state:", itemWithGallery);
             }
           }
 
