@@ -197,6 +197,16 @@ const menuItems = [
       path: "/ManageAboutUs",
       icon: <FaListUl />, // manage/list
     },
+    {
+          label: "Add Researches",
+          path: "/AddResearches",
+          icon: <FaImage />,
+        },
+         {
+          label: "Manage Researches",
+          path: "/ManageResearches",
+          icon: <FaImage />,
+        },
   ],
 },
 {
@@ -235,11 +245,13 @@ const menuItems = [
       path: "/ManageCncds",
       icon: <FaTasks />, // manage focus
     },
+
      {
       label: "Add Wellness Solutions",
       path: "/AddWellnessolution",
       icon: <FaPlusSquare />, // add focus
     },
+    
     {
       label: "Manage Wellness Solutions",
       path: "/ManageWellnessolution",
@@ -392,26 +404,7 @@ const menuItems = [
     },
 
 
-     {
-      icon: <FaImages />,
-      label: "Researches",
-      submenu: [
-        {
-          label: "Add Researches",
-          path: "/AddResearches",
-          icon: <FaImage />,
-        },
-        
-         {
-          label: "Manage Researches",
-          path: "/ManageResearches",
-          icon: <FaImage />,
-        },
-        
-        
-       
-      ],
-    },
+   
   
 
    {

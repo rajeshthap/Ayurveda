@@ -64,7 +64,11 @@
   background: linear-gradient(135deg, #1e5128 0%, #4e9f3d 100%);
   color: white;
   position: relative;
+
   overflow: hidden;
+}
+.trilok-contact-info{
+  font-size: 12px;
 }
 
 .trilok-contact-info::before {
@@ -155,8 +159,10 @@
   color: white;
 }
 
+
 .trilok-info-content p {
   margin: 5px 0;
+  font-size: 12px;
   color: rgba(255, 255, 255, 0.9);
 }
 
