@@ -224,7 +224,7 @@ const AddPresentationAwards = () => {
           <DashBoardHeader toggleSidebar={toggleSidebar} />
 
           <Container fluid className="dashboard-body dashboard-main-container">
-            <h1 className="page-title">Add Media Gallery Items</h1>
+            <h1 className="page-title">Add Presentation Awards Items</h1>
 
             {/* Alert for success/error messages */}
             {showAlert && (
