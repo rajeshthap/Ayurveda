@@ -1,11 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import BgShape2 from "../../assets/images/bg-shape2.png";
 import BgLeaf2 from "../../assets/images/bg-leaf2.png";
 import { FaArrowLeft, FaArrowRight, FaCheck } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 function ConsultNow() {
+  const location = useLocation();
   // API endpoint
   const API_URL = "https://mahadevaaya.com/trilokayurveda/trilokabackend/api/online-consult-section-1/";
   
@@ -43,6 +44,18 @@ function ConsultNow() {
     country: "",
     references: ""
   });
+
+  // Extract email from query parameters on component mount
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const email = searchParams.get("email");
+    if (email) {
+      setFormData(prev => ({
+        ...prev,
+        email: decodeURIComponent(email)
+      }));
+    }
+  }, [location.search]);
 
   // Validate Personal Information
   const validatePersonalInfo = () => {
@@ -265,7 +278,7 @@ function ConsultNow() {
     <div className="consult-form-step">
       <h3 className="step-title">PERSONAL INFORMATION</h3>
       <div className="row">
-        <div className="col-md-6 mb-3">
+        <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
           <label htmlFor="full_name" className="form-label">
             Full Name <span className="text-danger">*</span>
           </label>
@@ -280,7 +293,7 @@ function ConsultNow() {
           />
           {errors.full_name && <div className="invalid-feedback">{errors.full_name}</div>}
         </div>
-        <div className="col-md-6 mb-3">
+        <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
           <label htmlFor="date_of_birth" className="form-label">
             Date of Birth <span className="text-danger">*</span>
           </label>
@@ -296,7 +309,7 @@ function ConsultNow() {
           />
           {errors.date_of_birth && <div className="invalid-feedback">{errors.date_of_birth}</div>}
         </div>
-        <div className="col-md-6 mb-3">
+        <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
           <label htmlFor="gender" className="form-label">
             Gender <span className="text-danger">*</span>
           </label>
@@ -315,9 +328,9 @@ function ConsultNow() {
           </select>
           {errors.gender && <div className="invalid-feedback">{errors.gender}</div>}
         </div>
-        <div className="col-md-6 mb-3">
+        <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
           <label htmlFor="height" className="form-label">
-            Height (cm) <span className="text-danger">*</span>
+            Feet and Inches <span className="text-danger">*</span>
           </label>
           <input
             type="number"
@@ -331,7 +344,7 @@ function ConsultNow() {
           />
           {errors.height && <div className="invalid-feedback">{errors.height}</div>}
         </div>
-        <div className="col-md-6 mb-3">
+        <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
           <label htmlFor="weight" className="form-label">
             Weight (kg) <span className="text-danger">*</span>
           </label>
@@ -343,11 +356,11 @@ function ConsultNow() {
             name="weight"
             value={formData.weight}
             onChange={handleInputChange}
-            placeholder="e.g., 70.25"
+            placeholder="e.g., 70.25 kg"
           />
           {errors.weight && <div className="invalid-feedback">{errors.weight}</div>}
         </div>
-        <div className="col-md-6 mb-3">
+        <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
           <label htmlFor="occupation" className="form-label">
             Occupation <span className="text-danger">*</span>
           </label>
@@ -361,7 +374,7 @@ function ConsultNow() {
           />
           {errors.occupation && <div className="invalid-feedback">{errors.occupation}</div>}
         </div>
-        <div className="col-md-6 mb-3">
+        <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
           <label htmlFor="marital_status" className="form-label">
             Marital Status <span className="text-danger">*</span>
           </label>
@@ -380,7 +393,7 @@ function ConsultNow() {
           </select>
           {errors.marital_status && <div className="invalid-feedback">{errors.marital_status}</div>}
         </div>
-        <div className="col-md-6 mb-3">
+        <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
           <label htmlFor="email" className="form-label">
             Email <span className="text-danger">*</span>
           </label>
@@ -395,7 +408,7 @@ function ConsultNow() {
           />
           {errors.email && <div className="invalid-feedback">{errors.email}</div>}
         </div>
-        <div className="col-md-6 mb-3">
+        <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
           <label htmlFor="mobile_number" className="form-label">
             Mobile Number <span className="text-danger">*</span>
           </label>
@@ -411,7 +424,7 @@ function ConsultNow() {
           />
           {errors.mobile_number && <div className="invalid-feedback">{errors.mobile_number}</div>}
         </div>
-        <div className="col-md-6 mb-3">
+        <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
           <label htmlFor="alternate_number" className="form-label">
             Alternate Number
           </label>
@@ -426,9 +439,9 @@ function ConsultNow() {
           />
           {errors.alternate_number && <div className="invalid-feedback">{errors.alternate_number}</div>}
         </div>
-        <div className="col-12 mb-3">
+        <div className="col-8 mb-3">
           <label htmlFor="address" className="form-label">
-            Address <span className="text-danger">*</span>
+           Complete Address Postal <span className="text-danger">*</span>
           </label>
           <textarea
             className={`form-control ${errors.address ? 'is-invalid' : ''}`}
@@ -441,7 +454,7 @@ function ConsultNow() {
           ></textarea>
           {errors.address && <div className="invalid-feedback">{errors.address}</div>}
         </div>
-        <div className="col-md-6 mb-3">
+        <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
           <label htmlFor="city" className="form-label">
             City <span className="text-danger">*</span>
           </label>
@@ -456,7 +469,7 @@ function ConsultNow() {
           />
           {errors.city && <div className="invalid-feedback">{errors.city}</div>}
         </div>
-        <div className="col-md-6 mb-3">
+        <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
           <label htmlFor="pin" className="form-label">
             PIN Code <span className="text-danger">*</span>
           </label>
@@ -471,7 +484,7 @@ function ConsultNow() {
           />
           {errors.pin && <div className="invalid-feedback">{errors.pin}</div>}
         </div>
-        <div className="col-md-6 mb-3">
+        <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
           <label htmlFor="state" className="form-label">
             State <span className="text-danger">*</span>
           </label>
@@ -486,7 +499,7 @@ function ConsultNow() {
           />
           {errors.state && <div className="invalid-feedback">{errors.state}</div>}
         </div>
-        <div className="col-md-6 mb-3">
+        <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
           <label htmlFor="country" className="form-label">
             Country <span className="text-danger">*</span>
           </label>
@@ -505,7 +518,7 @@ function ConsultNow() {
       
         
         {/* New fields */}
-        <div className="col-md-6 mb-3">
+        <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
           <label htmlFor="references" className="form-label">
             Reference <span className="text-danger">*</span>
           </label>
@@ -534,7 +547,7 @@ function ConsultNow() {
     <div className="consult-form-step">
       <h3 className="step-title">Medical Information</h3>
       <div className="row">
-        <div className="col-md-6 mb-3">
+        <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
           <label htmlFor="family_history" className="form-label">Family History</label>
           <select
             className="form-select"
@@ -552,7 +565,7 @@ function ConsultNow() {
             <option>Any Other</option>
           </select>
         </div>
-        <div className="col-md-6 mb-3">
+        <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
           <label htmlFor="mode_of_onset" className="form-label">Mode of Onset</label>
           <select
             className="form-select"
@@ -565,7 +578,7 @@ function ConsultNow() {
             <option>Sudden/Gradual</option>
           </select>
         </div>
-        <div className="col-md-6 mb-3">
+        <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
           <label htmlFor="problem_start" className="form-label">Problem Start</label>
           <select
             className="form-select"
@@ -581,7 +594,7 @@ function ConsultNow() {
             <option>Night</option>
           </select>
         </div>
-        <div className="col-md-6 mb-3">
+        <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
           <label htmlFor="problem_progress" className="form-label">Problem Progress</label>
           <select
             className="form-select"
@@ -596,7 +609,7 @@ function ConsultNow() {
             <option>Constant</option>
           </select>
         </div>
-        <div className="col-md-6 mb-3">
+        <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
           <label htmlFor="past_history" className="form-label">Past History</label>
           <select
             className="form-select"
@@ -612,7 +625,7 @@ function ConsultNow() {
             <option>Accident</option>
           </select>
         </div>
-        <div className="col-md-6 mb-3">
+        <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
           <label htmlFor="any_surgery" className="form-label">Any Surgery</label>
           <input
             type="text"
@@ -682,7 +695,7 @@ function ConsultNow() {
         <div className="col-12 mb-4">
           <h5 className="sub-title">Treatment 1</h5>
         </div>
-        <div className="col-md-6 mb-3">
+        <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
           <label htmlFor="past_treatment_1_doctor_name" className="form-label">Doctor Name</label>
           <input
             type="text"
@@ -693,7 +706,7 @@ function ConsultNow() {
             onChange={handleInputChange}
           />
         </div>
-        <div className="col-md-6 mb-3">
+        <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
           <label htmlFor="past_treatment_1_hospital_name" className="form-label">Hospital Name</label>
           <input
             type="text"
@@ -704,7 +717,7 @@ function ConsultNow() {
             onChange={handleInputChange}
           />
         </div>
-        <div className="col-md-6 mb-3">
+        <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
           <label htmlFor="past_treatment_1_place" className="form-label">Place</label>
           <input
             type="text"
@@ -715,7 +728,7 @@ function ConsultNow() {
             onChange={handleInputChange}
           />
         </div>
-        <div className="col-md-6 mb-3">
+        <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
           <label htmlFor="past_treatment_1_date" className="form-label">Date</label>
           <input
             type="date"
@@ -742,7 +755,7 @@ function ConsultNow() {
         <div className="col-12 mb-4">
           <h5 className="sub-title">Treatment 2</h5>
         </div>
-        <div className="col-md-6 mb-3">
+        <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
           <label htmlFor="past_treatment_2_doctor_name" className="form-label">Doctor Name</label>
           <input
             type="text"
@@ -753,7 +766,7 @@ function ConsultNow() {
             onChange={handleInputChange}
           />
         </div>
-        <div className="col-md-6 mb-3">
+        <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
           <label htmlFor="past_treatment_2_hospital_name" className="form-label">Hospital Name</label>
           <input
             type="text"
@@ -764,7 +777,7 @@ function ConsultNow() {
             onChange={handleInputChange}
           />
         </div>
-        <div className="col-md-6 mb-3">
+        <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
           <label htmlFor="past_treatment_2_place" className="form-label">Place</label>
           <input
             type="text"
@@ -775,7 +788,7 @@ function ConsultNow() {
             onChange={handleInputChange}
           />
         </div>
-        <div className="col-md-6 mb-3">
+        <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
           <label htmlFor="past_treatment_2_date" className="form-label">Date</label>
           <input
             type="date"
@@ -819,7 +832,7 @@ function ConsultNow() {
     <div className="consult-form-step">
       <h3 className="step-title">Physical Examination</h3>
       <div className="row">
-        <div className="col-md-6 mb-3">
+        <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
           <label htmlFor="life_style" className="form-label">Life-style</label>
           <select
             className="form-select"
@@ -836,7 +849,7 @@ function ConsultNow() {
             <option>Any Other</option>
           </select>
         </div>
-        <div className="col-md-6 mb-3">
+        <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
           <label htmlFor="body_built" className="form-label">Body Built</label>
           <select
             className="form-select"
@@ -851,7 +864,7 @@ function ConsultNow() {
             <option>Well built</option>
           </select>
         </div>
-        <div className="col-md-6 mb-3">
+        <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
           <label htmlFor="complexion" className="form-label">Complexion</label>
           <select
             className="form-select"
@@ -866,7 +879,7 @@ function ConsultNow() {
             <option>Dark</option>
           </select>
         </div>
-        <div className="col-md-6 mb-3">
+        <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
           <label htmlFor="skin_nature" className="form-label">Skin Nature</label>
           <select
             className="form-select"
@@ -881,7 +894,7 @@ function ConsultNow() {
             <option>Normal</option>
           </select>
         </div>
-        <div className="col-md-6 mb-3">
+        <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
           <label htmlFor="hair_nature" className="form-label">Nature of Hair</label>
           <select
             className="form-select"
@@ -898,7 +911,7 @@ function ConsultNow() {
             <option>Premature graying/balding</option>
           </select>
         </div>
-        <div className="col-md-6 mb-3">
+        <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
           <label htmlFor="joint_characteristics" className="form-label">Joint characteristics</label>
           <select
             className="form-select"
@@ -913,7 +926,7 @@ function ConsultNow() {
             <option>Soft and flabby</option>
           </select>
         </div>
-        <div className="col-md-6 mb-3">
+        <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
           <label htmlFor="veins_tendons" className="form-label">Appearance of veins and tendons</label>
           <select
             className="form-select"
@@ -928,7 +941,7 @@ function ConsultNow() {
             <option>Not prominent</option>
           </select>
         </div>
-        <div className="col-md-6 mb-3">
+        <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
           <label htmlFor="temperature_preference" className="form-label">Temperature preferences</label>
           <select
             className="form-select"
@@ -943,7 +956,7 @@ function ConsultNow() {
             <option>Can tolerate both</option>
           </select>
         </div>
-        <div className="col-md-6 mb-3">
+        <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
           <label htmlFor="patient_body_temperature" className="form-label">Patient's body is</label>
           <select
             className="form-select"
@@ -958,7 +971,7 @@ function ConsultNow() {
             <option>Normal</option>
           </select>
         </div>
-        <div className="col-md-6 mb-3">
+        <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
           <label htmlFor="eye_condition" className="form-label">Eye</label>
           <select
             className="form-select"
@@ -973,7 +986,7 @@ function ConsultNow() {
             <option>Moist</option>
           </select>
         </div>
-        <div className="col-md-6 mb-3">
+        <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
           <label htmlFor="teeth_gums_nature" className="form-label">Nature of teeth and gums</label>
           <select
             className="form-select"
@@ -996,7 +1009,7 @@ function ConsultNow() {
     <div className="consult-form-step">
       <h3 className="step-title">Lifestyle</h3>
       <div className="row">
-        <div className="col-md-6 mb-3">
+        <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
           <label htmlFor="appetite" className="form-label">Appetite</label>
           <select
             className="form-select"
@@ -1012,7 +1025,7 @@ function ConsultNow() {
             <option>Normal</option>
           </select>
         </div>
-        <div className="col-md-6 mb-3">
+        <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
           <label htmlFor="taste_preference" className="form-label">Preference for taste</label>
           <select
             className="form-select"
@@ -1027,7 +1040,7 @@ function ConsultNow() {
             <option>Salty/Spicy</option>
           </select>
         </div>
-        <div className="col-md-6 mb-3">
+        <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
           <label htmlFor="sweating" className="form-label">Sweating</label>
           <select
             className="form-select"
@@ -1043,7 +1056,7 @@ function ConsultNow() {
             <option>Any Other</option>
           </select>
         </div>
-        <div className="col-md-6 mb-3">
+        <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
           <label htmlFor="excretory_habits" className="form-label">Excretory habits</label>
           <select
             className="form-select"
@@ -1058,7 +1071,7 @@ function ConsultNow() {
             <option>Well formed/Normal</option>
           </select>
         </div>
-        <div className="col-md-6 mb-3">
+        <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
           <label htmlFor="urination" className="form-label">Urination</label>
           <select
             className="form-select"
@@ -1074,7 +1087,7 @@ function ConsultNow() {
             <option>Normal</option>
           </select>
         </div>
-        <div className="col-md-6 mb-3">
+        <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
           <label htmlFor="sleep" className="form-label">Sleep</label>
           <select
             className="form-select"
@@ -1089,7 +1102,7 @@ function ConsultNow() {
             <option>Sound sleep</option>
           </select>
         </div>
-        <div className="col-md-6 mb-3">
+        <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
           <label htmlFor="psychological_status" className="form-label">Psychological status</label>
           <select
             className="form-select"
@@ -1104,7 +1117,7 @@ function ConsultNow() {
             <option>Stable</option>
           </select>
         </div>
-        <div className="col-md-6 mb-3">
+        <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
           <label htmlFor="memory" className="form-label">Memory</label>
           <select
             className="form-select"

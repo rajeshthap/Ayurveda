@@ -67,14 +67,14 @@ export default function OTPFlow() {
     e.preventDefault();
 
     if (!formData.email) {
-      setError("कृपया ईमेल भरें");
+      setError("Please enter your email");
       return;
     }
 
     // Basic email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
-      setError("कृपया एक वैध ईमेल पता दर्ज करें");
+      setError("Please enter a valid email address");
       return;
     }
 
@@ -95,17 +95,17 @@ export default function OTPFlow() {
       const data = await response.json();
 
       if (response.ok) {
-        setSuccessMessage("OTP आपके ईमेल पर भेज दिया गया है!");
+        setSuccessMessage("OTP has been sent to your email!");
         // Move to OTP step after 1.5 seconds
         setTimeout(() => {
           setCurrentStep('otp');
           setSuccessMessage("");
         }, 1500);
       } else {
-        setError(data.message || "OTP भेजने में विफल");
+        setError(data.message || "Failed to send OTP");
       }
     } catch (err) {
-      setError("सर्वर से कनेक्ट नहीं हो पाया। कृपया बाद में फिर से कोशिश करें।");
+      setError("Could not connect to server. Please try again later.");
     } finally {
       setIsLoading(false);
     }
@@ -116,12 +116,12 @@ export default function OTPFlow() {
     e.preventDefault();
 
     if (!formData.code) {
-      setError("कृपया OTP दर्ज करें");
+      setError("Please enter OTP");
       return;
     }
 
     if (formData.code.length !== 6) {
-      setError("OTP 6 अंकों का होना चाहिए");
+      setError("OTP must be 6 digits");
       return;
     }
 
@@ -145,7 +145,7 @@ export default function OTPFlow() {
       const data = await response.json();
 
       if (response.ok) {
-        setSuccessMessage("OTP सफलतापूर्वक सत्यापित!");
+        setSuccessMessage("OTP successfully verified!");
         
         // Store user data if provided
         if (data.token || data.user) {
@@ -155,13 +155,13 @@ export default function OTPFlow() {
         
         // Redirect to consultation form after successful verification
         setTimeout(() => {
-          navigate("/ConsultNow", { replace: true });
+          navigate(`/ConsultNow?email=${encodeURIComponent(formData.email)}`, { replace: true });
         }, 1500);
       } else {
-        setError(data.message || "OTP सत्यापन विफल। कृपया फिर से कोशिश करें।");
+        setError(data.message || "OTP verification failed. Please try again.");
       }
     } catch (err) {
-      setError("सर्वर से कनेक्ट नहीं हो पाया। कृपया बाद में फिर से कोशिश करें।");
+      setError("Could not connect to server. Please try again later.");
     } finally {
       setIsLoading(false);
     }
@@ -188,15 +188,15 @@ export default function OTPFlow() {
       const data = await response.json();
 
       if (response.ok) {
-        setSuccessMessage("OTP फिर से भेज दिया गया है!");
+        setSuccessMessage("OTP has been resent!");
         setTimeLeft(60);
         setCanResend(false);
         setFormData({ ...formData, code: "" });
       } else {
-        setError(data.message || "OTP फिर से भेजने में विफल");
+        setError(data.message || "Failed to resend OTP");
       }
     } catch (err) {
-      setError("सर्वर से कनेक्ट नहीं हो पाया। कृपया बाद में फिर से कोशिश करें।");
+      setError("Could not connect to server. Please try again later.");
     } finally {
       setIsLoading(false);
     }
@@ -232,7 +232,7 @@ export default function OTPFlow() {
                       <div>
                         <h1 className="pb-4">Send OTP</h1>
                         <p className="text-muted mb-4">
-                          अपना ईमेल पता दर्ज करें और हम आपको OTP भेजेंगे
+                          Enter your email address and we will send you an OTP
                         </p>
                       </div>
 
@@ -253,7 +253,7 @@ export default function OTPFlow() {
                       {/* Email Field */}
                       <Form.Group className="mb-4">
                         <Form.Label className="br-label">
-                          ईमेल पता <span className="br-span-star">*</span>
+                          Email Address <span className="br-span-star">*</span>
                         </Form.Label>
                         <Form.Control
                           type="email"
@@ -266,7 +266,7 @@ export default function OTPFlow() {
                           disabled={isLoading}
                         />
                         <Form.Text className="text-muted">
-                          हम आपको इस ईमेल पर OTP भेजेंगे
+                          We will send OTP to this email
                         </Form.Text>
                       </Form.Group>
 
@@ -275,7 +275,7 @@ export default function OTPFlow() {
                         <Button 
                           disabled={isLoading} 
                           type="submit" 
-                          className="w-100 trilok-submit-btn"
+                          className=" trilok-otp-btn"
                           size="lg"
                         >
                           {isLoading ? (
@@ -288,27 +288,15 @@ export default function OTPFlow() {
                                 aria-hidden="true"
                                 className="me-2"
                               />
-                              OTP भेज रहे हैं...
+                              Sending OTP...
                             </>
                           ) : (
-                            "OTP भेजें"
+                            "Send OTP"
                           )}
                         </Button>
                       </div>
 
-                      {/* Additional Links */}
-                      <div className="text-center mt-3">
-                        <p className="mb-0">
-                          पहले से ही खाता है?{" "}
-                          <Button 
-                            variant="link" 
-                            className="p-0 text-decoration-none"
-                            onClick={() => navigate("/login")}
-                          >
-                            यहाँ लॉगिन करें
-                          </Button>
-                        </p>
-                      </div>
+                   
                     </>
                   )}
 
@@ -316,12 +304,12 @@ export default function OTPFlow() {
                   {currentStep === 'otp' && (
                     <>
                       <div>
-                        <h1 className="pb-4">Verify OTP</h1>
+                        <h1 className="pb-4 ">Verify OTP</h1>
                         <p className="text-muted mb-2">
-                          हमने OTP भेज दिया है: <strong>{formData.email}</strong>
+                          We have sent OTP to: <strong>{formData.email}</strong>
                         </p>
                         <p className="text-muted mb-4">
-                          कृपया 6 अंकों का OTP दर्ज करें
+                          Please enter the 6-digit OTP
                         </p>
                       </div>
 
@@ -342,14 +330,14 @@ export default function OTPFlow() {
                       {/* OTP Input Field */}
                       <Form.Group className="mb-4">
                         <Form.Label className="br-label">
-                          OTP कोड <span className="br-span-star">*</span>
+                          OTP Code <span className="br-span-star">*</span>
                         </Form.Label>
                         <Form.Control
                           type="text"
                           className="mb-3 text-center"
-                          style={{ fontSize: '24px', letterSpacing: '8px' }}
+                          style={{ fontSize: '14px',  }}
                           name="code"
-                          placeholder="000000"
+                          placeholder="Enter Code"
                           value={formData.code}
                           onChange={handleChange}
                           maxLength={6}
@@ -358,7 +346,7 @@ export default function OTPFlow() {
                           autoComplete="one-time-code"
                         />
                         <Form.Text className="text-muted">
-                          6 अंकों का OTP दर्ज करें
+                          Enter 6-digit OTP
                         </Form.Text>
                       </Form.Group>
 
@@ -367,7 +355,7 @@ export default function OTPFlow() {
                         <Button 
                           disabled={isLoading || formData.code.length !== 6} 
                           type="submit" 
-                          className="w-100 trilok-submit-btn"
+                          className="trilok-otp-btn"
                           size="lg"
                         >
                           {isLoading ? (
@@ -380,10 +368,10 @@ export default function OTPFlow() {
                                 aria-hidden="true"
                                 className="me-2"
                               />
-                              सत्यापित कर रहे हैं...
+                              Verifying...
                             </>
                           ) : (
-                            "OTP सत्यापित करें"
+                            "Verify OTP"
                           )}
                         </Button>
                       </div>
@@ -397,11 +385,11 @@ export default function OTPFlow() {
                             onClick={handleResendOTP}
                             disabled={isLoading}
                           >
-                            OTP फिर से भेजें
+                            Resend OTP
                           </Button>
                         ) : (
                           <span className="text-muted">
-                            OTP फिर से भेजें ({formatTime(timeLeft)})
+                            Resend OTP ({formatTime(timeLeft)})
                           </span>
                         )}
                       </div>
@@ -414,7 +402,7 @@ export default function OTPFlow() {
                           onClick={handleBackToEmail}
                         >
                           <i className="fas fa-arrow-left me-2"></i>
-                          ईमेल बदलें
+                          Change Email
                         </Button>
                       </div>
                     </>

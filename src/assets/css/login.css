@@ -283,7 +283,17 @@
   min-height: 58vh;
   padding: 20px 30px;
 }
-
+.trilok-otp-btn{
+  background-color: #28a745 !important;
+  color: white;
+  border: none;
+  padding: 12px 30px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
 .trilok-submit-btn {
   background: #28a745;
   color: white;
