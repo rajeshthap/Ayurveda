@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 
 function ConsultNow() {
   // API endpoint
-  const API_URL = "https://mahadevaaya.com/trilokayurveda/trilokabackend/api/consult-entries/";
+  const API_URL = "https://mahadevaaya.com/trilokayurveda/trilokabackend/api/online-consult-section-1/";
   
   // Get today's date in YYYY-MM-DD format
   const getTodayDate = () => {
@@ -24,83 +24,36 @@ function ConsultNow() {
   const [submitMessage, setSubmitMessage] = useState("");
   const [errors, setErrors] = useState({});
   
-  // Form data state
+  // Form data state (only Section 1 fields)
   const [formData, setFormData] = useState({
-    // Personal Information
-    name: "",
-    date: "",
+    full_name: "",
+    date_of_birth: "",
     gender: "",
     height: "",
     weight: "",
-    email: "",
-    marital_status: "",
-    complete_address: "",
     occupation: "",
-    contact_number: "",
-    reference: "", // New field
-    complications: "", // New field
-    
-    // Medical Information
-    chief_complaint: "",
-    complaint_duration: "",
-    family_history: "",
-    mode_of_onset: "",
-    problem_start: "",
-    problem_progress: "",
-    past_history: "",
-    number_of_pregnancies: 0,
-    number_of_alive_kids: 0,
-    mode_of_delivery: "",
-    any_surgery: "",
-    menstrual_history: "",
-    
-    // Past Treatment
-    past_treatment_1_doctor_name: "",
-    past_treatment_1_hospital_name: "",
-    past_treatment_1_place: "",
-    past_treatment_1_date: "",
-    past_treatment_1_details: "",
-    past_treatment_2_doctor_name: "",
-    past_treatment_2_hospital_name: "",
-    past_treatment_2_place: "",
-    past_treatment_2_date: "",
-    past_treatment_2_details: "",
-    current_treatment: "",
-    
-    // Physical Examination
-    life_style: "",
-    body_built: "",
-    complexion: "",
-    skin_nature: "",
-    hair_nature: "",
-    joint_characteristics: "",
-    veins_tendons: "",
-    temperature_preference: "",
-    patient_body_temperature: "",
-    eye_condition: "",
-    teeth_gums_nature: "",
-    
-    // Lifestyle
-    appetite: "",
-    taste_preference: "",
-    sweating: "",
-    excretory_habits: "",
-    urination: "",
-    sleep: "",
-    psychological_status: "",
-    memory: ""
+    marital_status: "",
+    address: "",
+    email: "",
+    mobile_number: "",
+    alternate_number: "",
+    city: "",
+    pin: "",
+    state: "",
+    country: "",
+    references: ""
   });
 
   // Validate Personal Information
   const validatePersonalInfo = () => {
     const newErrors = {};
     
-    if (!formData.name.trim()) {
-      newErrors.name = "Name is required";
+    if (!formData.full_name.trim()) {
+      newErrors.full_name = "Full name is required";
     }
     
-    if (!formData.date) {
-      newErrors.date = "Date is required";
+    if (!formData.date_of_birth) {
+      newErrors.date_of_birth = "Date of birth is required";
     }
     
     if (!formData.gender) {
@@ -111,49 +64,54 @@ function ConsultNow() {
       newErrors.height = "Height is required";
     }
     
-    if (!formData.email.trim()) {
-      newErrors.email = "Email is required";
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "Email is invalid";
-    }
-    
     if (!formData.weight.trim()) {
       newErrors.weight = "Weight is required";
-    }
-    
-    if (!formData.marital_status) {
-      newErrors.marital_status = "Marital status is required";
-    }
-    
-    if (!formData.complete_address.trim()) {
-      newErrors.complete_address = "Address is required";
     }
     
     if (!formData.occupation.trim()) {
       newErrors.occupation = "Occupation is required";
     }
     
-    if (!formData.contact_number.trim()) {
-      newErrors.contact_number = "Contact number is required";
-    } else if (!/^\d{10}$/.test(formData.contact_number.replace(/\s/g, ""))) {
-      newErrors.contact_number = "Contact number must be 10 digits";
+    if (!formData.marital_status) {
+      newErrors.marital_status = "Marital status is required";
     }
     
-    if (!formData.chief_complaint.trim()) {
-      newErrors.chief_complaint = "Chief complaint is required";
+    if (!formData.address.trim()) {
+      newErrors.address = "Address is required";
     }
     
-    if (!formData.complaint_duration.trim()) {
-      newErrors.complaint_duration = "Complaint duration is required";
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = "Email is invalid";
     }
     
-    // Validation for new fields
-    if (!formData.reference) {
-      newErrors.reference = "Reference is required";
+    if (!formData.mobile_number.trim()) {
+      newErrors.mobile_number = "Mobile number is required";
+    } else if (!/^\d{10}$/.test(formData.mobile_number.replace(/\s/g, ""))) {
+      newErrors.mobile_number = "Mobile number must be 10 digits";
     }
     
-    if (!formData.complications.trim()) {
-      newErrors.complications = "Other health conditions is required";
+    if (!formData.city.trim()) {
+      newErrors.city = "City is required";
+    }
+    
+    if (!formData.pin.trim()) {
+      newErrors.pin = "PIN code is required";
+    } else if (!/^\d{6}$/.test(formData.pin.replace(/\s/g, ""))) {
+      newErrors.pin = "PIN code must be 6 digits";
+    }
+    
+    if (!formData.state.trim()) {
+      newErrors.state = "State is required";
+    }
+    
+    if (!formData.country.trim()) {
+      newErrors.country = "Country is required";
+    }
+    
+    if (!formData.references.trim()) {
+      newErrors.references = "References is required";
     }
     
     setErrors(newErrors);
@@ -166,7 +124,7 @@ function ConsultNow() {
     let updatedValue = value;
     
     // Remove numbers from full name field
-    if (name === "name") {
+    if (name === "full_name") {
       updatedValue = value.replace(/[0-9]/g, "");
     }
     
@@ -198,15 +156,9 @@ function ConsultNow() {
       // Log the form data to debug
       console.log("Submitting form data:", formData);
       
-      // Make sure all required fields are included and handle empty dates
+      // Make sure all required fields are included
       const submissionData = {
-        ...formData,
-        // Ensure number fields are properly formatted
-        number_of_pregnancies: parseInt(formData.number_of_pregnancies) || 0,
-        number_of_alive_kids: parseInt(formData.number_of_alive_kids) || 0,
-        // Handle empty date fields - set to null if empty
-        past_treatment_1_date: formData.past_treatment_1_date ? formData.past_treatment_1_date : null,
-        past_treatment_2_date: formData.past_treatment_2_date ? formData.past_treatment_2_date : null,
+        ...formData
       };
       
       console.log("Final submission data:", submissionData);
@@ -216,59 +168,22 @@ function ConsultNow() {
       setSubmitMessage("Your consultation request has been submitted successfully!");
       // Reset form after successful submission
       setFormData({
-        name: "",
-        date: "",
+        full_name: "",
+        date_of_birth: "",
         gender: "",
         height: "",
         weight: "",
-        email: "",
-        marital_status: "",
-        complete_address: "",
         occupation: "",
-        contact_number: "",
-        reference: "", // Reset new field
-        complications: "", // Reset new field
-        chief_complaint: "",
-        complaint_duration: "",
-        family_history: "",
-        mode_of_onset: "",
-        problem_start: "",
-        problem_progress: "",
-        past_history: "",
-        number_of_pregnancies: 0,
-        number_of_alive_kids: 0,
-        mode_of_delivery: "",
-        any_surgery: "",
-        menstrual_history: "",
-        past_treatment_1_doctor_name: "",
-        past_treatment_1_hospital_name: "",
-        past_treatment_1_place: "",
-        past_treatment_1_date: "",
-        past_treatment_2_doctor_name: "",
-        past_treatment_2_hospital_name: "",
-        past_treatment_2_place: "",
-        past_treatment_2_date: "",
-        past_treatment_2_details: "",
-        current_treatment: "",
-        life_style: "",
-        body_built: "",
-        complexion: "",
-        skin_nature: "",
-        hair_nature: "",
-        joint_characteristics: "",
-        veins_tendons: "",
-        temperature_preference: "",
-        patient_body_temperature: "",
-        eye_condition: "",
-        teeth_gums_nature: "",
-        appetite: "",
-        taste_preference: "",
-        sweating: "",
-        excretory_habits: "",
-        urination: "",
-        sleep: "",
-        psychological_status: "",
-        memory: ""
+        marital_status: "",
+        address: "",
+        email: "",
+        mobile_number: "",
+        alternate_number: "",
+        city: "",
+        pin: "",
+        state: "",
+        country: "",
+        references: ""
       });
       setCurrentStep(1);
       setCompletedSteps([]);
@@ -293,6 +208,14 @@ function ConsultNow() {
             } else {
               errorMessages.push(`${field}: ${error.response.data[field]}`);
             }
+            
+            // Set field-specific error for email duplicate error
+            if (field === 'email') {
+              setErrors(prev => ({
+                ...prev,
+                [field]: error.response.data[field]
+              }));
+            }
           }
           setSubmitMessage(`Error: ${errorMessages.join('; ')}`);
         } else {
@@ -312,18 +235,24 @@ function ConsultNow() {
     }
   };
 
-  // Navigate to next step
-  const nextStep = () => {
-    // Validate Personal Information before proceeding
-    if (currentStep === 1 && !validatePersonalInfo()) {
-      return;
+  // Navigate to next step or submit form if on step 1
+  const nextStep = async () => {
+    // If on step 1, validate and submit the form with Section 1 fields
+    if (currentStep === 1) {
+      if (!validatePersonalInfo()) {
+        return;
+      }
+      
+      // Call handleSubmit to submit the form
+      const fakeEvent = { preventDefault: () => {} };
+      await handleSubmit(fakeEvent);
+    } else {
+      // For other steps, proceed to next step
+      if (!completedSteps.includes(currentStep)) {
+        setCompletedSteps([...completedSteps, currentStep]);
+      }
+      setCurrentStep(currentStep + 1);
     }
-    
-    // Mark current step as completed
-    if (!completedSteps.includes(currentStep)) {
-      setCompletedSteps([...completedSteps, currentStep]);
-    }
-    setCurrentStep(currentStep + 1);
   };
 
   // Navigate to previous step
@@ -334,38 +263,38 @@ function ConsultNow() {
   // Render Personal Information Step
   const renderPersonalInfo = () => (
     <div className="consult-form-step">
-      <h3 className="step-title">PATIENT IDENTITY</h3>
+      <h3 className="step-title">PERSONAL INFORMATION</h3>
       <div className="row">
         <div className="col-md-6 mb-3">
-          <label htmlFor="name" className="form-label">
+          <label htmlFor="full_name" className="form-label">
             Full Name <span className="text-danger">*</span>
           </label>
           <input
             type="text"
-            className={`form-control ${errors.name ? 'is-invalid' : ''}`}
-            id="name"
-            name="name"
-            value={formData.name}
+            className={`form-control ${errors.full_name ? 'is-invalid' : ''}`}
+            id="full_name"
+            name="full_name"
+            value={formData.full_name}
             onChange={handleInputChange}
             required
           />
-          {errors.name && <div className="invalid-feedback">{errors.name}</div>}
+          {errors.full_name && <div className="invalid-feedback">{errors.full_name}</div>}
         </div>
         <div className="col-md-6 mb-3">
-          <label htmlFor="date" className="form-label">
-            Date <span className="text-danger">*</span>
+          <label htmlFor="date_of_birth" className="form-label">
+            Date of Birth <span className="text-danger">*</span>
           </label>
           <input
             type="date"
-            className={`form-control ${errors.date ? 'is-invalid' : ''}`}
-            id="date"
-            name="date"
-            value={formData.date}
+            className={`form-control ${errors.date_of_birth ? 'is-invalid' : ''}`}
+            id="date_of_birth"
+            name="date_of_birth"
+            value={formData.date_of_birth}
             onChange={handleInputChange}
-            min={todayDate}
+            max={todayDate}
             required
           />
-          {errors.date && <div className="invalid-feedback">{errors.date}</div>}
+          {errors.date_of_birth && <div className="invalid-feedback">{errors.date_of_birth}</div>}
         </div>
         <div className="col-md-6 mb-3">
           <label htmlFor="gender" className="form-label">
@@ -388,48 +317,49 @@ function ConsultNow() {
         </div>
         <div className="col-md-6 mb-3">
           <label htmlFor="height" className="form-label">
-            Height <span className="text-danger">*</span>
+            Height (cm) <span className="text-danger">*</span>
           </label>
           <input
             type="number"
+            step="0.01"
             className={`form-control ${errors.height ? 'is-invalid' : ''}`}
             id="height"
             name="height"
             value={formData.height}
             onChange={handleInputChange}
-            placeholder="e.g., 165 cm"
+            placeholder="e.g., 172.50"
           />
           {errors.height && <div className="invalid-feedback">{errors.height}</div>}
         </div>
         <div className="col-md-6 mb-3">
           <label htmlFor="weight" className="form-label">
-            Weight <span className="text-danger">*</span>
+            Weight (kg) <span className="text-danger">*</span>
           </label>
           <input
             type="number"
+            step="0.01"
             className={`form-control ${errors.weight ? 'is-invalid' : ''}`}
             id="weight"
             name="weight"
             value={formData.weight}
             onChange={handleInputChange}
-            placeholder="e.g., 60 kg"
+            placeholder="e.g., 70.25"
           />
           {errors.weight && <div className="invalid-feedback">{errors.weight}</div>}
         </div>
         <div className="col-md-6 mb-3">
-          <label htmlFor="email" className="form-label">
-            Email <span className="text-danger">*</span>
+          <label htmlFor="occupation" className="form-label">
+            Occupation <span className="text-danger">*</span>
           </label>
           <input
-            type="email"
-            className={`form-control ${errors.email ? 'is-invalid' : ''}`}
-            id="email"
-            name="email"
-            value={formData.email}
+            type="text"
+            className={`form-control ${errors.occupation ? 'is-invalid' : ''}`}
+            id="occupation"
+            name="occupation"
+            value={formData.occupation}
             onChange={handleInputChange}
-            required
           />
-          {errors.email && <div className="invalid-feedback">{errors.email}</div>}
+          {errors.occupation && <div className="invalid-feedback">{errors.occupation}</div>}
         </div>
         <div className="col-md-6 mb-3">
           <label htmlFor="marital_status" className="form-label">
@@ -451,87 +381,139 @@ function ConsultNow() {
           {errors.marital_status && <div className="invalid-feedback">{errors.marital_status}</div>}
         </div>
         <div className="col-md-6 mb-3">
-          <label htmlFor="occupation" className="form-label">
-            Occupation <span className="text-danger">*</span>
+          <label htmlFor="email" className="form-label">
+            Email <span className="text-danger">*</span>
           </label>
           <input
-            type="text"
-            className={`form-control ${errors.occupation ? 'is-invalid' : ''}`}
-            id="occupation"
-            name="occupation"
-            value={formData.occupation}
-            onChange={handleInputChange}
-          />
-          {errors.occupation && <div className="invalid-feedback">{errors.occupation}</div>}
-        </div>
-        <div className="col-md-6 mb-3">
-          <label htmlFor="contact_number" className="form-label">
-            Contact Number <span className="text-danger">*</span>
-          </label>
-          <input
-            type="number"
-            className={`form-control ${errors.contact_number ? 'is-invalid' : ''}`}
-            id="contact_number"
-            name="contact_number"
-            value={formData.contact_number}
+            type="email"
+            className={`form-control ${errors.email ? 'is-invalid' : ''}`}
+            id="email"
+            name="email"
+            value={formData.email}
             onChange={handleInputChange}
             required
           />
-          {errors.contact_number && <div className="invalid-feedback">{errors.contact_number}</div>}
+          {errors.email && <div className="invalid-feedback">{errors.email}</div>}
+        </div>
+        <div className="col-md-6 mb-3">
+          <label htmlFor="mobile_number" className="form-label">
+            Mobile Number <span className="text-danger">*</span>
+          </label>
+          <input
+            type="text"
+            className={`form-control ${errors.mobile_number ? 'is-invalid' : ''}`}
+            id="mobile_number"
+            name="mobile_number"
+            value={formData.mobile_number}
+            onChange={handleInputChange}
+            required
+            placeholder="e.g., 9876543210"
+          />
+          {errors.mobile_number && <div className="invalid-feedback">{errors.mobile_number}</div>}
+        </div>
+        <div className="col-md-6 mb-3">
+          <label htmlFor="alternate_number" className="form-label">
+            Alternate Number
+          </label>
+          <input
+            type="text"
+            className={`form-control ${errors.alternate_number ? 'is-invalid' : ''}`}
+            id="alternate_number"
+            name="alternate_number"
+            value={formData.alternate_number}
+            onChange={handleInputChange}
+            placeholder="e.g., 9123456780"
+          />
+          {errors.alternate_number && <div className="invalid-feedback">{errors.alternate_number}</div>}
         </div>
         <div className="col-12 mb-3">
-          <label htmlFor="complete_address" className="form-label">
-            Complete Address <span className="text-danger">*</span>
+          <label htmlFor="address" className="form-label">
+            Address <span className="text-danger">*</span>
           </label>
           <textarea
-            className={`form-control ${errors.complete_address ? 'is-invalid' : ''}`}
-            id="complete_address"
-            name="complete_address"
-            value={formData.complete_address}
+            className={`form-control ${errors.address ? 'is-invalid' : ''}`}
+            id="address"
+            name="address"
+            value={formData.address}
             onChange={handleInputChange}
             rows="3"
+            placeholder="e.g., 123 MG Road, Near City Mall"
           ></textarea>
-          {errors.complete_address && <div className="invalid-feedback">{errors.complete_address}</div>}
+          {errors.address && <div className="invalid-feedback">{errors.address}</div>}
         </div>
         <div className="col-md-6 mb-3">
-          <label htmlFor="chief_complaint" className="form-label">
-            Chief Complaint <span className="text-danger">*</span>
+          <label htmlFor="city" className="form-label">
+            City <span className="text-danger">*</span>
           </label>
           <input
             type="text"
-            className={`form-control ${errors.chief_complaint ? 'is-invalid' : ''}`}
-            id="chief_complaint"
-            name="chief_complaint"
-            value={formData.chief_complaint}
+            className={`form-control ${errors.city ? 'is-invalid' : ''}`}
+            id="city"
+            name="city"
+            value={formData.city}
             onChange={handleInputChange}
+            placeholder="e.g., Bangalore"
           />
-          {errors.chief_complaint && <div className="invalid-feedback">{errors.chief_complaint}</div>}
+          {errors.city && <div className="invalid-feedback">{errors.city}</div>}
         </div>
         <div className="col-md-6 mb-3">
-          <label htmlFor="complaint_duration" className="form-label">
-            Complaint Duration <span className="text-danger">*</span>
+          <label htmlFor="pin" className="form-label">
+            PIN Code <span className="text-danger">*</span>
           </label>
           <input
             type="text"
-            className={`form-control ${errors.complaint_duration ? 'is-invalid' : ''}`}
-            id="complaint_duration"
-            name="complaint_duration"
-            value={formData.complaint_duration}
+            className={`form-control ${errors.pin ? 'is-invalid' : ''}`}
+            id="pin"
+            name="pin"
+            value={formData.pin}
             onChange={handleInputChange}
+            placeholder="e.g., 560001"
           />
-          {errors.complaint_duration && <div className="invalid-feedback">{errors.complaint_duration}</div>}
+          {errors.pin && <div className="invalid-feedback">{errors.pin}</div>}
         </div>
+        <div className="col-md-6 mb-3">
+          <label htmlFor="state" className="form-label">
+            State <span className="text-danger">*</span>
+          </label>
+          <input
+            type="text"
+            className={`form-control ${errors.state ? 'is-invalid' : ''}`}
+            id="state"
+            name="state"
+            value={formData.state}
+            onChange={handleInputChange}
+            placeholder="e.g., Karnataka"
+          />
+          {errors.state && <div className="invalid-feedback">{errors.state}</div>}
+        </div>
+        <div className="col-md-6 mb-3">
+          <label htmlFor="country" className="form-label">
+            Country <span className="text-danger">*</span>
+          </label>
+          <input
+            type="text"
+            className={`form-control ${errors.country ? 'is-invalid' : ''}`}
+            id="country"
+            name="country"
+            value={formData.country}
+            onChange={handleInputChange}
+            placeholder="e.g., India"
+          />
+          {errors.country && <div className="invalid-feedback">{errors.country}</div>}
+        </div>
+       
+      
         
         {/* New fields */}
         <div className="col-md-6 mb-3">
-          <label htmlFor="reference" className="form-label">
+          <label htmlFor="references" className="form-label">
             Reference <span className="text-danger">*</span>
           </label>
           <select
-            className={`form-select ${errors.reference ? 'is-invalid' : ''}`}
-            id="reference"
-            name="reference"
-            value={formData.reference}
+            className={`form-select ${errors.references ? 'is-invalid' : ''}`}
+            id="references"
+            name="references"
+            value={formData.references}
             onChange={handleInputChange}
             required
           >
@@ -540,23 +522,9 @@ function ConsultNow() {
             <option value="Internet">Internet</option>
             <option value="Other">Other</option>
           </select>
-          {errors.reference && <div className="invalid-feedback">{errors.reference}</div>}
+          {errors.references && <div className="invalid-feedback">{errors.references}</div>}
         </div>
-        <div className="col-md-6 mb-3">
-          <label htmlFor="complications" className="form-label">
-            Other Health Conditions <span className="text-danger">*</span>
-          </label>
-          <input
-            type="text"
-            className={`form-control ${errors.complications ? 'is-invalid' : ''}`}
-            id="complications"
-            name="complications"
-            value={formData.complications}
-            onChange={handleInputChange}
-            required
-          />
-          {errors.complications && <div className="invalid-feedback">{errors.complications}</div>}
-        </div>
+       
       </div>
     </div>
   );
@@ -1448,11 +1416,15 @@ function ConsultNow() {
                 </div>
               </div>
               
-              {submitMessage ? (
+              {/* Show alert if there's a message */}
+              {submitMessage && (
                 <div className={`alert ${submitMessage.includes('Error') ? 'alert-danger' : 'alert-success'} my-4`}>
                   {submitMessage}
                 </div>
-              ) : (
+              )}
+              
+              {/* Always show form if there's an error or if no submission yet */}
+              {!submitMessage || submitMessage.includes('Error') ? (
                 <form onSubmit={handleSubmit}>
                   {renderStep()}
                   
@@ -1478,7 +1450,7 @@ function ConsultNow() {
                     )}
                   </div>
                 </form>
-              )}
+              ) : null}
             </div>
           </div>
           <div className="ayur-bgshape ayur-about-bgshape">

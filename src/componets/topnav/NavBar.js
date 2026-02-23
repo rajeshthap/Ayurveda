@@ -204,11 +204,10 @@ function NavBar() {
               
                       </ul>
                     </li>
-
                     <li><Link to="/Blogs" onClick={resetMenu}>Blogs</Link></li>
                     <li><Link to="/ContactUs" onClick={resetMenu}>Contact Us</Link></li>
                     <li>
-                      <Link className="ayur-btn-consult" to="/ConsultNow" onClick={resetMenu}>
+                      <Link className="ayur-btn-consult" to="/OtpSend" onClick={resetMenu}>
                         Consult Now
                       </Link>
                     </li>

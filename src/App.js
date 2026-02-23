@@ -109,6 +109,8 @@ import ManageContactUs from './componets/dash_board/ManageContactUs';
 import TotalContact from './componets/dash_board/total_consult_now/TotalContact';
 import MedicalDisclaimer from './componets/dash_board/Disclaimer/MedicalDisclaimer';
 import ManageMedia from './componets/dash_board/GalleryItem/ManageMedia';
+import OtpSend from './componets/Consult_now/OtpSend';
+
 
 
 
@@ -344,6 +346,8 @@ function App() {
 <Route path="/TotalContact" element={<TotalContact/>} />
 <Route path="/MedicalDisclaimer" element={<MedicalDisclaimer/>} />
 <Route path="/ManageMedia" element={<ManageMedia/>} />
+<Route path="/OtpSend" element={<OtpSend/>} />
+
 {/* <Route path="*" element={<NotFound />} />  */}
 </Routes>
 
