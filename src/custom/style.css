@@ -71,7 +71,18 @@ body {
 a {
   text-decoration: none !important;
 }
-
+.main-headin-form h5{
+  font-size: 16px;
+  color: #198754;
+}
+.main-headin-form h3{
+  font-size: 14px;
+  color: #0d6efd;
+  font-weight: 600;
+}
+.medical-report p{
+  color: #198754;
+}
 .about-us {
   margin-top: 20px;
   padding: 40px;
