@@ -70,7 +70,7 @@ function OurTestimonial() {
         <div className="row">
           <div className="col-lg-12">
             <div className="ayur-heading-wrap ayur-test-head">
-              <h3>Our Testimonial</h3>
+              <h3>Patient Testimonial</h3>
               <h5>What Our Client’s Say</h5>
             </div>
           </div>

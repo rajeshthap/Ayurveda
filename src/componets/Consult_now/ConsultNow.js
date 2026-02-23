@@ -334,7 +334,7 @@ function ConsultNow() {
   // Render Personal Information Step
   const renderPersonalInfo = () => (
     <div className="consult-form-step">
-      <h3 className="step-title">Personal Information</h3>
+      <h3 className="step-title">PATIENT IDENTITY</h3>
       <div className="row">
         <div className="col-md-6 mb-3">
           <label htmlFor="name" className="form-label">

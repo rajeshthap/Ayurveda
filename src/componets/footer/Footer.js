@@ -147,7 +147,8 @@ function Footer() {
 
       {/* Background Shapes */}
       <div className="ayur-bgshape ayur-footer-bgshape">
-        <img src={FooterLeftShape} alt="img" />
+        {/* <img src={FooterLeftShape} alt="img" /> */}
+        <div></div>
         <img src={FooterRightShape} alt="img" />
       </div>
     </div>

@@ -290,12 +290,7 @@ const menuItems = [
       active: true,
     },
 
-     {
-      icon: <FaTachometerAlt />,
-      label: "Manage Consent",
-      path: "/ManageConsent",
-      active: true,
-    },
+     
 
     {
       icon: <FaTachometerAlt />,
@@ -399,7 +394,13 @@ const menuItems = [
           path: "/ManageDisclamier",
           icon: <FaImage />,
         },
-       
+        {
+      icon: <FaTachometerAlt />,
+      label: "Manage Consent",
+      path: "/ManageConsent",
+      active: true,
+    },
+
       ],
     },
 
