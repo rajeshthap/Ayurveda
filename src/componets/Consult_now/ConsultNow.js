@@ -2023,6 +2023,15 @@ function ConsultNow() {
         return;
       }
 
+      // Validate that consent is given
+      if (!consentGiven) {
+        setErrors(prev => ({
+          ...prev,
+          consentGiven: "Please confirm that all information provided is true and complete"
+        }));
+        return;
+      }
+
       console.log("✅ Section 4 validation passed");
       setIsSubmitting(true);
 
@@ -2074,14 +2083,9 @@ function ConsultNow() {
         // Mark section 4 as completed
         setCompletedSteps((prev) => [...prev, 4]);
 
-         // Auto navigate to legal consent step after a short delay
-         console.log("🔄 Navigating to legal consent step (step 5)...");
-         setTimeout(() => {
-           setCurrentStep(5);
-           // Clear message after navigation
-           setSubmitMessage("");
-         }, 2000);
-       } catch (error) {
+        // Mark form as submitted
+        setFormSubmitted(true);
+      } catch (error) {
         console.error("Error submitting Section 4:", error);
 
         // Handle error
@@ -2118,26 +2122,6 @@ function ConsultNow() {
       } finally {
         setIsSubmitting(false);
       }
-    } else if (currentStep === 5) {
-      console.log("\n📋 SECTION 5 (CONSENT) - CHECKING CONSENT:");
-      console.log("=".repeat(80));
-      
-      // Validate that consent is given
-      if (!consentGiven) {
-        setErrors(prev => ({
-          ...prev,
-          consentGiven: "Please confirm that all information provided is true and complete"
-        }));
-        return;
-      }
-
-      console.log("✅ Consent confirmed! Navigating to review step...");
-      
-      // Mark section 5 as completed
-      setCompletedSteps((prev) => [...prev, 5]);
-      
-      // Navigate to review step (step 6)
-      setCurrentStep(6);
     }
   };
 
@@ -4747,45 +4731,37 @@ function ConsultNow() {
             </div>
           )}
         </div>
-      </div>
-    </div>
-  );
 
-  // Render Legal Consent Step
-  const renderConsent = () => (
-    <div className="consult-form-step">
-      <h3 className="step-title">Legal Consent & Declaration</h3>
-      <div className="consent-section">
-        <div className="row">
-          <div className="col-12 mb-4">
-            <h5 className="sub-title">SECTION 9 — LEGAL CONSENT & DECLARATION</h5>
-            <div className="form-check mb-3">
-              <input
-                type="checkbox"
-                className="form-check-input"
-                id="consentCheckbox"
-                checked={consentGiven}
-                onChange={(e) => setConsentGiven(e.target.checked)}
-              />
-              <label className="form-check-label" for="consentCheckbox">
-                I confirm that all information provided is true and complete. Ayurvedic treatment is individualized and depends on disease stage, constitution, and compliance. No cure or specific outcome can be guaranteed. I will not discontinue ongoing medical treatment without consulting my physician. Online consultation has limitations due to absence of physical examination.
-              </label>
-            </div>
-            {errors.consentGiven && (
-              <div className="invalid-feedback d-block">
-                {errors.consentGiven}
-              </div>
-            )}
+        {/* Consent Checkbox */}
+        <div className="col-lg-12 mb-4">
+          <div className="form-check mb-3">
+            <input
+              type="checkbox"
+              className={`form-check-input ${errors.consentGiven ? 'is-invalid' : ''}`}
+              id="consentCheckbox"
+              checked={consentGiven}
+              onChange={(e) => setConsentGiven(e.target.checked)}
+            />
+            <label className="form-check-label" for="consentCheckbox">
+              I confirm that all information provided is true and complete. Ayurvedic treatment is individualized and depends on disease stage, constitution, and compliance. No cure or specific outcome can be guaranteed. I will not discontinue ongoing medical treatment without consulting my physician. Online consultation has limitations due to absence of physical examination.
+            </label>
           </div>
+          {errors.consentGiven && (
+            <div className="invalid-feedback d-block">
+              {errors.consentGiven}
+            </div>
+          )}
         </div>
       </div>
     </div>
   );
 
+
+
   // Render Review Step
   const renderReview = () => (
     <div className="consult-form-step">
-      <h3 className="step-title">Review Your Information</h3>
+      <h3 className="step-title">Your Information</h3>
       <div className="review-section">
         <div className="row">
           <div className="col-12 mb-4">
@@ -4808,7 +4784,7 @@ function ConsultNow() {
                   </td>
                   <td>{formData.gender}</td>
                   <td>
-                    <strong>Height:</strong>
+                    <strong>Feet and Inches:</strong>
                   </td>
                   <td>{formData.height}</td>
                 </tr>
@@ -4834,90 +4810,136 @@ function ConsultNow() {
                 </tr>
                 <tr>
                   <td>
-                    <strong>Contact Number:</strong>
+                    <strong>Mobile Number:</strong>
                   </td>
                   <td>{formData.mobile_number}</td>
                   <td>
-                    <strong>Address:</strong>
+                    <strong>Alternate Number:</strong>
                   </td>
-                  <td>{formData.address}</td>
+                  <td>{formData.alternate_number}</td>
                 </tr>
                 <tr>
                   <td>
-                    <strong>Chief Complaint:</strong>
+                    <strong>Address:</strong>
                   </td>
-                  <td>{formData.main_disease_problem}</td>
+                  <td colSpan={3}>{formData.address}</td>
+                </tr>
+                <tr>
                   <td>
-                    <strong>Reference:</strong>
+                    <strong>City:</strong>
                   </td>
-                  <td>{formData.references}</td>
+                  <td>{formData.city}</td>
+                  <td>
+                    <strong>PIN Code:</strong>
+                  </td>
+                  <td>{formData.pin}</td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>State:</strong>
+                  </td>
+                  <td>{formData.state}</td>
+                  <td>
+                    <strong>Country:</strong>
+                  </td>
+                  <td>{formData.country}</td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>References:</strong>
+                  </td>
+                  <td colSpan={3}>{formData.references}</td>
                 </tr>
               </tbody>
             </table>
           </div>
 
           <div className="col-12 mb-4">
-            <h5 className="sub-title">Medical Information</h5>
+            <h5 className="sub-title">Primary Health Concern</h5>
             <table className="table table-bordered">
               <tbody>
                 <tr>
                   <td>
-                    <strong>Family History:</strong>
+                    <strong>Main disease/problem with duration:</strong>
                   </td>
-                  <td>{formData.disease_history.join(", ")}</td>
+                  <td colSpan={3}>{formData.main_disease_problem}</td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>Associated complications or conditions:</strong>
+                  </td>
+                  <td colSpan={3}>{formData.associated_complications}</td>
+                </tr>
+                <tr>
                   <td>
                     <strong>Mode of Onset:</strong>
                   </td>
                   <td>{formData.mode_of_onset}</td>
+                  <td>
+                    <strong>Date of Diagnosis:</strong>
+                  </td>
+                  <td>{formData.date_of_diagnosis}</td>
                 </tr>
                 <tr>
                   <td>
-                    <strong>Problem Start:</strong>
+                    <strong>How did the problem start?:</strong>
                   </td>
-                  <td>{formData.problem_start_description}</td>
-                  <td>
-                    <strong>Problem Progress:</strong>
-                  </td>
-                  <td>{formData.progression_over_time}</td>
+                  <td colSpan={3}>{formData.problem_start_description}</td>
                 </tr>
                 <tr>
                   <td>
-                    <strong>Past History:</strong>
+                    <strong>How has it progressed over time?:</strong>
                   </td>
-                  <td>{formData.medical_history}</td>
-                  <td>
-                    <strong>Any Surgery:</strong>
-                  </td>
-                  <td>{formData.surgeries}</td>
+                  <td colSpan={3}>{formData.progression_over_time}</td>
                 </tr>
                 <tr>
                   <td>
-                    <strong>Number of Pregnancies:</strong>
+                    <strong>Other Significant health events:</strong>
                   </td>
-                  <td>{formData.number_of_pregnancies}</td>
-                  <td>
-                    <strong>Number of Alive Kids:</strong>
-                  </td>
-                  <td>{formData.number_of_living_children}</td>
+                  <td colSpan={3}>{formData.significant_health_events}</td>
                 </tr>
                 <tr>
                   <td>
-                    <strong>Mode of Delivery:</strong>
+                    <strong>Current or past medications:</strong>
                   </td>
-                  <td>{formData.mode_of_delivery}</td>
-                  <td>
-                    <strong>Menstrual History:</strong>
-                  </td>
-                  <td>{formData.menstrual_history}</td>
+                  <td colSpan={3}>{formData.past_medications}</td>
                 </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div className="col-12 mb-4">
-            <h5 className="sub-title">Past Treatment</h5>
-            <table className="table table-bordered">
-              <tbody>
+                <tr>
+                  {/* <td>
+                    <strong>Past Medical History:</strong>
+                  </td>
+                  <td colSpan={3}>{formData.medical_history}</td> */}
+                </tr>
+                <tr>
+                  <td>
+                    <strong>Hospitalizations:</strong>
+                  </td>
+                  <td colSpan={3}>{formData.hospitalizations}</td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>Surgeries:</strong>
+                  </td>
+                  <td colSpan={3}>{formData.surgeries}</td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>Accidents:</strong>
+                  </td>
+                  <td colSpan={3}>{formData.accidents}</td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>Family / Personal Disease History:</strong>
+                  </td>
+                  <td colSpan={3}>{formData.disease_history.join(", ")}</td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>Other Chronic Diseases:</strong>
+                  </td>
+                  <td colSpan={3}>{formData.other_chronic_disease}</td>
+                </tr>
                 <tr>
                   <td>
                     <strong>Diagnosing Doctor:</strong>
@@ -4928,31 +4950,11 @@ function ConsultNow() {
                   </td>
                   <td>{formData.hospital_clinic_name}</td>
                 </tr>
-                <tr>
-                  <td>
-                    <strong>City:</strong>
-                  </td>
-                  <td>{formData.city}</td>
-                  <td>
-                    <strong>Date of Diagnosis:</strong>
-                  </td>
-                  <td>{formData.date_of_diagnosis || "Not provided"}</td>
-                </tr>
-                <tr>
-                  <td colSpan="4">
-                    <strong>Other Chronic Diseases:</strong>{" "}
-                    {formData.other_chronic_disease}
-                  </td>
-                </tr>
-                <tr>
-                  <td colSpan="4">
-                    <strong>Current Treatment:</strong>{" "}
-                    {formData.past_medications}
-                  </td>
-                </tr>
               </tbody>
             </table>
           </div>
+
+          {/* Past Treatment section is now included in Primary Health Concern section */}
 
           <div className="col-12 mb-4">
             <h5 className="sub-title">Lifestyle Assessment</h5>
@@ -5005,25 +5007,23 @@ function ConsultNow() {
                 </tr>
                 <tr>
                   <td>
-                    <strong>Number of Living Children:</strong>
-                  </td>
-                  <td>
-                    {formData.number_of_living_children || "Not provided"}
-                  </td>
-                  <td>
                     <strong>Mode of Delivery:</strong>
                   </td>
                   <td>{formData.mode_of_delivery || "Not provided"}</td>
-                </tr>
-                <tr>
                   <td>
                     <strong>Menstrual History:</strong>
                   </td>
                   <td>{formData.menstrual_history || "Not provided"}</td>
+                </tr>
+                <tr>
                   <td>
                     <strong>Gynecological Surgery:</strong>
                   </td>
                   <td>{formData.gynaecological_surgery || "Not provided"}</td>
+                  <td>
+                    <strong>&nbsp;</strong>
+                  </td>
+                  <td>&nbsp;</td>
                 </tr>
               </tbody>
             </table>
@@ -5248,7 +5248,7 @@ function ConsultNow() {
                           <td>{selectedReport.email || "N/A"}</td>
                         </tr>
                         <tr>
-                          <td><strong>Height:</strong></td>
+                          <td><strong>Feet and Inches:</strong></td>
                           <td>{selectedReport.height || "N/A"}</td>
                           <td><strong>Weight:</strong></td>
                           <td>{selectedReport.weight || "N/A"}</td>
@@ -5295,11 +5295,11 @@ function ConsultNow() {
                       <table className="table table-bordered table-sm">
                         <tbody>
                           <tr>
-                            <td><strong>Main Problem:</strong></td>
+                            <td><strong>Main disease/problem with duration:</strong></td>
                             <td colSpan={3}>{selectedReport.section2[0].main_disease_problem || "N/A"}</td>
                           </tr>
                           <tr>
-                            <td><strong>Associated Complications:</strong></td>
+                            <td><strong>Associated complications or conditions:</strong></td>
                             <td colSpan={3}>{selectedReport.section2[0].associated_complications || "N/A"}</td>
                           </tr>
                           <tr>
@@ -5309,11 +5309,11 @@ function ConsultNow() {
                             <td>{selectedReport.section2[0].date_of_diagnosis || "N/A"}</td>
                           </tr>
                           <tr>
-                            <td><strong>Problem Start Description:</strong></td>
+                            <td><strong>How did the problem start ?:</strong></td>
                             <td colSpan={3}>{selectedReport.section2[0].problem_start_description || "N/A"}</td>
                           </tr>
                           <tr>
-                            <td><strong>Progression Over Time:</strong></td>
+                            <td><strong>How has it progressed over time?:</strong></td>
                             <td colSpan={3}>{selectedReport.section2[0].progression_over_time || "N/A"}</td>
                           </tr>
                           <tr>
@@ -5324,10 +5324,10 @@ function ConsultNow() {
                             <td><strong>Past Medications:</strong></td>
                             <td colSpan={3}>{selectedReport.section2[0].past_medications || "N/A"}</td>
                           </tr>
-                          <tr>
+                          {/* <tr>
                             <td><strong>Medical History:</strong></td>
                             <td colSpan={3}>{selectedReport.section2[0].medical_history || "N/A"}</td>
-                          </tr>
+                          </tr> */}
                           <tr>
                             <td><strong>Hospitalizations:</strong></td>
                             <td colSpan={3}>{selectedReport.section2[0].hospitalizations || "N/A"}</td>
@@ -5523,8 +5523,6 @@ function ConsultNow() {
       case 4:
         return renderPhysicalExamination();
       case 5:
-        return renderConsent();
-      case 6:
         return renderReview();
       default:
         return renderPersonalInfo();
@@ -5562,14 +5560,6 @@ function ConsultNow() {
                   </div>
                   <div
                     className={`step ${currentStep >= 1 ? "active" : ""} ${completedSteps.includes(1) ? "completed" : ""}`}
-                    onClick={() => {
-                      if (currentStep === 0) {
-                        setCurrentStep(1);
-                      } else if (currentStep >= 1) {
-                        // Can navigate to step 1 from any higher step
-                        setCurrentStep(1);
-                      }
-                    }}
                   >
                     <div className="step-number">
                       {completedSteps.includes(1) ? <FaCheck /> : "1"}
@@ -5578,11 +5568,6 @@ function ConsultNow() {
                   </div>
                   <div
                     className={`step ${currentStep >= 2 ? "active" : ""} ${completedSteps.includes(2) ? "completed" : ""}`}
-                    onClick={() => {
-                      if (completedSteps.includes(1)) {
-                        setCurrentStep(2);
-                      }
-                    }}
                   >
                     <div className="step-number">
                       {completedSteps.includes(2) ? <FaCheck /> : "2"}
@@ -5591,11 +5576,6 @@ function ConsultNow() {
                   </div>
                   <div
                     className={`step ${currentStep >= 3 ? "active" : ""} ${completedSteps.includes(3) ? "completed" : ""}`}
-                    onClick={() => {
-                      if (completedSteps.includes(2)) {
-                        setCurrentStep(3);
-                      }
-                    }}
                   >
                     <div className="step-number">
                       {completedSteps.includes(3) ? <FaCheck /> : "3"}
@@ -5604,43 +5584,13 @@ function ConsultNow() {
                   </div>
                   <div
                     className={`step ${currentStep >= 4 ? "active" : ""} ${completedSteps.includes(4) ? "completed" : ""}`}
-                    onClick={() => {
-                      if (completedSteps.includes(3)) {
-                        setCurrentStep(4);
-                      }
-                    }}
                   >
                     <div className="step-number">
                       {completedSteps.includes(4) ? <FaCheck /> : "4"}
                     </div>
                     <span>AYURVEDIC CONSTITUTION ANALYSIS</span>
                   </div>
-                  <div
-                    className={`step ${currentStep >= 5 ? "active" : ""} ${completedSteps.includes(5) ? "completed" : ""}`}
-                    onClick={() => {
-                      if (completedSteps.includes(4)) {
-                        setCurrentStep(5);
-                      }
-                    }}
-                  >
-                    <div className="step-number">
-                      {completedSteps.includes(5) ? <FaCheck /> : "5"}
-                    </div>
-                    <span>Legal Consent</span>
-                  </div>
-                  <div
-                    className={`step ${currentStep >= 6 ? "active" : ""} ${completedSteps.includes(6) ? "completed" : ""}`}
-                    onClick={() => {
-                      if (completedSteps.includes(5)) {
-                        setCurrentStep(6);
-                      }
-                    }}
-                  >
-                    <div className="step-number">
-                      {completedSteps.includes(6) ? <FaCheck /> : "6"}
-                    </div>
-                    <span>Preview</span>
-                  </div>
+
                 </div>
               </div>
 
@@ -5669,7 +5619,7 @@ function ConsultNow() {
                     {/* Show navigation only if not on Previous Reports tab */}
                     {currentStep !== 0 && (
                       <>
-                        {currentStep > 1 && (
+                        {currentStep > 1 && currentStep !== 5 && (
                           <button
                             type="button"
                             className="btn btn-secondary"
@@ -5681,7 +5631,7 @@ function ConsultNow() {
                           </button>
                         )}
 
-                        {currentStep < 5 && (
+                        {currentStep < 4 && (
                           <button
                             type="button"
                             className="btn btn-primary ms-auto"
@@ -5698,7 +5648,7 @@ function ConsultNow() {
                           </button>
                         )}
 
-                        {currentStep === 5 && (
+                        {currentStep === 4 && (
                           <button
                             type="button"
                             className="btn btn-primary ms-auto"
@@ -5710,17 +5660,7 @@ function ConsultNow() {
                           </button>
                         )}
 
-                        {currentStep === 6 && (
-                          <button
-                            type="button"
-                            className="btn btn-primary ms-auto"
-                            onClick={() => window.print()}
-                            disabled={isSubmitting}
-                          >
-                            <FaEye className="me-2" />
-                            Preview & Print
-                          </button>
-                        )}
+
                       </>
                     )}
                     
