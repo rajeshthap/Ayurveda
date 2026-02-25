@@ -1,12 +1,17 @@
 import React, { useState, useEffect } from "react";
+import Form from "react-bootstrap/Form";
 import axios from "axios";
 import BgShape2 from "../../assets/images/bg-shape2.png";
 import BgLeaf2 from "../../assets/images/bg-leaf2.png";
-import { FaArrowLeft, FaArrowRight, FaCheck } from "react-icons/fa";
+import { FaArrowLeft, FaArrowRight, FaCheck, FaEye } from "react-icons/fa";
 import { Link, useLocation } from "react-router-dom";
 
 function ConsultNow() {
   const location = useLocation();
+  
+  // Check if in view mode
+  const searchParams = new URLSearchParams(location.search);
+  const isViewMode = searchParams.get("view") === "true";
   // API endpoints
   const API_URL_SECTION1 =
     "https://mahadevaaya.com/trilokayurveda/trilokabackend/api/online-consult-section-1/";
@@ -34,6 +39,32 @@ function ConsultNow() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(null);
   const [isLoadingConsultData, setIsLoadingConsultData] = useState(false);
   const [consultDataFetched, setConsultDataFetched] = useState(false);
+  const [previousReports, setPreviousReports] = useState([]);
+  const [isLoadingReports, setIsLoadingReports] = useState(false);
+  const [selectedReport, setSelectedReport] = useState(null);
+  const [consentGiven, setConsentGiven] = useState(false);
+  const [formSubmitted, setFormSubmitted] = useState(false);
+
+  // Base URL for API
+  const API_BASE_URL = "https://mahadevaaya.com/trilokayurveda/trilokabackend";
+
+  // Function to get the full medical reports URL
+  const getMedicalReportsUrl = (filePath) => {
+    if (!filePath) return null;
+    
+    // If the file path already includes the full URL, return as is
+    if (filePath.startsWith("http")) {
+      return filePath;
+    }
+    
+    // If the file path starts with a slash, combine with base URL (no extra slash)
+    if (filePath.startsWith("/")) {
+      return `${API_BASE_URL}${filePath}`;
+    }
+    
+    // Otherwise, add slash between base URL and path
+    return `${API_BASE_URL}/${filePath}`;
+  };
 
   // Ref to track consult_id in real-time
   const consultIdRef = React.useRef("");
@@ -118,6 +149,23 @@ function ConsultNow() {
     additional_clinical_information: "",
   });
 
+  // Fetch previous reports for the user
+  const fetchPreviousReports = async (email) => {
+    setIsLoadingReports(true);
+    try {
+      const apiUrl = `https://mahadevaaya.com/trilokayurveda/trilokabackend/api/consultation-combined/?email=${encodeURIComponent(email)}`;
+      const response = await axios.get(apiUrl);
+      
+      if (response.data && Array.isArray(response.data) && response.data.length > 0) {
+        setPreviousReports(response.data);
+      }
+    } catch (error) {
+      console.error("❌ Error fetching previous reports:", error);
+    } finally {
+      setIsLoadingReports(false);
+    }
+  };
+
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
     const email = searchParams.get("email");
@@ -129,6 +177,9 @@ function ConsultNow() {
 
     const decodedEmail = decodeURIComponent(email);
     setFormData((prev) => ({ ...prev, email: decodedEmail }));
+    
+    // Fetch previous reports
+    fetchPreviousReports(decodedEmail);
 
     const fetchConsultationData = async () => {
       setIsLoadingConsultData(true);
@@ -263,7 +314,10 @@ function ConsultNow() {
               consultationData.section2,
               "date_of_diagnosis",
             ),
-            medical_reports: "", // File uploads not included in API response
+            medical_reports: extractSectionData(
+              consultationData.section2,
+              "medical_reports",
+            ),
 
             // Section 3 - Lifestyle & Habits (exact field names)
             habits: (() => {
@@ -440,10 +494,20 @@ function ConsultNow() {
           // Update consultId ref
           consultIdRef.current = updatedFormData.consult_id;
 
+          // Set consent given from response (check various possible field names)
+          const consentValue = 
+            consultationData.consentGiven || 
+            consultationData.consent_given || 
+            consultationData.section9?.[0]?.consentGiven || 
+            consultationData.section9?.[0]?.consent_given || 
+            false;
+          setConsentGiven(consentValue);
+
           // Update form state
           console.log("🔄 Setting form data with updated values:", {
             consult_id: updatedFormData.consult_id,
             full_name: updatedFormData.full_name,
+            consentGiven: consentValue
           });
           setFormData(updatedFormData);
 
@@ -597,103 +661,64 @@ function ConsultNow() {
   const validateMedicalInfo = () => {
     const newErrors = {};
 
-    console.log("\n🔍 VALIDATING SECTION 2:");
-    console.log("📋 Form Data consult_id details:", {
-      consult_id: formData.consult_id,
-      consult_id_empty: !formData.consult_id,
-      consult_id_type: typeof formData.consult_id,
-      consult_id_trimmed: formData.consult_id?.trim(),
-      consult_id_trimmed_empty: !formData.consult_id?.trim(),
-    });
-    console.log("📋 Full Form Data for Section 2:", {
-      consult_id: formData.consult_id,
-      main_disease_problem: formData.main_disease_problem,
-      mode_of_onset: formData.mode_of_onset,
-      disease_history: formData.disease_history,
-    });
-
-    // Check if consult_id exists (should be fetched from API)
     if (!formData.consult_id || !formData.consult_id.toString().trim()) {
-      console.log("❌ consult_id validation FAILED - Empty or missing");
-      console.log("   consult_id value:", `"${formData.consult_id}"`);
-      console.log("   consult_id type:", typeof formData.consult_id);
-      console.log(
-        "   Hint: Make sure the consultation data was fetched successfully from the API",
-      );
-      newErrors.consult_id =
-        "Consultation ID is required. Please ensure consultation data was loaded from the system.";
-    } else {
-      console.log("✅ consult_id validation PASSED:", formData.consult_id);
+      newErrors.consult_id = "Consultation ID is required";
     }
 
     if (!formData.main_disease_problem.trim()) {
-      console.log("❌ main_disease_problem validation FAILED");
       newErrors.main_disease_problem = "Main disease problem is required";
-    } else {
-      console.log("✅ main_disease_problem validation PASSED");
     }
 
     if (!formData.mode_of_onset) {
-      console.log("❌ mode_of_onset validation FAILED");
       newErrors.mode_of_onset = "Mode of onset is required";
-    } else {
-      console.log("✅ mode_of_onset validation PASSED");
     }
 
     if (!formData.problem_start_description.trim()) {
-      console.log("❌ problem_start_description validation FAILED");
-      newErrors.problem_start_description =
-        "Problem start description is required";
-    } else {
-      console.log("✅ problem_start_description validation PASSED");
+      newErrors.problem_start_description = "Problem start description is required";
     }
 
     if (!formData.progression_over_time.trim()) {
-      console.log("❌ progression_over_time validation FAILED");
       newErrors.progression_over_time = "Progression over time is required";
-    } else {
-      console.log("✅ progression_over_time validation PASSED");
     }
 
     if (formData.disease_history.length === 0) {
-      console.log("❌ disease_history validation FAILED");
       newErrors.disease_history = "Disease history is required";
-    } else {
-      console.log("✅ disease_history validation PASSED");
     }
 
     if (!formData.diagnosing_doctor_name.trim()) {
-      console.log("❌ diagnosing_doctor_name validation FAILED");
       newErrors.diagnosing_doctor_name = "Diagnosing doctor name is required";
-    } else {
-      console.log("✅ diagnosing_doctor_name validation PASSED");
     }
 
     if (!formData.hospital_clinic_name.trim()) {
-      console.log("❌ hospital_clinic_name validation FAILED");
       newErrors.hospital_clinic_name = "Hospital/clinic name is required";
-    } else {
-      console.log("✅ hospital_clinic_name validation PASSED");
     }
 
     if (!formData.city.trim()) {
-      console.log("❌ city validation FAILED");
       newErrors.city = "City is required";
-    } else {
-      console.log("✅ city validation PASSED");
     }
 
     if (!formData.date_of_diagnosis) {
-      console.log("❌ date_of_diagnosis validation FAILED");
       newErrors.date_of_diagnosis = "Date of diagnosis is required";
-    } else {
-      console.log("✅ date_of_diagnosis validation PASSED");
     }
 
-    console.log("\n📊 VALIDATION SUMMARY:");
-    console.log("   Errors found:", Object.keys(newErrors).length);
-    if (Object.keys(newErrors).length > 0) {
-      console.log("   Error details:", newErrors);
+    // Validate medical reports file if selected
+    if (formData.medical_reports) {
+      // If it's a file object (new upload)
+      if (typeof formData.medical_reports === "object" && formData.medical_reports.name) {
+        const maxSize = 200 * 1024 * 1024; // 200MB in bytes
+        const allowedTypes = [".pdf", ".PDF"];
+        
+        // Check file extension
+        const fileName = formData.medical_reports.name.toLowerCase();
+        const isValidType = allowedTypes.some(type => fileName.endsWith(type));
+        
+        if (!isValidType) {
+          newErrors.medical_reports = "Please upload a PDF file";
+        } else if (formData.medical_reports.size > maxSize) {
+          newErrors.medical_reports = "File size must be less than 200MB";
+        }
+      }
+      // If it's a string (file path from API), no validation needed here
     }
 
     setErrors(newErrors);
@@ -704,14 +729,11 @@ function ConsultNow() {
   const validateLifestyleInfo = () => {
     const newErrors = {};
 
-    // Check if at least one habit is selected (optional, but kept for consistency)
-    // Note: API accepts empty array if no habits are selected
-    // Uncomment below if you want to require at least one habit
-    /*
-    if (formData.habits.length === 0) {
+    // Check if at least one habit is selected
+    const selectedHabits = Object.keys(formData.habits).filter(habit => formData.habits[habit] === "Yes");
+    if (selectedHabits.length === 0) {
       newErrors.habits = "Please select at least one habit or indicate none";
     }
-    */
 
     // These fields are optional (API accepts null values)
     // Uncomment below if you want to make them required
@@ -774,87 +796,83 @@ function ConsultNow() {
     const newErrors = {};
 
     if (formData.body_build.length === 0) {
-      newErrors.body_build = "Body build information is required";
+      newErrors.body_build = "Body build is required";
     }
 
     if (formData.complexion.length === 0) {
-      newErrors.complexion = "Complexion information is required";
+      newErrors.complexion = "Complexion is required";
     }
 
     if (formData.skin_nature.length === 0) {
-      newErrors.skin_nature = "Skin nature information is required";
+      newErrors.skin_nature = "Skin nature is required";
     }
 
     if (formData.hair_nature.length === 0) {
-      newErrors.hair_nature = "Hair nature information is required";
+      newErrors.hair_nature = "Hair nature is required";
     }
 
     if (formData.premature_greying_or_balding.length === 0) {
-      newErrors.premature_greying_or_balding =
-        "Premature greying or balding information is required";
+      newErrors.premature_greying_or_balding = "Premature greying or balding is required";
     }
 
     if (formData.joint_characteristics.length === 0) {
-      newErrors.joint_characteristics =
-        "Joint characteristics information is required";
+      newErrors.joint_characteristics = "Joint characteristics is required";
     }
 
     if (formData.veins_and_tendons.length === 0) {
-      newErrors.veins_and_tendons = "Veins and tendons information is required";
+      newErrors.veins_and_tendons = "Veins and tendons is required";
     }
 
     if (formData.body_temperature.length === 0) {
-      newErrors.body_temperature = "Body temperature information is required";
+      newErrors.body_temperature = "Body temperature is required";
     }
 
     if (formData.temperature_preference.length === 0) {
-      newErrors.temperature_preference =
-        "Temperature preference information is required";
+      newErrors.temperature_preference = "Temperature preference is required";
     }
 
     if (formData.eyes.length === 0) {
-      newErrors.eyes = "Eyes information is required";
+      newErrors.eyes = "Eyes is required";
     }
 
     if (formData.teeth_and_gums.length === 0) {
-      newErrors.teeth_and_gums = "Teeth and gums information is required";
+      newErrors.teeth_and_gums = "Teeth and gums is required";
     }
 
     if (formData.voice_nature.length === 0) {
-      newErrors.voice_nature = "Voice nature information is required";
+      newErrors.voice_nature = "Voice nature is required";
     }
 
     if (formData.appetite.length === 0) {
-      newErrors.appetite = "Appetite information is required";
+      newErrors.appetite = "Appetite is required";
     }
 
     if (formData.taste_preference.length === 0) {
-      newErrors.taste_preference = "Taste preference information is required";
+      newErrors.taste_preference = "Taste preference is required";
     }
 
     if (formData.sweating.length === 0) {
-      newErrors.sweating = "Sweating information is required";
+      newErrors.sweating = "Sweating is required";
     }
 
     if (formData.bowel_habits.length === 0) {
-      newErrors.bowel_habits = "Bowel habits information is required";
+      newErrors.bowel_habits = "Bowel habits is required";
     }
 
     if (formData.urination.length === 0) {
-      newErrors.urination = "Urination information is required";
+      newErrors.urination = "Urination is required";
     }
 
     if (formData.sleep.length === 0) {
-      newErrors.sleep = "Sleep information is required";
+      newErrors.sleep = "Sleep is required";
     }
 
     if (formData.memory.length === 0) {
-      newErrors.memory = "Memory information is required";
+      newErrors.memory = "Memory is required";
     }
 
     if (formData.psychological_state.length === 0) {
-      newErrors.psychological_state =
-        "Psychological state information is required";
+      newErrors.psychological_state = "Psychological state is required";
     }
 
     setErrors(newErrors);
@@ -867,9 +885,37 @@ function ConsultNow() {
 
     if (type === "file" && files && files.length > 0) {
       // For file inputs, handle the file object
+      const file = files[0];
+      
+      // Validate file type and size
+      const maxSize = 200 * 1024 * 1024; // 200MB in bytes
+      const allowedTypes = [".pdf", ".PDF"];
+      
+      // Check file extension
+      const fileName = file.name.toLowerCase();
+      const isValidType = allowedTypes.some(type => fileName.endsWith(type));
+      
+      if (!isValidType) {
+        setErrors({
+          ...errors,
+          [name]: "Please upload a PDF file"
+        });
+        return;
+      }
+      
+      // Check file size
+      if (file.size > maxSize) {
+        setErrors({
+          ...errors,
+          [name]: "File size must be less than 200MB"
+        });
+        return;
+      }
+      
+      // If validation passes, set the file
       setFormData({
         ...formData,
-        [name]: files[0],
+        [name]: file,
       });
     } else {
       // For other inputs, handle value normally
@@ -906,6 +952,63 @@ function ConsultNow() {
     setIsSubmitting(true);
 
     try {
+      // Validate all sections before submitting
+      console.log("🔍 Validating all sections before submission");
+      
+      const isPersonalInfoValid = validatePersonalInfo();
+      const isMedicalInfoValid = validateMedicalInfo();
+      const isLifestyleInfoValid = validateLifestyleInfo();
+      const isPhysicalPsychologicalInfoValid = validatePhysicalPsychologicalInfo();
+      
+      console.log("📊 Validation results:");
+      console.log("   Personal Info:", isPersonalInfoValid);
+      console.log("   Medical Info:", isMedicalInfoValid);
+      console.log("   Lifestyle Info:", isLifestyleInfoValid);
+      console.log("   Physical Info:", isPhysicalPsychologicalInfoValid);
+
+      // Validate consent checkbox
+      if (!consentGiven) {
+        setErrors(prev => ({
+          ...prev,
+          consentGiven: "Please confirm that all information provided is true and complete"
+        }));
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Check if all sections are valid and navigate to first invalid step
+      if (!isPersonalInfoValid) {
+        console.error("❌ Personal Information section has errors");
+        setSubmitMessage("Please complete all required fields in Personal Information section");
+        setCurrentStep(1);
+        setIsSubmitting(false);
+        return;
+      }
+
+      if (!isMedicalInfoValid) {
+        console.error("❌ Medical Information section has errors");
+        setSubmitMessage("Please complete all required fields in Medical Information section");
+        setCurrentStep(2);
+        setIsSubmitting(false);
+        return;
+      }
+
+      if (!isLifestyleInfoValid) {
+        console.error("❌ Lifestyle Assessment section has errors");
+        setSubmitMessage("Please complete all required fields in Lifestyle Assessment section");
+        setCurrentStep(3);
+        setIsSubmitting(false);
+        return;
+      }
+
+      if (!isPhysicalPsychologicalInfoValid) {
+        console.error("❌ Ayurvedic Constitution Analysis section has errors");
+        setSubmitMessage("Please complete all required fields in Ayurvedic Constitution Analysis section");
+        setCurrentStep(4);
+        setIsSubmitting(false);
+        return;
+      }
+
       // Log the form data to debug
       console.log("Submitting form data:", formData);
 
@@ -958,7 +1061,8 @@ function ConsultNow() {
       );
       submissionData.append("city", formData.city);
       submissionData.append("date_of_diagnosis", formData.date_of_diagnosis);
-      if (formData.medical_reports) {
+      // Only append medical_reports if it's a file object (new upload), not a string path
+      if (formData.medical_reports && typeof formData.medical_reports === "object" && formData.medical_reports.name) {
         submissionData.append("medical_reports", formData.medical_reports);
       }
 
@@ -978,6 +1082,9 @@ function ConsultNow() {
       setSubmitMessage(
         "Your consultation request has been submitted successfully!",
       );
+      
+      // Mark form as submitted
+      setFormSubmitted(true);
 
       // Reset form after successful submission
       setFormData({
@@ -1078,13 +1185,11 @@ function ConsultNow() {
               errorMessages.push(`${field}: ${error.response.data[field]}`);
             }
 
-            // Set field-specific error for email duplicate error
-            if (field === "email") {
-              setErrors((prev) => ({
-                ...prev,
-                [field]: error.response.data[field],
-              }));
-            }
+            // Set field-specific errors for all fields
+            setErrors((prev) => ({
+              ...prev,
+              [field]: error.response.data[field],
+            }));
           }
           setSubmitMessage(`Error: ${errorMessages.join("; ")}`);
         } else {
@@ -1508,7 +1613,8 @@ function ConsultNow() {
         );
         section2Data.append("city", formData.city);
         section2Data.append("date_of_diagnosis", formData.date_of_diagnosis);
-        if (formData.medical_reports) {
+        // Only append medical_reports if it's a file object (new upload), not a string path
+        if (formData.medical_reports && typeof formData.medical_reports === "object" && formData.medical_reports.name) {
           section2Data.append("medical_reports", formData.medical_reports);
         }
 
@@ -1883,14 +1989,33 @@ function ConsultNow() {
       } finally {
         setIsSubmitting(false);
       }
-    } else if (currentStep === 4) {
+     } else if (currentStep === 4) {
       console.log("\n" + "=".repeat(80));
       console.log("📋 SECTION 4 SUBMISSION - PRE-CHECKS:");
       console.log("=".repeat(80));
       console.log("Current Step:", currentStep);
       console.log("isSubmitting:", isSubmitting);
       console.log("consult_id from ref:", consultIdRef.current);
+      console.log("consult_id empty?:", !consultIdRef.current);
+      console.log("consult_id type:", typeof consultIdRef.current);
+      console.log("consultDataFetched:", consultDataFetched);
       console.log("Full formData for Section 4:", JSON.stringify(formData, null, 2));
+      console.log("=".repeat(80));
+
+      // IMPORTANT: Check if consult_id exists before allowing submission
+      if (!consultIdRef.current || !consultIdRef.current.toString().trim()) {
+        console.error(
+          "❌ CRITICAL: consult_id is missing before Section 4 submission",
+        );
+        setSubmitMessage(
+          "❌ ERROR: Consultation ID not found! Please complete previous sections first.",
+        );
+        return;
+      }
+
+      console.log(
+        "✅ consult_id found! Proceeding with Section 4 validation...",
+      );
 
       // Validate Section 4 before submitting
       if (!validatePhysicalPsychologicalInfo()) {
@@ -1903,39 +2028,38 @@ function ConsultNow() {
 
       try {
         // Submit Section 4 data
-        const section4Data = new FormData();
-        section4Data.append("consult_id", consultIdRef.current);
-        section4Data.append("body_build", JSON.stringify(formData.body_build));
-        section4Data.append("complexion", JSON.stringify(formData.complexion));
-        section4Data.append("skin_nature", JSON.stringify(formData.skin_nature));
-        section4Data.append("hair_nature", JSON.stringify(formData.hair_nature));
-        section4Data.append("premature_greying_or_balding", JSON.stringify(formData.premature_greying_or_balding));
-        section4Data.append("joint_characteristics", JSON.stringify(formData.joint_characteristics));
-        section4Data.append("veins_and_tendons", JSON.stringify(formData.veins_and_tendons));
-        section4Data.append("body_temperature", JSON.stringify(formData.body_temperature));
-        section4Data.append("temperature_preference", JSON.stringify(formData.temperature_preference));
-        section4Data.append("eyes", JSON.stringify(formData.eyes));
-        section4Data.append("teeth_and_gums", JSON.stringify(formData.teeth_and_gums));
-        section4Data.append("voice_nature", JSON.stringify(formData.voice_nature));
-        section4Data.append("appetite", JSON.stringify(formData.appetite));
-        section4Data.append("taste_preference", JSON.stringify(formData.taste_preference));
-        section4Data.append("sweating", JSON.stringify(formData.sweating));
-        section4Data.append("bowel_habits", JSON.stringify(formData.bowel_habits));
-        section4Data.append("urination", JSON.stringify(formData.urination));
-        section4Data.append("sleep", JSON.stringify(formData.sleep));
-        section4Data.append("memory", JSON.stringify(formData.memory));
-        section4Data.append("psychological_state", JSON.stringify(formData.psychological_state));
-        section4Data.append("additional_clinical_information", formData.additional_clinical_information);
+        const section4Data = {
+          consult_id: consultIdRef.current,
+          body_build: formData.body_build,
+          complexion: formData.complexion,
+          skin_nature: formData.skin_nature,
+          hair_nature: formData.hair_nature,
+          premature_greying_or_balding: formData.premature_greying_or_balding,
+          joint_characteristics: formData.joint_characteristics,
+          veins_and_tendons: formData.veins_and_tendons,
+          body_temperature: formData.body_temperature,
+          temperature_preference: formData.temperature_preference,
+          eyes: formData.eyes,
+          teeth_and_gums: formData.teeth_and_gums,
+          voice_nature: formData.voice_nature,
+          appetite: formData.appetite,
+          taste_preference: formData.taste_preference,
+          sweating: formData.sweating,
+          bowel_habits: formData.bowel_habits,
+          urination: formData.urination,
+          memory: formData.memory,
+          sleep: formData.sleep,
+          psychological_state: formData.psychological_state,
+          additional_clinical_information: formData.additional_clinical_information,
+        };
 
-        // Log FormData contents properly
+        // Log JSON data
         console.log("\n📤 SUBMITTING SECTION 4 DATA:");
-        for (let [key, value] of section4Data.entries()) {
-          console.log(`   ${key}: ${value}`);
-        }
+        console.log(JSON.stringify(section4Data, null, 2));
         
         const response = await axios.post(API_URL_SECTION4, section4Data, {
           headers: {
-            "Content-Type": "multipart/form-data",
+            "Content-Type": "application/json",
           },
         });
         console.log("\n✅ SECTION 4 API RESPONSE RECEIVED:");
@@ -1950,14 +2074,14 @@ function ConsultNow() {
         // Mark section 4 as completed
         setCompletedSteps((prev) => [...prev, 4]);
 
-        // Auto navigate to review step after a short delay
-        console.log("🔄 Navigating to review step (step 5)...");
-        setTimeout(() => {
-          setCurrentStep(5);
-          // Clear message after navigation
-          setSubmitMessage("");
-        }, 2000);
-      } catch (error) {
+         // Auto navigate to legal consent step after a short delay
+         console.log("🔄 Navigating to legal consent step (step 5)...");
+         setTimeout(() => {
+           setCurrentStep(5);
+           // Clear message after navigation
+           setSubmitMessage("");
+         }, 2000);
+       } catch (error) {
         console.error("Error submitting Section 4:", error);
 
         // Handle error
@@ -1974,12 +2098,11 @@ function ConsultNow() {
                 errorMessages.push(`${field}: ${error.response.data[field]}`);
               }
 
-              if (field === "email") {
-                setErrors((prev) => ({
-                  ...prev,
-                  [field]: error.response.data[field],
-                }));
-              }
+              // Set field-specific errors for all fields
+              setErrors((prev) => ({
+                ...prev,
+                [field]: error.response.data[field],
+              }));
             }
             errorMessage = `Error: ${errorMessages.join("; ")}`;
           } else {
@@ -1995,6 +2118,26 @@ function ConsultNow() {
       } finally {
         setIsSubmitting(false);
       }
+    } else if (currentStep === 5) {
+      console.log("\n📋 SECTION 5 (CONSENT) - CHECKING CONSENT:");
+      console.log("=".repeat(80));
+      
+      // Validate that consent is given
+      if (!consentGiven) {
+        setErrors(prev => ({
+          ...prev,
+          consentGiven: "Please confirm that all information provided is true and complete"
+        }));
+        return;
+      }
+
+      console.log("✅ Consent confirmed! Navigating to review step...");
+      
+      // Mark section 5 as completed
+      setCompletedSteps((prev) => [...prev, 5]);
+      
+      // Navigate to review step (step 6)
+      setCurrentStep(6);
     }
   };
 
@@ -2009,7 +2152,7 @@ function ConsultNow() {
       <h5 className="">SECTION 2 — PRIMARY HEALTH CONCERN</h5>
 
       {/* DEBUG: Show consult_id status */}
-      <div className="alert alert-info" style={{ marginBottom: "20px" }}>
+      {/* <div className="alert alert-info" style={{ marginBottom: "20px" }}>
         <strong>Consultation Status:</strong>{" "}
         {consultIdRef.current ? (
           <span style={{ color: "green" }}>
@@ -2020,7 +2163,7 @@ function ConsultNow() {
             ✗ Consultation ID NOT loaded - Data may still be loading...
           </span>
         )}
-      </div>
+      </div> */}
 
       <div className="row mt-3">
         {/* Hidden field for consult_id */}
@@ -2033,7 +2176,7 @@ function ConsultNow() {
         />
 
         <h3>Chief Complaint</h3>
-        <div className="col-lg-4 mb-3 col-md-4 col-sm-12">
+        <div className="col-lg-6 mb-3 col-md-4 col-sm-12">
           <label htmlFor="main_disease_problem" className="form-label">
             Main disease/problem with duration{" "}
             <span className="text-danger">*</span>
@@ -2046,6 +2189,7 @@ function ConsultNow() {
             onChange={handleInputChange}
             rows="3"
             placeholder="e.g., Type 2 Diabetes for 5 years"
+            required
           ></textarea>
           {errors.main_disease_problem && (
             <div className="invalid-feedback">
@@ -2053,7 +2197,7 @@ function ConsultNow() {
             </div>
           )}
         </div>
-        <div className="col-lg-4 mb-4 col-md-6 col-sm-12">
+        <div className="col-lg-6 mb-4 col-md-6 col-sm-12">
           <label htmlFor="associated_complications" className="form-label">
             Associated complications or conditions
           </label>
@@ -2073,7 +2217,7 @@ function ConsultNow() {
           )}
         </div>
         <h3>History of Present Illness</h3>
-        <div className="col-lg-4 mb-3 col-md-4 col-sm-12">
+        <div className="col-lg-6 mb-3 col-md-4 col-sm-12">
           <label htmlFor="mode_of_onset" className="form-label">
             Mode of Onset <span className="text-danger">*</span>
           </label>
@@ -2083,6 +2227,7 @@ function ConsultNow() {
             name="mode_of_onset"
             value={formData.mode_of_onset}
             onChange={handleInputChange}
+            required
           >
             <option value="">Select Mode</option>
             <option value="gradual">Gradual</option>
@@ -2093,7 +2238,7 @@ function ConsultNow() {
           )}
         </div>
 
-        <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
+        <div className="col-lg-6 mb-3 col-md-6 col-sm-12">
           <label htmlFor="problem_start_description" className="form-label">
             How did the problem start ? <span className="text-danger">*</span>
           </label>
@@ -2105,6 +2250,7 @@ function ConsultNow() {
             onChange={handleInputChange}
             rows="2"
             placeholder="e.g., Started with frequent urination and fatigue"
+            required
           ></textarea>
           {errors.problem_start_description && (
             <div className="invalid-feedback">
@@ -2125,6 +2271,7 @@ function ConsultNow() {
             onChange={handleInputChange}
             rows="2"
             placeholder="e.g., Symptoms gradually worsened over 2 years"
+            required
           ></textarea>
           {errors.progression_over_time && (
             <div className="invalid-feedback">
@@ -2338,6 +2485,7 @@ function ConsultNow() {
             value={formData.diagnosing_doctor_name}
             onChange={handleInputChange}
             placeholder="e.g., Dr. Amit Sharma"
+            required
           />
           {errors.diagnosing_doctor_name && (
             <div className="invalid-feedback">
@@ -2357,6 +2505,7 @@ function ConsultNow() {
             value={formData.hospital_clinic_name}
             onChange={handleInputChange}
             placeholder="e.g., City Care Hospital"
+            required
           />
           {errors.hospital_clinic_name && (
             <div className="invalid-feedback">
@@ -2376,6 +2525,7 @@ function ConsultNow() {
             value={formData.city}
             onChange={handleInputChange}
             placeholder="e.g., Delhi"
+            required
           />
           {errors.city && <div className="invalid-feedback">{errors.city}</div>}
         </div>
@@ -2391,6 +2541,7 @@ function ConsultNow() {
             value={formData.date_of_diagnosis}
             onChange={handleInputChange}
             max={todayDate}
+            required
           />
           {errors.date_of_diagnosis && (
             <div className="invalid-feedback">{errors.date_of_diagnosis}</div>
@@ -2400,16 +2551,36 @@ function ConsultNow() {
           <label htmlFor="medical_reports" className="form-label">
             Medical Reports
           </label>
+          {/* Show view button if medical reports file path exists */}
+          {typeof formData.medical_reports === "string" && formData.medical_reports && (
+            <div className="mb-2">
+              <a
+                href={getMedicalReportsUrl(formData.medical_reports)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-sm btn-outline-primary"
+              >
+                <FaEye className="me-1" /> View Medical Reports
+              </a>
+            </div>
+          )}
+          {/* File input */}
           <input
             type="file"
             className={`form-control ${errors.medical_reports ? "is-invalid" : ""}`}
             id="medical_reports"
             name="medical_reports"
             onChange={handleInputChange}
-            accept=".pdf,.jpg,.jpeg,.png"
+            accept=".pdf"
           />
           {errors.medical_reports && (
             <div className="invalid-feedback">{errors.medical_reports}</div>
+          )}
+          {/* Show selected file name if a file is selected */}
+          {formData.medical_reports && typeof formData.medical_reports !== "string" && (
+            <div className="mt-2">
+              Selected file: <strong>{formData.medical_reports.name}</strong>
+            </div>
           )}
         </div>
         <div className="col-lg-4 mb-3 col-md-6 col-sm-12 medical-report">
@@ -2434,7 +2605,7 @@ function ConsultNow() {
       <h3 className="step-title">PERSONAL INFORMATION</h3>
 
       {/* Display Consultation Status */}
-      <div className="alert alert-warning mb-4" role="alert">
+      {/* <div className="alert alert-warning mb-4" role="alert">
         <div>
           <strong>Status:</strong>
         </div>
@@ -2446,14 +2617,14 @@ function ConsultNow() {
         <div>
           Email: <code>{formData.email || "(empty)"}</code>
         </div>
-      </div>
+      </div> */}
 
       {/* Display Consultation ID */}
-      {formData.consult_id && (
+      {/* {formData.consult_id && (
         <div className="alert alert-success mb-4" role="alert">
           <strong>✓ Consultation ID Loaded:</strong> {formData.consult_id}
         </div>
-      )}
+      )} */}
 
       <div className="row">
         <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
@@ -2754,7 +2925,7 @@ function ConsultNow() {
   <label htmlFor="habits" className="form-label">
     Habits <span className="text-danger">*</span>
   </label>
-  <div className="p-3 d-flex justify-content-around">
+  <div className="p-3 d-flex justify-content-center gap-3 flex-wrap">
     {[
       { value: "Smoking", label: "Smoking" },
       { value: "Alcohol", label: "Alcohol" },
@@ -2762,82 +2933,64 @@ function ConsultNow() {
       { value: "Drugs", label: "Drugs" },
       { value: "Non-vegetarian diet", label: "Non-vegetarian diet" },
     ].map((option) => (
-      <div key={option.value} className="mb-3">
-        <div className="d-flex justify-content-between align-items-center mb-2">
+      <div key={option.value} className="text-center" style={{ width: '180px' }}>
+        <div className="mb-2">
           <label className="form-check-label fw-medium">
             {option.label}
           </label>
         </div>
         <div className="d-flex gap-3 justify-content-center">
-          <div className="form-check d-flex align-items-center">
-            <input
-              className="form-check-input"
-              type="radio"
-              name={`habits-${option.value}`}
-              id={`habits-${option.value}-yes`}
-              value="Yes"
-              checked={formData.habits[option.value] === "Yes"}
-              onChange={(e) => {
-                setFormData((prev) => ({
-                  ...prev,
-                  habits: {
-                    ...prev.habits,
-                    [option.value]: e.target.value,
-                  },
-                }));
-                if (errors.habits) {
-                  setErrors({
-                    ...errors,
-                    habits: "",
-                  });
-                }
-              }}
-            />
-            <label
-              className="form-check-label ms-2"
-              htmlFor={`habits-${option.value}-yes`}
-            >
-              Yes
-            </label>
-          </div>
-          <div className="form-check d-flex align-items-center">
-            <input
-              className="form-check-input"
-              type="radio"
-              name={`habits-${option.value}`}
-              id={`habits-${option.value}-no`}
-              value="No"
-              checked={formData.habits[option.value] === "No"}
-              onChange={(e) => {
-                setFormData((prev) => ({
-                  ...prev,
-                  habits: {
-                    ...prev.habits,
-                    [option.value]: e.target.value,
-                  },
-                }));
-                if (errors.habits) {
-                  setErrors({
-                    ...errors,
-                    habits: "",
-                  });
-                }
-              }}
-            />
-            <label
-              className="form-check-label ms-2"
-              htmlFor={`habits-${option.value}-no`}
-            >
-              No
-            </label>
-          </div>
+          <Form.Check 
+            type="radio"
+            name={`habits-${option.value}`}
+            id={`habits-${option.value}-yes`}
+            label="Yes"
+            value="Yes"
+            checked={formData.habits[option.value] === "Yes"}
+            onChange={(e) => {
+              setFormData((prev) => ({
+                ...prev,
+                habits: {
+                  ...prev.habits,
+                  [option.value]: e.target.value,
+                },
+              }));
+              if (errors.habits) {
+                setErrors({
+                  ...errors,
+                  habits: "",
+                });
+              }
+            }}
+          />
+          <Form.Check 
+            type="radio"
+            name={`habits-${option.value}`}
+            id={`habits-${option.value}-no`}
+            label="No"
+            value="No"
+            checked={formData.habits[option.value] === "No"}
+            onChange={(e) => {
+              setFormData((prev) => ({
+                ...prev,
+                habits: {
+                  ...prev.habits,
+                  [option.value]: e.target.value,
+                },
+              }));
+              if (errors.habits) {
+                setErrors({
+                  ...errors,
+                  habits: "",
+                });
+              }
+            }}
+          />
         </div>
       </div>
     ))}
   </div>
-  {errors.habits && (
-    <div className="invalid-feedback">{errors.habits}</div>
-  )}
+ 
 </div>
 
         <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
@@ -3063,9 +3216,11 @@ function ConsultNow() {
   const renderPhysicalExamination = () => (
     <div className="consult-form-step">
       <h3 className="step-title">
-        SECTION 4 — AYURVEDIC CONSTITUTION ANALYSIS
+        SECTION 7 — AYURVEDIC CONSTITUTION ANALYSIS
       </h3>
-      <div className="row">
+
+      <div className="row step-4-heading">
+        <h2>(For Prakriti & Dosha Assessment) Body Characteristics</h2>
         <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
           <label htmlFor="body_build" className="form-label">
             Body Build <span className="text-danger">*</span>
@@ -3088,9 +3243,9 @@ function ConsultNow() {
                 aria-labelledby="bodyBuildDropdown"
               >
                 {[
-                  { value: "Lean", label: "Lean" },
-                  { value: "Medium frame", label: "Medium frame" },
-                  { value: "Heavy built", label: "Heavy built" },
+                { value: "Thin", label: "Thin" },
+               { value: "Medium", label: "Medium" },
+               { value: "Well-built", label: "Well-built" }
                 ].map((option) => (
                   <li key={option.value} className="mb-2">
                     <div className="form-check">
@@ -3162,9 +3317,9 @@ function ConsultNow() {
                 aria-labelledby="complexionDropdown"
               >
                 {[
-                  { value: "Fair", label: "Fair" },
-                  { value: "Dusky", label: "Dusky" },
-                  { value: "Dark", label: "Dark" },
+                { value: "Fair", label: "Fair" },
+               { value: "Dusky", label: "Dusky" },
+               { value: "Dark", label: "Dark" }
                 ].map((option) => (
                   <li key={option.value} className="mb-2">
                     <div className="form-check">
@@ -3236,9 +3391,9 @@ function ConsultNow() {
                 aria-labelledby="skinNatureDropdown"
               >
                 {[
-                  { value: "Dry", label: "Dry" },
-                  { value: "Oily", label: "Oily" },
-                  { value: "Normal", label: "Normal" },
+              { value: "Dry", label: "Dry" },
+             { value: "Oily", label: "Oily" },
+                 { value: "Normal", label: "Normal" }
                 ].map((option) => (
                   <li key={option.value} className="mb-2">
                     <div className="form-check">
@@ -3310,12 +3465,10 @@ function ConsultNow() {
                 aria-labelledby="hairNatureDropdown"
               >
                 {[
-                  { value: "Dry", label: "Dry" },
-                  { value: "Frizzy", label: "Frizzy" },
-                  { value: "Oily", label: "Oily" },
-                  { value: "Silky", label: "Silky" },
-                  { value: "Thick", label: "Thick" },
-                  { value: "Thin", label: "Thin" },
+                { value: "Dry", label: "Dry" },
+{ value: "Oily", label: "Oily" },
+{ value: "Thick", label: "Thick" },
+{ value: "Thin", label: "Thin" }
                 ].map((option) => (
                   <li key={option.value} className="mb-2">
                     <div className="form-check">
@@ -3443,6 +3596,7 @@ function ConsultNow() {
             </div>
           )}
         </div>
+        <h2>Physiological Traits</h2>
         <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
           <label htmlFor="joint_characteristics" className="form-label">
             Joint Characteristics <span className="text-danger">*</span>
@@ -3465,10 +3619,10 @@ function ConsultNow() {
                 aria-labelledby="jointCharacteristicsDropdown"
               >
                 {[
-                  { value: "Flexible", label: "Flexible" },
-                  { value: "Stiff", label: "Stiff" },
-                  { value: "Emits sound", label: "Emits sound" },
-                  { value: "Hot to touch", label: "Hot to touch" },
+               { value: "Cracking sounds", label: "Cracking sounds" },
+{ value: "Hot to touch", label: "Hot to touch" },
+{ value: "Soft", label: "Soft" },
+{ value: "Flabby", label: "Flabby" }
                 ].map((option) => (
                   <li key={option.value} className="mb-2">
                     <div className="form-check">
@@ -3545,10 +3699,9 @@ function ConsultNow() {
                 aria-labelledby="veinsAndTendonsDropdown"
               >
                 {[
-                  { value: "Visible veins", label: "Visible veins" },
-                  { value: "Prominent", label: "Prominent" },
-                  { value: "Normal", label: "Normal" },
-                  { value: "Not visible", label: "Not visible" },
+              { value: "Prominent", label: "Prominent" },
+{ value: "Normal", label: "Normal" },
+{ value: "Not visible", label: "Not visible" }
                 ].map((option) => (
                   <li key={option.value} className="mb-2">
                     <div className="form-check">
@@ -3622,9 +3775,9 @@ function ConsultNow() {
                 aria-labelledby="bodyTemperatureDropdown"
               >
                 {[
-                  { value: "Warm", label: "Warm" },
-                  { value: "Cold", label: "Cold" },
-                  { value: "Normal", label: "Normal" },
+                 { value: "Cold", label: "Cold" },
+{ value: "Hot", label: "Hot" },
+{ value: "Normal", label: "Normal" }
                 ].map((option) => (
                   <li key={option.value} className="mb-2">
                     <div className="form-check">
@@ -3698,15 +3851,9 @@ function ConsultNow() {
                 aria-labelledby="temperaturePreferenceDropdown"
               >
                 {[
-                  {
-                    value: "Prefers cold weather",
-                    label: "Prefers cold weather",
-                  },
-                  {
-                    value: "Prefers warm weather",
-                    label: "Prefers warm weather",
-                  },
-                  { value: "Can tolerate both", label: "Can tolerate both" },
+                 { value: "Cannot tolerate cold", label: "Cannot tolerate cold" },
+{ value: "Cannot tolerate heat", label: "Cannot tolerate heat" },
+{ value: "Cannot tolerate both", label: "Cannot tolerate both" }
                 ].map((option) => (
                   <li key={option.value} className="mb-2">
                     <div className="form-check">
@@ -3761,6 +3908,7 @@ function ConsultNow() {
             </div>
           )}
         </div>
+        <h2>Sensory Features</h2>
         <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
           <label htmlFor="eyes" className="form-label">
             Eyes <span className="text-danger">*</span>
@@ -3783,11 +3931,9 @@ function ConsultNow() {
                 aria-labelledby="eyesDropdown"
               >
                 {[
-                  { value: "Brown", label: "Brown" },
-                  { value: "Black", label: "Black" },
-                  { value: "Blue", label: "Blue" },
-                  { value: "Bright", label: "Bright" },
-                  { value: "Dull", label: "Dull" },
+               { value: "Dry", label: "Dry" },
+{ value: "Reddish", label: "Reddish" },
+{ value: "Moist", label: "Moist" }
                 ].map((option) => (
                   <li key={option.value} className="mb-2">
                     <div className="form-check">
@@ -3854,9 +4000,9 @@ function ConsultNow() {
                 aria-labelledby="teethAndGumsDropdown"
               >
                 {[
-                  { value: "Healthy", label: "Healthy" },
-                  { value: "Gum problems", label: "Gum problems" },
-                  { value: "Tooth decay", label: "Tooth decay" },
+                { value: "Regular", label: "Regular" },
+{ value: "Uneven", label: "Uneven" },
+{ value: "Bleeding", label: "Bleeding" }
                 ].map((option) => (
                   <li key={option.value} className="mb-2">
                     <div className="form-check">
@@ -3928,9 +4074,9 @@ function ConsultNow() {
                 aria-labelledby="voiceNatureDropdown"
               >
                 {[
-                  { value: "Soft", label: "Soft" },
-                  { value: "Loud", label: "Loud" },
-                  { value: "Hoarse", label: "Hoarse" },
+                { value: "Talkative", label: "Talkative" },
+{ value: "Feeble", label: "Feeble" },
+{ value: "Balanced", label: "Balanced" }
                 ].map((option) => (
                   <li key={option.value} className="mb-2">
                     <div className="form-check">
@@ -3980,6 +4126,7 @@ function ConsultNow() {
             <div className="invalid-feedback">{errors.voice_nature}</div>
           )}
         </div>
+        <h2>Functional Traits</h2>
         <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
           <label htmlFor="appetite" className="form-label">
             Appetite <span className="text-danger">*</span>
@@ -4002,10 +4149,10 @@ function ConsultNow() {
                 aria-labelledby="appetiteDropdown"
               >
                 {[
-                  { value: "Moderate", label: "Moderate" },
-                  { value: "Robust", label: "Robust" },
-                  { value: "Low", label: "Low" },
-                  { value: "Irregular", label: "Irregular" },
+                 { value: "Irregular", label: "Irregular" },
+{ value: "Robust", label: "Robust" },
+{ value: "Low", label: "Low" },
+{ value: "Normal", label: "Normal" }
                 ].map((option) => (
                   <li key={option.value} className="mb-2">
                     <div className="form-check">
@@ -4077,10 +4224,10 @@ function ConsultNow() {
                 aria-labelledby="tastePreferenceDropdown"
               >
                 {[
-                  { value: "Sweet", label: "Sweet" },
-                  { value: "Salty", label: "Salty" },
-                  { value: "Sour", label: "Sour" },
-                  { value: "Spicy", label: "Spicy" },
+           { value: "Sweet", label: "Sweet" },
+{ value: "Sour", label: "Sour" },
+{ value: "Salty", label: "Salty" },
+{ value: "Spicy", label: "Spicy" }
                 ].map((option) => (
                   <li key={option.value} className="mb-2">
                     <div className="form-check">
@@ -4154,9 +4301,9 @@ function ConsultNow() {
                 aria-labelledby="sweatingDropdown"
               >
                 {[
-                  { value: "Moderate", label: "Moderate" },
-                  { value: "Profuse", label: "Profuse" },
                   { value: "Scanty", label: "Scanty" },
+{ value: "Profuse", label: "Profuse" },
+{ value: "Normal", label: "Normal" }
                 ].map((option) => (
                   <li key={option.value} className="mb-2">
                     <div className="form-check">
@@ -4206,6 +4353,7 @@ function ConsultNow() {
             <div className="invalid-feedback">{errors.sweating}</div>
           )}
         </div>
+        <h2>Excretory Patterns</h2>
         <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
           <label htmlFor="bowel_habits" className="form-label">
             Bowel Habits <span className="text-danger">*</span>
@@ -4228,9 +4376,9 @@ function ConsultNow() {
                 aria-labelledby="bowelHabitsDropdown"
               >
                 {[
-                  { value: "Regular", label: "Regular" },
-                  { value: "Constipated", label: "Constipated" },
-                  { value: "Loose", label: "Loose" },
+                 { value: "Constipation", label: "Constipation" },
+{ value: "Loose", label: "Loose" },
+{ value: "Normal", label: "Normal" }
                 ].map((option) => (
                   <li key={option.value} className="mb-2">
                     <div className="form-check">
@@ -4302,10 +4450,10 @@ function ConsultNow() {
                 aria-labelledby="urinationDropdown"
               >
                 {[
-                  { value: "Normal", label: "Normal" },
-                  { value: "Frequent", label: "Frequent" },
-                  { value: "Scanty", label: "Scanty" },
-                  { value: "Burning", label: "Burning" },
+                 { value: "Painful", label: "Painful" },
+{ value: "Burning", label: "Burning" },
+{ value: "Frequent", label: "Frequent" },
+{ value: "Normal", label: "Normal" }
                 ].map((option) => (
                   <li key={option.value} className="mb-2">
                     <div className="form-check">
@@ -4355,7 +4503,80 @@ function ConsultNow() {
             <div className="invalid-feedback">{errors.urination}</div>
           )}
         </div>
-        <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
+      
+        <h2>Sleep & Memory </h2>
+           <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
+          <label htmlFor="memory" className="form-label">
+            Memory <span className="text-danger">*</span>
+          </label>
+          <div className="dropdown">
+            <button
+              className={`btn btn-outline-secondary dropdown-toggle w-100 text-left ${errors.memory ? "is-invalid" : ""}`}
+              type="button"
+              id="memoryDropdown"
+              onClick={() => setIsDropdownOpen(isDropdownOpen === 'memory' ? null : 'memory')}
+              aria-expanded={isDropdownOpen === 'memory'}
+            >
+              {formData.memory.length > 0
+                ? `${formData.memory.length} option(s) selected`
+                : "Select memory(s)"}
+            </button>
+            {isDropdownOpen === 'memory' && (
+              <ul
+                className="dropdown-menu show w-100 p-2"
+                aria-labelledby="memoryDropdown"
+              >
+                {[
+                  { value: "Insomnia", label: "Insomnia" },
+                  { value: "Moderate", label: "Moderate" },
+                  { value: "Sound", label: "Sound" },
+                ].map((option) => (
+                  <li key={option.value} className="mb-2">
+                    <div className="form-check">
+                      <input
+                        className="form-check-input"
+                        type="checkbox"
+                        id={`memory-${option.value}`}
+                        value={option.value}
+                        checked={formData.memory.includes(option.value)}
+                        onChange={(e) => {
+                          let updatedValues;
+                          if (e.target.checked) {
+                            updatedValues = [...formData.memory, option.value];
+                          } else {
+                            updatedValues = formData.memory.filter(
+                              (d) => d !== option.value,
+                            );
+                          }
+                          setFormData((prev) => ({
+                            ...prev,
+                            memory: updatedValues,
+                          }));
+                          if (errors.memory) {
+                            setErrors({
+                              ...errors,
+                              memory: "",
+                            });
+                          }
+                        }}
+                      />
+                      <label
+                        className="form-check-label"
+                        htmlFor={`memory-${option.value}`}
+                      >
+                        {option.label}
+                      </label>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+          {errors.memory && (
+            <div className="invalid-feedback">{errors.memory}</div>
+          )}
+        </div>
+          <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
           <label htmlFor="sleep" className="form-label">
             Sleep <span className="text-danger">*</span>
           </label>
@@ -4504,89 +4725,19 @@ function ConsultNow() {
             <div className="invalid-feedback">{errors.psychological_state}</div>
           )}
         </div>
-        <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
-          <label htmlFor="memory" className="form-label">
-            Memory <span className="text-danger">*</span>
-          </label>
-          <div className="dropdown">
-            <button
-              className={`btn btn-outline-secondary dropdown-toggle w-100 text-left ${errors.memory ? "is-invalid" : ""}`}
-              type="button"
-              id="memoryDropdown"
-              onClick={() => setIsDropdownOpen(isDropdownOpen === 'memory' ? null : 'memory')}
-              aria-expanded={isDropdownOpen === 'memory'}
-            >
-              {formData.memory.length > 0
-                ? `${formData.memory.length} option(s) selected`
-                : "Select memory(s)"}
-            </button>
-            {isDropdownOpen === 'memory' && (
-              <ul
-                className="dropdown-menu show w-100 p-2"
-                aria-labelledby="memoryDropdown"
-              >
-                {[
-                  { value: "Good", label: "Good" },
-                  { value: "Moderate", label: "Moderate" },
-                  { value: "Poor", label: "Poor" },
-                ].map((option) => (
-                  <li key={option.value} className="mb-2">
-                    <div className="form-check">
-                      <input
-                        className="form-check-input"
-                        type="checkbox"
-                        id={`memory-${option.value}`}
-                        value={option.value}
-                        checked={formData.memory.includes(option.value)}
-                        onChange={(e) => {
-                          let updatedValues;
-                          if (e.target.checked) {
-                            updatedValues = [...formData.memory, option.value];
-                          } else {
-                            updatedValues = formData.memory.filter(
-                              (d) => d !== option.value,
-                            );
-                          }
-                          setFormData((prev) => ({
-                            ...prev,
-                            memory: updatedValues,
-                          }));
-                          if (errors.memory) {
-                            setErrors({
-                              ...errors,
-                              memory: "",
-                            });
-                          }
-                        }}
-                      />
-                      <label
-                        className="form-check-label"
-                        htmlFor={`memory-${option.value}`}
-                      >
-                        {option.label}
-                      </label>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-          {errors.memory && (
-            <div className="invalid-feedback">{errors.memory}</div>
-          )}
-        </div>
+     
         <div className="col-lg-12 mb-3">
           <label
             htmlFor="additional_clinical_information"
             className="form-label"
           >
-            Additional Clinical Information
+          Additional Clinical Information
           </label>
           <textarea
             className={`form-control ${errors.additional_clinical_information ? "is-invalid" : ""}`}
             id="additional_clinical_information"
             name="additional_clinical_information"
-            value={formData.additional_clinical_information}
+            value={formData.additional_clinical_information} placeholder="Please mention anything else relevant to your health condition"
             onChange={handleInputChange}
             rows="3"
           ></textarea>
@@ -4595,6 +4746,37 @@ function ConsultNow() {
               {errors.additional_clinical_information}
             </div>
           )}
+        </div>
+      </div>
+    </div>
+  );
+
+  // Render Legal Consent Step
+  const renderConsent = () => (
+    <div className="consult-form-step">
+      <h3 className="step-title">Legal Consent & Declaration</h3>
+      <div className="consent-section">
+        <div className="row">
+          <div className="col-12 mb-4">
+            <h5 className="sub-title">SECTION 9 — LEGAL CONSENT & DECLARATION</h5>
+            <div className="form-check mb-3">
+              <input
+                type="checkbox"
+                className="form-check-input"
+                id="consentCheckbox"
+                checked={consentGiven}
+                onChange={(e) => setConsentGiven(e.target.checked)}
+              />
+              <label className="form-check-label" for="consentCheckbox">
+                I confirm that all information provided is true and complete. Ayurvedic treatment is individualized and depends on disease stage, constitution, and compliance. No cure or specific outcome can be guaranteed. I will not discontinue ongoing medical treatment without consulting my physician. Online consultation has limitations due to absence of physical examination.
+              </label>
+            </div>
+            {errors.consentGiven && (
+              <div className="invalid-feedback d-block">
+                {errors.consentGiven}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
@@ -4967,9 +5149,371 @@ function ConsultNow() {
     </div>
   );
 
+  // Render Previous Reports tab
+  const renderPreviousReports = () => (
+    <div className="consult-form-step">
+      <h3 className="step-title">Previous Reports</h3>
+      
+      {isLoadingReports ? (
+        <div className="alert alert-info" role="alert">
+          ⏳ Loading previous reports...
+        </div>
+      ) : previousReports.length === 0 ? (
+        <div className="alert alert-warning" role="alert">
+          No previous reports found. Please start a new consultation.
+        </div>
+      ) : (
+        <div className="previous-reports-list">
+          <h5 className="sub-title mb-3">Your Consultation History</h5>
+          <div className="row">
+            {previousReports.map((report, index) => (
+              <div key={index} className="col-md-6 mb-4">
+                <div className="card">
+                  <div className="card-header bg-primary text-white">
+                    {/* <h6 className="mb-0">
+                      Consultation #{report.consult_id || index + 1}
+                    </h6> */}
+                    <small className="text-white">
+                      Date: {new Date(report.created_at || report.createdAt).toLocaleDateString()}
+                    </small>
+                  </div>
+                  <div className="card-body">
+                    <div className="report-details">
+                      <p>
+                        <strong>Patient:</strong> {report.full_name || "N/A"}
+                      </p>
+                      <p>
+                        <strong>Date of Birth:</strong> {report.date_of_birth || "N/A"}
+                      </p>
+                      <p>
+                        <strong>Gender:</strong> {report.gender || "N/A"}
+                      </p>
+                      <p>
+                        <strong>Email:</strong> {report.email || "N/A"}
+                      </p>
+                      {report.section2 && report.section2.length > 0 && (
+                        <p>
+                          <strong>Main Complaint:</strong> {report.section2[0].main_disease_problem || "N/A"}
+                        </p>
+                      )}
+                      <div className="d-flex gap-2 mt-3">
+                        <button
+                          type="button"
+                          className="btn btn-primary btn-sm"
+                          onClick={() => setSelectedReport(report)}
+                        >
+                          View Details
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Report Details Modal */}
+      {selectedReport && (
+        <div className="modal show d-block" tabIndex="-1" role="dialog">
+          <div className="modal-dialog modal-xl" role="document">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">
+                  Consultation ID: {selectedReport.consult_id || "N/A"}
+                </h5>
+                <button
+                  type="button"
+                  className="btn-close"
+                  onClick={() => setSelectedReport(null)}
+                ></button>
+              </div>
+              <div className="modal-body">
+                <div className="row">
+                  <div className="col-12 mb-4">
+                    <h6 className="sub-title">Personal Information</h6>
+                    <table className="table table-bordered table-sm">
+                      <tbody>
+                        <tr>
+                          <td><strong>Name:</strong></td>
+                          <td>{selectedReport.full_name || "N/A"}</td>
+                          <td><strong>Date of Birth:</strong></td>
+                          <td>{selectedReport.date_of_birth || "N/A"}</td>
+                        </tr>
+                        <tr>
+                          <td><strong>Gender:</strong></td>
+                          <td>{selectedReport.gender || "N/A"}</td>
+                          <td><strong>Email:</strong></td>
+                          <td>{selectedReport.email || "N/A"}</td>
+                        </tr>
+                        <tr>
+                          <td><strong>Height:</strong></td>
+                          <td>{selectedReport.height || "N/A"}</td>
+                          <td><strong>Weight:</strong></td>
+                          <td>{selectedReport.weight || "N/A"}</td>
+                        </tr>
+                        <tr>
+                          <td><strong>Occupation:</strong></td>
+                          <td>{selectedReport.occupation || "N/A"}</td>
+                          <td><strong>Marital Status:</strong></td>
+                          <td>{selectedReport.marital_status || "N/A"}</td>
+                        </tr>
+                        <tr>
+                          <td><strong>Mobile Number:</strong></td>
+                          <td>{selectedReport.mobile_number || "N/A"}</td>
+                          <td><strong>Alternate Number:</strong></td>
+                          <td>{selectedReport.alternate_number || "N/A"}</td>
+                        </tr>
+                        <tr>
+                          <td><strong>Address:</strong></td>
+                          <td colSpan={3}>{selectedReport.address || "N/A"}</td>
+                        </tr>
+                        <tr>
+                          <td><strong>City:</strong></td>
+                          <td>{selectedReport.city || "N/A"}</td>
+                          <td><strong>PIN Code:</strong></td>
+                          <td>{selectedReport.pin || "N/A"}</td>
+                        </tr>
+                        <tr>
+                          <td><strong>State:</strong></td>
+                          <td>{selectedReport.state || "N/A"}</td>
+                          <td><strong>Country:</strong></td>
+                          <td>{selectedReport.country || "N/A"}</td>
+                        </tr>
+                        <tr>
+                          <td><strong>References:</strong></td>
+                          <td colSpan={3}>{selectedReport.references || "N/A"}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  
+                  {selectedReport.section2 && selectedReport.section2.length > 0 && (
+                    <div className="col-12 mb-4">
+                      <h6 className="sub-title">Primary Health Concern</h6>
+                      <table className="table table-bordered table-sm">
+                        <tbody>
+                          <tr>
+                            <td><strong>Main Problem:</strong></td>
+                            <td colSpan={3}>{selectedReport.section2[0].main_disease_problem || "N/A"}</td>
+                          </tr>
+                          <tr>
+                            <td><strong>Associated Complications:</strong></td>
+                            <td colSpan={3}>{selectedReport.section2[0].associated_complications || "N/A"}</td>
+                          </tr>
+                          <tr>
+                            <td><strong>Mode of Onset:</strong></td>
+                            <td>{selectedReport.section2[0].mode_of_onset || "N/A"}</td>
+                            <td><strong>Date of Diagnosis:</strong></td>
+                            <td>{selectedReport.section2[0].date_of_diagnosis || "N/A"}</td>
+                          </tr>
+                          <tr>
+                            <td><strong>Problem Start Description:</strong></td>
+                            <td colSpan={3}>{selectedReport.section2[0].problem_start_description || "N/A"}</td>
+                          </tr>
+                          <tr>
+                            <td><strong>Progression Over Time:</strong></td>
+                            <td colSpan={3}>{selectedReport.section2[0].progression_over_time || "N/A"}</td>
+                          </tr>
+                          <tr>
+                            <td><strong>Significant Health Events:</strong></td>
+                            <td colSpan={3}>{selectedReport.section2[0].significant_health_events || "N/A"}</td>
+                          </tr>
+                          <tr>
+                            <td><strong>Past Medications:</strong></td>
+                            <td colSpan={3}>{selectedReport.section2[0].past_medications || "N/A"}</td>
+                          </tr>
+                          <tr>
+                            <td><strong>Medical History:</strong></td>
+                            <td colSpan={3}>{selectedReport.section2[0].medical_history || "N/A"}</td>
+                          </tr>
+                          <tr>
+                            <td><strong>Hospitalizations:</strong></td>
+                            <td colSpan={3}>{selectedReport.section2[0].hospitalizations || "N/A"}</td>
+                          </tr>
+                          <tr>
+                            <td><strong>Surgeries:</strong></td>
+                            <td colSpan={3}>{selectedReport.section2[0].surgeries || "N/A"}</td>
+                          </tr>
+                          <tr>
+                            <td><strong>Accidents:</strong></td>
+                            <td colSpan={3}>{selectedReport.section2[0].accidents || "N/A"}</td>
+                          </tr>
+                          <tr>
+                            <td><strong>Disease History:</strong></td>
+                            <td colSpan={3}>{Array.isArray(selectedReport.section2[0].disease_history) ? selectedReport.section2[0].disease_history.join(", ") : selectedReport.section2[0].disease_history || "N/A"}</td>
+                          </tr>
+                          <tr>
+                            <td><strong>Other Chronic Diseases:</strong></td>
+                            <td colSpan={3}>{selectedReport.section2[0].other_chronic_disease || "N/A"}</td>
+                          </tr>
+                          <tr>
+                            <td><strong>Diagnosing Doctor:</strong></td>
+                            <td>{selectedReport.section2[0].diagnosing_doctor_name || "N/A"}</td>
+                            <td><strong>Hospital/Clinic:</strong></td>
+                            <td>{selectedReport.section2[0].hospital_clinic_name || "N/A"}</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+
+                  {selectedReport.section3 && selectedReport.section3.length > 0 && (
+                    <div className="col-12 mb-4">
+                      <h6 className="sub-title">Lifestyle Assessment</h6>
+                      <table className="table table-bordered table-sm">
+                        <tbody>
+                          <tr>
+                            <td><strong>Type of Exercise:</strong></td>
+                            <td>{selectedReport.section3[0].type_of_exercise || "N/A"}</td>
+                            <td><strong>Frequency:</strong></td>
+                            <td>{selectedReport.section3[0].frequency || "N/A"}</td>
+                          </tr>
+                          <tr>
+                            <td><strong>Mental Workload:</strong></td>
+                            <td>{selectedReport.section3[0].mental_workload || "N/A"}</td>
+                            <td><strong>Stress Levels:</strong></td>
+                            <td>{selectedReport.section3[0].stress_levels || "N/A"}</td>
+                          </tr>
+                          <tr>
+                            <td><strong>Social Interaction Level:</strong></td>
+                            <td>{selectedReport.section3[0].social_interaction_level || "N/A"}</td>
+                            <td><strong>Number of Pregnancies:</strong></td>
+                            <td>{selectedReport.section3[0].number_of_pregnancies || "N/A"}</td>
+                          </tr>
+                          <tr>
+                            <td><strong>Number of Living Children:</strong></td>
+                            <td>{selectedReport.section3[0].number_of_living_children || "N/A"}</td>
+                            <td><strong>Mode of Delivery:</strong></td>
+                            <td>{selectedReport.section3[0].mode_of_delivery || "N/A"}</td>
+                          </tr>
+                          <tr>
+                            <td><strong>Menstrual History:</strong></td>
+                            <td colSpan={3}>{selectedReport.section3[0].menstrual_history || "N/A"}</td>
+                          </tr>
+                          <tr>
+                            <td><strong>Gynecological Surgery:</strong></td>
+                            <td colSpan={3}>{selectedReport.section3[0].gynaecological_surgery || "N/A"}</td>
+                          </tr>
+                          <tr>
+                            <td><strong>Habits:</strong></td>
+                            <td colSpan={3}>
+                              {(() => {
+                                const habits = selectedReport.section3[0].habits;
+                                if (Array.isArray(habits)) {
+                                  return habits.join(", ");
+                                } else if (typeof habits === "object" && habits !== null) {
+                                  return Object.entries(habits)
+                                    .filter(([_, value]) => value === "Yes")
+                                    .map(([key]) => key)
+                                    .join(", ");
+                                }
+                                return "N/A";
+                              })()}
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+
+                  {selectedReport.section4 && selectedReport.section4.length > 0 && (
+                    <div className="col-12 mb-4">
+                      <h6 className="sub-title">Ayurvedic Constitution Analysis</h6>
+                      <table className="table table-bordered table-sm">
+                        <tbody>
+                          <tr>
+                            <td><strong>Body Build:</strong></td>
+                            <td>{Array.isArray(selectedReport.section4[0].body_build) ? selectedReport.section4[0].body_build.join(", ") : selectedReport.section4[0].body_build || "N/A"}</td>
+                            <td><strong>Complexion:</strong></td>
+                            <td>{Array.isArray(selectedReport.section4[0].complexion) ? selectedReport.section4[0].complexion.join(", ") : selectedReport.section4[0].complexion || "N/A"}</td>
+                          </tr>
+                          <tr>
+                            <td><strong>Skin Nature:</strong></td>
+                            <td>{Array.isArray(selectedReport.section4[0].skin_nature) ? selectedReport.section4[0].skin_nature.join(", ") : selectedReport.section4[0].skin_nature || "N/A"}</td>
+                            <td><strong>Hair Nature:</strong></td>
+                            <td>{Array.isArray(selectedReport.section4[0].hair_nature) ? selectedReport.section4[0].hair_nature.join(", ") : selectedReport.section4[0].hair_nature || "N/A"}</td>
+                          </tr>
+                          <tr>
+                            <td><strong>Premature Greying/Balding:</strong></td>
+                            <td>{Array.isArray(selectedReport.section4[0].premature_greying_or_balding) ? selectedReport.section4[0].premature_greying_or_balding.join(", ") : selectedReport.section4[0].premature_greying_or_balding || "N/A"}</td>
+                            <td><strong>Joint Characteristics:</strong></td>
+                            <td>{Array.isArray(selectedReport.section4[0].joint_characteristics) ? selectedReport.section4[0].joint_characteristics.join(", ") : selectedReport.section4[0].joint_characteristics || "N/A"}</td>
+                          </tr>
+                          <tr>
+                            <td><strong>Veins & Tendons:</strong></td>
+                            <td>{Array.isArray(selectedReport.section4[0].veins_and_tendons) ? selectedReport.section4[0].veins_and_tendons.join(", ") : selectedReport.section4[0].veins_and_tendons || "N/A"}</td>
+                            <td><strong>Body Temperature:</strong></td>
+                            <td>{Array.isArray(selectedReport.section4[0].body_temperature) ? selectedReport.section4[0].body_temperature.join(", ") : selectedReport.section4[0].body_temperature || "N/A"}</td>
+                          </tr>
+                          <tr>
+                            <td><strong>Temperature Preference:</strong></td>
+                            <td>{Array.isArray(selectedReport.section4[0].temperature_preference) ? selectedReport.section4[0].temperature_preference.join(", ") : selectedReport.section4[0].temperature_preference || "N/A"}</td>
+                            <td><strong>Eyes:</strong></td>
+                            <td>{Array.isArray(selectedReport.section4[0].eyes) ? selectedReport.section4[0].eyes.join(", ") : selectedReport.section4[0].eyes || "N/A"}</td>
+                          </tr>
+                          <tr>
+                            <td><strong>Teeth & Gums:</strong></td>
+                            <td>{Array.isArray(selectedReport.section4[0].teeth_and_gums) ? selectedReport.section4[0].teeth_and_gums.join(", ") : selectedReport.section4[0].teeth_and_gums || "N/A"}</td>
+                            <td><strong>Voice Nature:</strong></td>
+                            <td>{Array.isArray(selectedReport.section4[0].voice_nature) ? selectedReport.section4[0].voice_nature.join(", ") : selectedReport.section4[0].voice_nature || "N/A"}</td>
+                          </tr>
+                          <tr>
+                            <td><strong>Appetite:</strong></td>
+                            <td>{Array.isArray(selectedReport.section4[0].appetite) ? selectedReport.section4[0].appetite.join(", ") : selectedReport.section4[0].appetite || "N/A"}</td>
+                            <td><strong>Taste Preference:</strong></td>
+                            <td>{Array.isArray(selectedReport.section4[0].taste_preference) ? selectedReport.section4[0].taste_preference.join(", ") : selectedReport.section4[0].taste_preference || "N/A"}</td>
+                          </tr>
+                          <tr>
+                            <td><strong>Sweating:</strong></td>
+                            <td>{Array.isArray(selectedReport.section4[0].sweating) ? selectedReport.section4[0].sweating.join(", ") : selectedReport.section4[0].sweating || "N/A"}</td>
+                            <td><strong>Bowel Habits:</strong></td>
+                            <td>{Array.isArray(selectedReport.section4[0].bowel_habits) ? selectedReport.section4[0].bowel_habits.join(", ") : selectedReport.section4[0].bowel_habits || "N/A"}</td>
+                          </tr>
+                          <tr>
+                            <td><strong>Urination:</strong></td>
+                            <td>{Array.isArray(selectedReport.section4[0].urination) ? selectedReport.section4[0].urination.join(", ") : selectedReport.section4[0].urination || "N/A"}</td>
+                            <td><strong>Sleep:</strong></td>
+                            <td>{Array.isArray(selectedReport.section4[0].sleep) ? selectedReport.section4[0].sleep.join(", ") : selectedReport.section4[0].sleep || "N/A"}</td>
+                          </tr>
+                          <tr>
+                            <td><strong>Memory:</strong></td>
+                            <td>{Array.isArray(selectedReport.section4[0].memory) ? selectedReport.section4[0].memory.join(", ") : selectedReport.section4[0].memory || "N/A"}</td>
+                            <td><strong>Psychological State:</strong></td>
+                            <td>{Array.isArray(selectedReport.section4[0].psychological_state) ? selectedReport.section4[0].psychological_state.join(", ") : selectedReport.section4[0].psychological_state || "N/A"}</td>
+                          </tr>
+                          <tr>
+                            <td><strong>Additional Clinical Information:</strong></td>
+                            <td colSpan={3}>{selectedReport.section4[0].additional_clinical_information || "N/A"}</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={() => setSelectedReport(null)}
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+
   // Render step based on currentStep
   const renderStep = () => {
     switch (currentStep) {
+      case 0:
+        return renderPreviousReports();
       case 1:
         return renderPersonalInfo();
       case 2:
@@ -4979,6 +5523,8 @@ function ConsultNow() {
       case 4:
         return renderPhysicalExamination();
       case 5:
+        return renderConsent();
+      case 6:
         return renderReview();
       default:
         return renderPersonalInfo();
@@ -5001,12 +5547,29 @@ function ConsultNow() {
 
       <div className="row">
         <div className="ayur-bgcover ayur-about-sec">
-          <div className="container fluid about-us">
+          <div className="container fluid">
             <div className="consult-form-container">
               <div className="step-indicator mb-4">
                 <div className="d-flex justify-content-between">
                   <div
+                    className={`step ${currentStep === 0 ? "active" : ""}`}
+                    onClick={() => setCurrentStep(0)}
+                  >
+                    <div className="step-number">
+                      📄
+                    </div>
+                    <span>Previous Reports</span>
+                  </div>
+                  <div
                     className={`step ${currentStep >= 1 ? "active" : ""} ${completedSteps.includes(1) ? "completed" : ""}`}
+                    onClick={() => {
+                      if (currentStep === 0) {
+                        setCurrentStep(1);
+                      } else if (currentStep >= 1) {
+                        // Can navigate to step 1 from any higher step
+                        setCurrentStep(1);
+                      }
+                    }}
                   >
                     <div className="step-number">
                       {completedSteps.includes(1) ? <FaCheck /> : "1"}
@@ -5015,6 +5578,11 @@ function ConsultNow() {
                   </div>
                   <div
                     className={`step ${currentStep >= 2 ? "active" : ""} ${completedSteps.includes(2) ? "completed" : ""}`}
+                    onClick={() => {
+                      if (completedSteps.includes(1)) {
+                        setCurrentStep(2);
+                      }
+                    }}
                   >
                     <div className="step-number">
                       {completedSteps.includes(2) ? <FaCheck /> : "2"}
@@ -5023,6 +5591,11 @@ function ConsultNow() {
                   </div>
                   <div
                     className={`step ${currentStep >= 3 ? "active" : ""} ${completedSteps.includes(3) ? "completed" : ""}`}
+                    onClick={() => {
+                      if (completedSteps.includes(2)) {
+                        setCurrentStep(3);
+                      }
+                    }}
                   >
                     <div className="step-number">
                       {completedSteps.includes(3) ? <FaCheck /> : "3"}
@@ -5031,6 +5604,11 @@ function ConsultNow() {
                   </div>
                   <div
                     className={`step ${currentStep >= 4 ? "active" : ""} ${completedSteps.includes(4) ? "completed" : ""}`}
+                    onClick={() => {
+                      if (completedSteps.includes(3)) {
+                        setCurrentStep(4);
+                      }
+                    }}
                   >
                     <div className="step-number">
                       {completedSteps.includes(4) ? <FaCheck /> : "4"}
@@ -5039,9 +5617,27 @@ function ConsultNow() {
                   </div>
                   <div
                     className={`step ${currentStep >= 5 ? "active" : ""} ${completedSteps.includes(5) ? "completed" : ""}`}
+                    onClick={() => {
+                      if (completedSteps.includes(4)) {
+                        setCurrentStep(5);
+                      }
+                    }}
                   >
                     <div className="step-number">
                       {completedSteps.includes(5) ? <FaCheck /> : "5"}
+                    </div>
+                    <span>Legal Consent</span>
+                  </div>
+                  <div
+                    className={`step ${currentStep >= 6 ? "active" : ""} ${completedSteps.includes(6) ? "completed" : ""}`}
+                    onClick={() => {
+                      if (completedSteps.includes(5)) {
+                        setCurrentStep(6);
+                      }
+                    }}
+                  >
+                    <div className="step-number">
+                      {completedSteps.includes(6) ? <FaCheck /> : "6"}
                     </div>
                     <span>Preview</span>
                   </div>
@@ -5058,7 +5654,7 @@ function ConsultNow() {
               )}
 
               {/* Always show form if there's an error or if no submission yet */}
-              {!submitMessage || submitMessage.includes("Error") ? (
+              {!formSubmitted && (!submitMessage || submitMessage.includes("Error")) ? (
                 <form onSubmit={handleSubmit}>
                   {renderStep()}
 
@@ -5070,42 +5666,73 @@ function ConsultNow() {
                   )}
 
                   <div className="form-navigation mt-4 d-flex justify-content-between">
-                    {currentStep > 1 && (
-                      <button
-                        type="button"
-                        className="btn btn-secondary"
-                        onClick={prevStep}
-                        disabled={isSubmitting || isLoadingConsultData}
-                      >
-                        <FaArrowLeft className="me-2" />
-                        Previous
-                      </button>
-                    )}
+                    {/* Show navigation only if not on Previous Reports tab */}
+                    {currentStep !== 0 && (
+                      <>
+                        {currentStep > 1 && (
+                          <button
+                            type="button"
+                            className="btn btn-secondary"
+                            onClick={prevStep}
+                            disabled={isSubmitting || isLoadingConsultData}
+                          >
+                            <FaArrowLeft className="me-2" />
+                            Previous
+                          </button>
+                        )}
 
-                    {currentStep < 5 && (
+                        {currentStep < 5 && (
+                          <button
+                            type="button"
+                            className="btn btn-primary ms-auto"
+                            onClick={nextStep}
+                            disabled={
+                              isSubmitting ||
+                              (currentStep === 1 && isLoadingConsultData)
+                            }
+                          >
+                            {isLoadingConsultData ? "⏳ Loading Data..." : "Next"}
+                            {!isLoadingConsultData && (
+                              <FaArrowRight className="ms-2" />
+                            )}
+                          </button>
+                        )}
+
+                        {currentStep === 5 && (
+                          <button
+                            type="button"
+                            className="btn btn-primary ms-auto"
+                            onClick={nextStep}
+                            disabled={isSubmitting}
+                          >
+                            Confirm & Continue
+                            <FaArrowRight className="ms-2" />
+                          </button>
+                        )}
+
+                        {currentStep === 6 && (
+                          <button
+                            type="button"
+                            className="btn btn-primary ms-auto"
+                            onClick={() => window.print()}
+                            disabled={isSubmitting}
+                          >
+                            <FaEye className="me-2" />
+                            Preview & Print
+                          </button>
+                        )}
+                      </>
+                    )}
+                    
+                    {/* Show button to start new consultation when on Previous Reports tab */}
+                    {currentStep === 0 && previousReports.length > 0 && (
                       <button
                         type="button"
                         className="btn btn-primary ms-auto"
-                        onClick={nextStep}
-                        disabled={
-                          isSubmitting ||
-                          (currentStep === 1 && isLoadingConsultData)
-                        }
+                        onClick={() => setCurrentStep(1)}
                       >
-                        {isLoadingConsultData ? "⏳ Loading Data..." : "Next"}
-                        {!isLoadingConsultData && (
-                          <FaArrowRight className="ms-2" />
-                        )}
-                      </button>
-                    )}
-
-                    {currentStep === 5 && (
-                      <button
-                        type="submit"
-                        className="btn btn-success ms-auto"
-                        disabled={isSubmitting}
-                      >
-                        {isSubmitting ? "Submitting..." : "Submit Consultation"}
+                        Start New Consultation
+                        <FaArrowRight className="ms-2" />
                       </button>
                     )}
                   </div>
