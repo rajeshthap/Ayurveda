@@ -149,7 +149,7 @@ function ConsultNow() {
     additional_clinical_information: "",
   });
 
-  // Fetch previous reports for the user
+  // Fetch Previous History for the user
   const fetchPreviousReports = async (email) => {
     setIsLoadingReports(true);
     try {
@@ -158,13 +158,23 @@ function ConsultNow() {
       
       if (response.data && Array.isArray(response.data) && response.data.length > 0) {
         setPreviousReports(response.data);
+      } else {
+        setPreviousReports([]);
       }
     } catch (error) {
-      console.error("❌ Error fetching previous reports:", error);
+      console.error("❌ Error fetching Previous History:", error);
+      setPreviousReports([]);
     } finally {
       setIsLoadingReports(false);
     }
   };
+
+  // Fetch previous reports whenever currentStep becomes 0 and we have an email
+  useEffect(() => {
+    if (currentStep === 0 && formData.email) {
+      fetchPreviousReports(formData.email);
+    }
+  }, [currentStep, formData.email]);
 
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
@@ -178,8 +188,13 @@ function ConsultNow() {
     const decodedEmail = decodeURIComponent(email);
     setFormData((prev) => ({ ...prev, email: decodedEmail }));
     
-    // Fetch previous reports
+    // Fetch Previous History
     fetchPreviousReports(decodedEmail);
+
+    // Auto-refresh Previous History every 30 seconds
+    const refreshInterval = setInterval(() => {
+      fetchPreviousReports(decodedEmail);
+    }, 30000);
 
     const fetchConsultationData = async () => {
       setIsLoadingConsultData(true);
@@ -551,6 +566,9 @@ function ConsultNow() {
     };
 
     fetchConsultationData();
+
+    // Cleanup interval on component unmount
+    return () => clearInterval(refreshInterval);
   }, [location.search]);
 
   // Optional: Debug log to verify data
@@ -729,11 +747,7 @@ function ConsultNow() {
   const validateLifestyleInfo = () => {
     const newErrors = {};
 
-    // Check if at least one habit is selected
-    const selectedHabits = Object.keys(formData.habits).filter(habit => formData.habits[habit] === "Yes");
-    if (selectedHabits.length === 0) {
-      newErrors.habits = "Please select at least one habit or indicate none";
-    }
+    // No validation needed for habits - user can select "No" for all
 
     // These fields are optional (API accepts null values)
     // Uncomment below if you want to make them required
@@ -875,7 +889,8 @@ function ConsultNow() {
       newErrors.psychological_state = "Psychological state is required";
     }
 
-    setErrors(newErrors);
+    // Merge with existing errors to preserve errors from other sections
+    setErrors(prevErrors => ({ ...prevErrors, ...newErrors }));
     return Object.keys(newErrors).length === 0;
   };
 
@@ -1085,6 +1100,14 @@ function ConsultNow() {
       
       // Mark form as submitted
       setFormSubmitted(true);
+
+      // Auto-refresh Previous History to show new consultation
+      const email = formData.email;
+      if (email) {
+        setTimeout(() => {
+          fetchPreviousReports(email);
+        }, 1000); // Wait 1 second to ensure the new data is available
+      }
 
       // Reset form after successful submission
       setFormData({
@@ -1826,10 +1849,10 @@ function ConsultNow() {
       setIsSubmitting(true);
 
       // Build a readable payload representation BEFORE try block
-      const selectedHabits = Object.keys(formData.habits).filter(habit => formData.habits[habit] === "Yes");
+      const habitsPayload = formData.habits; // Send all habits with their Yes/No values
       const section3Payload = {
         consult_id: consultIdRef.current,
-        habits: selectedHabits,
+        habits: habitsPayload,
         type_of_exercise: formData.type_of_exercise,
         frequency: formData.frequency,
         mental_workload: formData.mental_workload,
@@ -2085,6 +2108,14 @@ function ConsultNow() {
 
         // Mark form as submitted
         setFormSubmitted(true);
+
+        // Auto-refresh Previous History to show new consultation
+        const email = formData.email;
+        if (email) {
+          setTimeout(() => {
+            fetchPreviousReports(email);
+          }, 1000); // Wait 1 second to ensure the new data is available
+        }
       } catch (error) {
         console.error("Error submitting Section 4:", error);
 
@@ -2382,10 +2413,7 @@ function ConsultNow() {
                   { value: "Tuberculosis", label: "Tuberculosis" },
                   { value: "Memory Disorders", label: "Memory disorders" },
                   { value: "Acidity_Flatulence", label: "Acidity/Flatulence" },
-                  {
-                    value: "Other_Chronic_Disease",
-                    label: "Any other chronic disease",
-                  },
+                 
                 ].map((disease) => (
                   <li key={disease.value} className="mb-2">
                     <div className="form-check">
@@ -2457,9 +2485,9 @@ function ConsultNow() {
           )}
         </div>
         <h5> Section 4 DIAGNOSTIC DETAILS</h5>
-        <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
+        <div className="col-lg-4 mb-3 col-md-6 col-sm-12 mt-2">
           <label htmlFor="diagnosing_doctor_name" className="form-label">
-            Diagnosing Doctor Name <span className="text-danger">*</span>
+           Diagnosing Doctor's Name <span className="text-danger">*</span>
           </label>
           <input
             type="text"
@@ -2586,30 +2614,10 @@ function ConsultNow() {
   // Render Personal Information Step
   const renderPersonalInfo = () => (
     <div className="consult-form-step">
-      <h3 className="step-title">PERSONAL INFORMATION</h3>
-
-      {/* Display Consultation Status */}
-      {/* <div className="alert alert-warning mb-4" role="alert">
-        <div>
-          <strong>Status:</strong>
-        </div>
-        <div>Loading: {isLoadingConsultData ? "YES" : "NO"}</div>
-        <div>Fetched: {consultDataFetched ? "YES" : "NO"}</div>
-        <div>
-          Consultation ID: <code>{formData.consult_id || "(empty)"}</code>
-        </div>
-        <div>
-          Email: <code>{formData.email || "(empty)"}</code>
-        </div>
-      </div> */}
-
-      {/* Display Consultation ID */}
-      {/* {formData.consult_id && (
-        <div className="alert alert-success mb-4" role="alert">
-          <strong>✓ Consultation ID Loaded:</strong> {formData.consult_id}
-        </div>
-      )} */}
-
+      <h3>
+  SECTION 1 — PATIENT IDENTITY
+      </h3>
+      <h6 className="step-title">PERSONAL INFORMATION</h6>
       <div className="row">
         <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
           <label htmlFor="full_name" className="form-label">
@@ -2669,7 +2677,7 @@ function ConsultNow() {
         </div>
         <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
           <label htmlFor="height" className="form-label">
-            Feet and Inches <span className="text-danger">*</span>
+            Height (Inches) <span className="text-danger">*</span>
           </label>
           <input
             type="number"
@@ -2749,7 +2757,7 @@ function ConsultNow() {
             className={`form-control ${errors.email ? "is-invalid" : ""}`}
             id="email"
             name="email"
-            value={formData.email}
+            value={formData.email} disabled
             onChange={handleInputChange}
             required
           />
@@ -2794,7 +2802,7 @@ function ConsultNow() {
         </div>
         <div className="col-8 mb-3">
           <label htmlFor="address" className="form-label">
-            Complete Address Postal <span className="text-danger">*</span>
+            Complete Postal Address <span className="text-danger">*</span>
           </label>
           <textarea
             className={`form-control ${errors.address ? "is-invalid" : ""}`}
@@ -2890,6 +2898,7 @@ function ConsultNow() {
             <option value="">Select Reference</option>
             <option value="Friends or Relatives">Friends or Relatives</option>
             <option value="Internet">Internet</option>
+            <option value="Doctor Referral">Doctor Referral</option>
             <option value="Other">Other</option>
           </select>
           {errors.references && (
@@ -2903,13 +2912,13 @@ function ConsultNow() {
   // Render Lifestyle Assessment Step (Section 3)
   const renderPastTreatment = () => (
     <div className="consult-form-step">
-      <h3 className="step-title">SECTION 3 — LIFESTYLE ASSESSMENT</h3>
+      <h3 className="step-title">SECTION 5 — LIFESTYLE ASSESSMENT</h3>
       <div className="row">
 <div className="col-lg-12 mb-3 col-md-6 col-sm-12">
-  <label htmlFor="habits" className="form-label">
-    Habits <span className="text-danger">*</span>
-  </label>
-  <div className="p-3 d-flex justify-content-center gap-3 flex-wrap">
+  <h6>
+    Habits 
+  </h6>
+  <div className="p-3 d-flex justify-content-center form-label gap-3 flex-wrap">
     {[
       { value: "Smoking", label: "Smoking" },
       { value: "Alcohol", label: "Alcohol" },
@@ -2976,8 +2985,8 @@ function ConsultNow() {
   </div>
  
 </div>
-
-        <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
+<h6>Physical Activity</h6>
+        <div className="col-lg-4 col-md-6 col-sm-12 mt-2">
           <label htmlFor="type_of_exercise" className="form-label">
             Type of Exercise
           </label>
@@ -3007,7 +3016,7 @@ function ConsultNow() {
 
         <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
           <label htmlFor="frequency" className="form-label">
-            Frequency
+           Frequency(Per Week)
           </label>
           <input
             type="text"
@@ -3116,8 +3125,9 @@ function ConsultNow() {
             <div className="invalid-feedback">{errors.social_interaction_level}</div>
           )}
         </div>
-<h3>SECTION 6 — GYNAECOLOGICAL / OBSTETRIC HISTORY </h3>
-        <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
+        <div className="mt-3">
+<h3>SECTION 6 — GYNAECOLOGICAL / OBSTETRIC HISTORY </h3></div>
+        <div className="col-lg-4 mb-3 col-md-6 col-sm-12 mt-2">
           <label htmlFor="number_of_pregnancies" className="form-label">
             Number of pregnancies
           </label>
@@ -3181,7 +3191,7 @@ function ConsultNow() {
 
         <div className="col-lg-6 mb-3 col-md-6 col-sm-12">
           <label htmlFor="gynaecological_surgery" className="form-label">
-            Gynaecological Surgery
+            Any Gynaecological Surgery
           </label>
           <textarea
             className="form-control"
@@ -3199,12 +3209,12 @@ function ConsultNow() {
   // Render Ayurvedic Constitution Analysis Step (Section 4)
   const renderPhysicalExamination = () => (
     <div className="consult-form-step">
-      <h3 className="step-title">
+      <h3 className="">
         SECTION 7 — AYURVEDIC CONSTITUTION ANALYSIS
       </h3>
 
       <div className="row step-4-heading">
-        <h2>(For Prakriti & Dosha Assessment) Body Characteristics</h2>
+        <h6>(For Prakriti & Dosha Assessment) Body Characteristics</h6>
         <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
           <label htmlFor="body_build" className="form-label">
             Body Build <span className="text-danger">*</span>
@@ -3256,10 +3266,8 @@ function ConsultNow() {
                             body_build: updatedValues,
                           }));
                           if (errors.body_build) {
-                            setErrors({
-                              ...errors,
-                              body_build: "",
-                            });
+                            const { body_build, ...restErrors } = errors;
+                            setErrors(restErrors);
                           }
                         }}
                       />
@@ -3276,7 +3284,7 @@ function ConsultNow() {
             )}
           </div>
           {errors.body_build && (
-            <div className="invalid-feedback">{errors.body_build}</div>
+            <div className="text-danger mt-1" style={{ fontSize: '0.875em' }}>{errors.body_build}</div>
           )}
         </div>
         <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
@@ -3329,12 +3337,10 @@ function ConsultNow() {
                             ...prev,
                             complexion: updatedValues,
                           }));
-                          if (errors.complexion) {
-                            setErrors({
-                              ...errors,
-                              complexion: "",
-                            });
-                          }
+                           if (errors.complexion) {
+                             const { complexion, ...restErrors } = errors;
+                             setErrors(restErrors);
+                           }
                         }}
                       />
                       <label
@@ -3350,7 +3356,7 @@ function ConsultNow() {
             )}
           </div>
           {errors.complexion && (
-            <div className="invalid-feedback">{errors.complexion}</div>
+            <div className="text-danger mt-1" style={{ fontSize: '0.875em' }}>{errors.complexion}</div>
           )}
         </div>
         <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
@@ -3403,12 +3409,10 @@ function ConsultNow() {
                             ...prev,
                             skin_nature: updatedValues,
                           }));
-                          if (errors.skin_nature) {
-                            setErrors({
-                              ...errors,
-                              skin_nature: "",
-                            });
-                          }
+                           if (errors.skin_nature) {
+                             const { skin_nature, ...restErrors } = errors;
+                             setErrors(restErrors);
+                           }
                         }}
                       />
                       <label
@@ -3424,7 +3428,7 @@ function ConsultNow() {
             )}
           </div>
           {errors.skin_nature && (
-            <div className="invalid-feedback">{errors.skin_nature}</div>
+            <div className="text-danger mt-1" style={{ fontSize: '0.875em' }}>{errors.skin_nature}</div>
           )}
         </div>
         <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
@@ -3478,12 +3482,10 @@ function ConsultNow() {
                             ...prev,
                             hair_nature: updatedValues,
                           }));
-                          if (errors.hair_nature) {
-                            setErrors({
-                              ...errors,
-                              hair_nature: "",
-                            });
-                          }
+                           if (errors.hair_nature) {
+                             const { hair_nature, ...restErrors } = errors;
+                             setErrors(restErrors);
+                           }
                         }}
                       />
                       <label
@@ -3499,7 +3501,7 @@ function ConsultNow() {
             )}
           </div>
           {errors.hair_nature && (
-            <div className="invalid-feedback">{errors.hair_nature}</div>
+            <div className="text-danger mt-1" style={{ fontSize: '0.875em' }}>{errors.hair_nature}</div>
           )}
         </div>
         <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
@@ -3575,12 +3577,10 @@ function ConsultNow() {
             )}
           </div>
           {errors.premature_greying_or_balding && (
-            <div className="invalid-feedback">
-              {errors.premature_greying_or_balding}
-            </div>
+            <div className="text-danger mt-1" style={{ fontSize: '0.875em' }}>{errors.premature_greying_or_balding}</div>
           )}
         </div>
-        <h2>Physiological Traits</h2>
+        <h6>Physiological Traits</h6>
         <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
           <label htmlFor="joint_characteristics" className="form-label">
             Joint Characteristics <span className="text-danger">*</span>
@@ -3656,9 +3656,7 @@ function ConsultNow() {
             )}
           </div>
           {errors.joint_characteristics && (
-            <div className="invalid-feedback">
-              {errors.joint_characteristics}
-            </div>
+            <div className="text-danger mt-1" style={{ fontSize: '0.875em' }}>{errors.joint_characteristics}</div>
           )}
         </div>
         <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
@@ -3734,7 +3732,7 @@ function ConsultNow() {
             )}
           </div>
           {errors.veins_and_tendons && (
-            <div className="invalid-feedback">{errors.veins_and_tendons}</div>
+            <div className="text-danger mt-1" style={{ fontSize: '0.875em' }}>{errors.veins_and_tendons}</div>
           )}
         </div>
         <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
@@ -3810,7 +3808,7 @@ function ConsultNow() {
             )}
           </div>
           {errors.body_temperature && (
-            <div className="invalid-feedback">{errors.body_temperature}</div>
+            <div className="text-danger mt-1" style={{ fontSize: '0.875em' }}>{errors.body_temperature}</div>
           )}
         </div>
         <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
@@ -3887,12 +3885,10 @@ function ConsultNow() {
             )}
           </div>
           {errors.temperature_preference && (
-            <div className="invalid-feedback">
-              {errors.temperature_preference}
-            </div>
+            <div className="text-danger mt-1" style={{ fontSize: '0.875em' }}>{errors.temperature_preference}</div>
           )}
         </div>
-        <h2>Sensory Features</h2>
+        <h6>Sensory Features</h6>
         <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
           <label htmlFor="eyes" className="form-label">
             Eyes <span className="text-danger">*</span>
@@ -3960,7 +3956,7 @@ function ConsultNow() {
               </ul>
             )}
           </div>
-          {errors.eyes && <div className="invalid-feedback">{errors.eyes}</div>}
+          {errors.eyes && <div className="text-danger mt-1" style={{ fontSize: '0.875em' }}>{errors.eyes}</div>}
         </div>
         <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
           <label htmlFor="teeth_and_gums" className="form-label">
@@ -4033,7 +4029,7 @@ function ConsultNow() {
             )}
           </div>
           {errors.teeth_and_gums && (
-            <div className="invalid-feedback">{errors.teeth_and_gums}</div>
+            <div className="text-danger mt-1" style={{ fontSize: '0.875em' }}>{errors.teeth_and_gums}</div>
           )}
         </div>
         <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
@@ -4107,10 +4103,10 @@ function ConsultNow() {
             )}
           </div>
           {errors.voice_nature && (
-            <div className="invalid-feedback">{errors.voice_nature}</div>
+            <div className="text-danger mt-1" style={{ fontSize: '0.875em' }}>{errors.voice_nature}</div>
           )}
         </div>
-        <h2>Functional Traits</h2>
+        <h6>Functional Traits</h6>
         <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
           <label htmlFor="appetite" className="form-label">
             Appetite <span className="text-danger">*</span>
@@ -4183,7 +4179,7 @@ function ConsultNow() {
             )}
           </div>
           {errors.appetite && (
-            <div className="invalid-feedback">{errors.appetite}</div>
+            <div className="text-danger mt-1" style={{ fontSize: '0.875em' }}>{errors.appetite}</div>
           )}
         </div>
         <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
@@ -4260,7 +4256,7 @@ function ConsultNow() {
             )}
           </div>
           {errors.taste_preference && (
-            <div className="invalid-feedback">{errors.taste_preference}</div>
+            <div className="text-danger mt-1" style={{ fontSize: '0.875em' }}>{errors.taste_preference}</div>
           )}
         </div>
         <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
@@ -4334,10 +4330,10 @@ function ConsultNow() {
             )}
           </div>
           {errors.sweating && (
-            <div className="invalid-feedback">{errors.sweating}</div>
+            <div className="text-danger mt-1" style={{ fontSize: '0.875em' }}>{errors.sweating}</div>
           )}
         </div>
-        <h2>Excretory Patterns</h2>
+        <h6>Excretory Patterns</h6>
         <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
           <label htmlFor="bowel_habits" className="form-label">
             Bowel Habits <span className="text-danger">*</span>
@@ -4409,7 +4405,7 @@ function ConsultNow() {
             )}
           </div>
           {errors.bowel_habits && (
-            <div className="invalid-feedback">{errors.bowel_habits}</div>
+            <div className="text-danger mt-1" style={{ fontSize: '0.875em' }}>{errors.bowel_habits}</div>
           )}
         </div>
         <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
@@ -4484,11 +4480,11 @@ function ConsultNow() {
             )}
           </div>
           {errors.urination && (
-            <div className="invalid-feedback">{errors.urination}</div>
+            <div className="text-danger mt-1" style={{ fontSize: '0.875em' }}>{errors.urination}</div>
           )}
         </div>
       
-        <h2>Sleep & Memory </h2>
+        <h6>Sleep & Memory </h6>
            <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
           <label htmlFor="memory" className="form-label">
             Memory <span className="text-danger">*</span>
@@ -4557,7 +4553,7 @@ function ConsultNow() {
             )}
           </div>
           {errors.memory && (
-            <div className="invalid-feedback">{errors.memory}</div>
+            <div className="text-danger mt-1" style={{ fontSize: '0.875em' }}>{errors.memory}</div>
           )}
         </div>
           <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
@@ -4629,7 +4625,7 @@ function ConsultNow() {
             )}
           </div>
           {errors.sleep && (
-            <div className="invalid-feedback">{errors.sleep}</div>
+            <div className="text-danger mt-1" style={{ fontSize: '0.875em' }}>{errors.sleep}</div>
           )}
         </div>
         <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
@@ -4706,10 +4702,10 @@ function ConsultNow() {
             )}
           </div>
           {errors.psychological_state && (
-            <div className="invalid-feedback">{errors.psychological_state}</div>
+            <div className="text-danger mt-1" style={{ fontSize: '0.875em' }}>{errors.psychological_state}</div>
           )}
         </div>
-     
+     <h3>SECTION 8 — ADDITIONAL CLINICAL INFORMATION</h3>
         <div className="col-lg-12 mb-3">
           <label
             htmlFor="additional_clinical_information"
@@ -4740,10 +4736,20 @@ function ConsultNow() {
               className={`form-check-input ${errors.consentGiven ? 'is-invalid' : ''}`}
               id="consentCheckbox"
               checked={consentGiven}
-              onChange={(e) => setConsentGiven(e.target.checked)}
+              onChange={(e) => {
+                setConsentGiven(e.target.checked);
+                if (e.target.checked) {
+                  setErrors(prev => {
+                    const newErrors = { ...prev };
+                    delete newErrors.consentGiven;
+                    return newErrors;
+                  });
+                }
+              }}
             />
+            <h3>SECTION 9 — LEGAL CONSENT & DECLARATION</h3>
             <label className="form-check-label" for="consentCheckbox">
-              I confirm that all information provided is true and complete. Ayurvedic treatment is individualized and depends on disease stage, constitution, and compliance. No cure or specific outcome can be guaranteed. I will not discontinue ongoing medical treatment without consulting my physician. Online consultation has limitations due to absence of physical examination.
+              I confirm that all information provided is true and complete. Ayurvedic treatment is individualized and depends on disease stage, constitution, and compliance. 
             </label>
           </div>
           {errors.consentGiven && (
@@ -4784,7 +4790,7 @@ function ConsultNow() {
                   </td>
                   <td>{formData.gender}</td>
                   <td>
-                    <strong>Feet and Inches:</strong>
+                    <strong>Height ( Inches):</strong>
                   </td>
                   <td>{formData.height}</td>
                 </tr>
@@ -4949,6 +4955,32 @@ function ConsultNow() {
                     <strong>Hospital/Clinic:</strong>
                   </td>
                   <td>{formData.hospital_clinic_name}</td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>Medical Reports:</strong>
+                  </td>
+                  <td colSpan={3}>
+                    {formData.medical_reports ? (
+                      <div>
+                        {typeof formData.medical_reports === "string" ? (
+                          <a
+                            href={getMedicalReportsUrl(formData.medical_reports)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="btn btn-info btn-sm"
+                          >
+                            <FaEye className="me-1" />
+                            View Medical Reports
+                          </a>
+                        ) : (
+                          <span>Selected file: <strong>{formData.medical_reports.name}</strong></span>
+                        )}
+                      </div>
+                    ) : (
+                      "Not provided"
+                    )}
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -5149,18 +5181,21 @@ function ConsultNow() {
     </div>
   );
 
-  // Render Previous Reports tab
+  // Render Previous History tab
   const renderPreviousReports = () => (
     <div className="consult-form-step">
-      <h3 className="step-title">Previous Reports</h3>
+      <h3 className="step-title">Previous History</h3>
       
       {isLoadingReports ? (
-        <div className="alert alert-info" role="alert">
-          ⏳ Loading previous reports...
+        <div className="alert alert-info" role="alert" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem', fontSize: '1.1rem' }}>
+          <div className="spinner-border text-primary me-3" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+          Loading Previous History...
         </div>
       ) : previousReports.length === 0 ? (
         <div className="alert alert-warning" role="alert">
-          No previous reports found. Please start a new consultation.
+          No Previous History found. Please start a new consultation.
         </div>
       ) : (
         <div className="previous-reports-list">
@@ -5204,6 +5239,22 @@ function ConsultNow() {
                         >
                           View Details
                         </button>
+                        {report.section2 && report.section2.length > 0 && report.section2[0].medical_reports && (
+                          <button
+                            type="button"
+                            className="btn btn-info btn-sm"
+                            onClick={() => {
+                              const medicalReportsUrl = getMedicalReportsUrl(report.section2[0].medical_reports);
+                              if (medicalReportsUrl) {
+                                window.open(medicalReportsUrl, '_blank');
+                              }
+                            }}
+                            title="View Medical Reports"
+                          >
+                            <FaEye className="me-1" />
+                            View Reports
+                          </button>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -5232,6 +5283,7 @@ function ConsultNow() {
               <div className="modal-body">
                 <div className="row">
                   <div className="col-12 mb-4">
+                  
                     <h6 className="sub-title">Personal Information</h6>
                     <table className="table table-bordered table-sm">
                       <tbody>
@@ -5494,6 +5546,22 @@ function ConsultNow() {
                 </div>
               </div>
               <div className="modal-footer">
+                {selectedReport.section2 && selectedReport.section2.length > 0 && selectedReport.section2[0].medical_reports && (
+                  <button
+                    type="button"
+                    className="btn btn-info"
+                    onClick={() => {
+                      const medicalReportsUrl = getMedicalReportsUrl(selectedReport.section2[0].medical_reports);
+                      if (medicalReportsUrl) {
+                        window.open(medicalReportsUrl, '_blank');
+                      }
+                    }}
+                    title="View Medical Reports"
+                  >
+                    <FaEye className="me-1" />
+                    View Reports
+                  </button>
+                )}
                 <button
                   type="button"
                   className="btn btn-secondary"
@@ -5549,15 +5617,23 @@ function ConsultNow() {
             <div className="consult-form-container">
               <div className="step-indicator mb-4">
                 <div className="d-flex justify-content-between">
-                  <div
-                    className={`step ${currentStep === 0 ? "active" : ""}`}
-                    onClick={() => setCurrentStep(0)}
-                  >
-                    <div className="step-number">
-                      📄
+                  {previousReports.length > 0 && (
+                    <div
+                      className={`step ${currentStep === 0 ? "active" : ""}`}
+                      onClick={() => {
+                        setCurrentStep(0);
+                        // Fetch previous reports when clicking on Previous History tab
+                        if (formData.email) {
+                          fetchPreviousReports(formData.email);
+                        }
+                      }}
+                    >
+                      <div className="step-number">
+                        📄
+                      </div>
+                      <span>Previous History</span>
                     </div>
-                    <span>Previous Reports</span>
-                  </div>
+                  )}
                   <div
                     className={`step ${currentStep >= 1 ? "active" : ""} ${completedSteps.includes(1) ? "completed" : ""}`}
                   >
@@ -5616,7 +5692,7 @@ function ConsultNow() {
                   )}
 
                   <div className="form-navigation mt-4 d-flex justify-content-between">
-                    {/* Show navigation only if not on Previous Reports tab */}
+                    {/* Show navigation only if not on Previous History tab */}
                     {currentStep !== 0 && (
                       <>
                         {currentStep > 1 && currentStep !== 5 && (
@@ -5655,7 +5731,7 @@ function ConsultNow() {
                             onClick={nextStep}
                             disabled={isSubmitting}
                           >
-                            Confirm & Continue
+                            Confirm & Submit
                             <FaArrowRight className="ms-2" />
                           </button>
                         )}
@@ -5664,7 +5740,7 @@ function ConsultNow() {
                       </>
                     )}
                     
-                    {/* Show button to start new consultation when on Previous Reports tab */}
+                    {/* Show button to start new consultation when on Previous History tab */}
                     {currentStep === 0 && previousReports.length > 0 && (
                       <button
                         type="button"
@@ -5691,3 +5767,4 @@ function ConsultNow() {
 }
 
 export default ConsultNow;
+

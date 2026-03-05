@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Container, Row, Col, Alert, Card, Spinner, Pagination, Accordion } from "react-bootstrap";
+import { Container, Row, Col, Alert, Card, Spinner, Pagination, Accordion, Modal, Table } from "react-bootstrap";
 import "../../../assets/css/dashboard.css";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
@@ -12,7 +12,7 @@ import {
   FaStethoscope, FaNotesMedical, FaUserClock, FaInfoCircle,
   FaAppleAlt, FaBed, FaBrain, FaEye, FaTooth,
   FaRunning, FaClipboardList, FaUserMd as FaUser, FaIdCard, FaBaby, FaCut, FaUserNurse,
-  FaThermometer, FaHandHoldingMedical
+  FaThermometer, FaHandHoldingMedical, FaFileMedical
 } from "react-icons/fa";
 
 const TotalConsultNow = () => {
@@ -39,16 +39,65 @@ const TotalConsultNow = () => {
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
+  
+  // Modal state
+  const [showModal, setShowModal] = useState(false);
+  const [selectedEntry, setSelectedEntry] = useState(null);
 
   // *** UPDATED: NEW API URL ***
   const API_URL = "https://mahadevaaya.com/trilokayurveda/trilokabackend/api/online-consultations/all/";
 
+  // Function to get the full medical reports URL
+  const getMedicalReportsUrl = (filePath) => {
+    if (!filePath) return null;
+    
+    // If the file path already includes the full URL, return as is
+    if (filePath.startsWith("http")) {
+      return filePath;
+    }
+    
+    // If the file path starts with a slash, combine with base URL (no extra slash)
+    if (filePath.startsWith("/")) {
+      return `https://mahadevaaya.com/trilokayurveda/trilokabackend/${filePath}`;
+    }
+    
+    // Otherwise, add slash between base URL and path
+    return `https://mahadevaaya.com/trilokayurveda/trilokabackend/${filePath}`;
+  };
+
   // Helper function to safely display array values
   const displayArray = (arr) => {
-    if (!arr || arr.length === 0) {
+    if (!arr || arr === null || arr === undefined) {
       return "None";
     }
-    return arr.join(", ");
+    // Check if arr is actually an array
+    const safeArray = Array.isArray(arr) ? arr : [arr];
+    // Filter out empty values and join
+    const nonEmptyValues = safeArray.filter(value => value && value.toString().trim() !== "");
+    return nonEmptyValues.length > 0 ? nonEmptyValues.join(", ") : "None";
+  };
+
+  // Helper function to display habits with Yes/No format for specific types
+  const displayHabits = (habits) => {
+    const habitTypes = ['Smoking', 'Alcohol', 'Tobacco', 'Drugs', 'Non-vegetarian diet'];
+    
+    // Check if habits is an object (key-value pairs with Yes/No)
+    if (typeof habits === 'object' && habits !== null && !Array.isArray(habits)) {
+      return habitTypes.map(habitType => {
+        const hasHabit = habits[habitType] === "Yes";
+        return `${habitType}: ${hasHabit ? 'Yes' : 'No'}`;
+      }).join(", ");
+    }
+    
+    // Check if habits is an array
+    const habitArray = Array.isArray(habits) ? habits : (habits ? [habits] : []);
+    
+    return habitTypes.map(habitType => {
+      const hasHabit = habitArray.some(habit => 
+        habit && habit.toString().toLowerCase().includes(habitType.toLowerCase())
+      );
+      return `${habitType}: ${hasHabit ? 'Yes' : 'No'}`;
+    }).join(", ");
   };
 
   // Check device width
@@ -166,6 +215,7 @@ const TotalConsultNow = () => {
           past_medications: section2.past_medications || "N/A",
           surgeries: section2.surgeries || "N/A",
           date_of_diagnosis: formatDate(section2.date_of_diagnosis),
+          medical_reports: section2.medical_reports || "",
 
           habits: section3.habits || [],
           type_of_exercise: section3.type_of_exercise || "N/A",
@@ -226,6 +276,17 @@ const TotalConsultNow = () => {
   const totalPages = Math.ceil(entries.length / itemsPerPage);
 
   const handlePageChange = (pageNumber) => setCurrentPage(pageNumber);
+
+  // Modal handlers
+  const handleViewClick = (entry) => {
+    setSelectedEntry(entry);
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setSelectedEntry(null);
+  };
 
   // Show loading while checking authentication
   if (authLoading || !authChecked) {
@@ -304,7 +365,7 @@ const TotalConsultNow = () => {
                         <Accordion defaultActiveKey="0">
                           {currentItems.map((entry, index) => (
                             <Accordion.Item eventKey={entry.id || index.toString()} key={entry.id || index}>
-                              <Accordion.Header>
+                               <Accordion.Header>
                                 <div className="d-flex align-items-center w-100">
                                   <div className="consultation-avatar bg-success text-white rounded-circle d-flex align-items-center justify-content-center me-3">
                                     {entry.full_name ? entry.full_name.charAt(0).toUpperCase() : 'U'}
@@ -317,6 +378,15 @@ const TotalConsultNow = () => {
                                     <FaCalendarAlt className="me-1" />
                                     <small>{entry.formatted_date}</small>
                                   </div>
+                                  <button 
+                                    className="btn btn-sm btn-primary ms-3"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleViewClick(entry);
+                                    }}
+                                  >
+                                    View
+                                  </button>
                                 </div>
                               </Accordion.Header>
                               <Accordion.Body>
@@ -336,7 +406,7 @@ const TotalConsultNow = () => {
                                           <div className="info-item"><span className="info-label"><FaCalendarAlt className="me-2 text-success" />DOB:</span><span className="info-value">{entry.formatted_dob}</span></div>
                                         </div>
                                       </Col>
-                                      <Col md={6} className="mb-4 mb-md-0">
+                                       <Col md={6} className="mb-4 mb-md-0">
                                         <h6 className="section-title text-success"><FaStethoscope className="me-2" />Medical Information</h6>
                                         <div className="info-group">
                                           <div className="info-item"><span className="info-label"><FaNotesMedical className="me-2 text-success" />Chief Complaint:</span><span className="info-value">{entry.main_disease_problem}</span></div>
@@ -346,6 +416,20 @@ const TotalConsultNow = () => {
                                           <div className="info-item"><span className="info-label"><FaNotesMedical className="me-2 text-success" />Past Medications:</span><span className="info-value">{entry.past_medications}</span></div>
                                           <div className="info-item"><span className="info-label"><FaCut className="me-2 text-success" />Surgeries:</span><span className="info-value">{entry.surgeries}</span></div>
                                           <div className="info-item"><span className="info-label"><FaCalendarAlt className="me-2 text-success" />Diagnosis Date:</span><span className="info-value">{entry.date_of_diagnosis}</span></div>
+                                          {/* Show view button if medical reports file path exists */}
+                                          {entry.medical_reports && (
+                                            <div className="info-item">
+                                              <span className="info-label"><FaFileMedical className="me-2 text-success" />Medical Reports:</span>
+                                              <a
+                                                href={getMedicalReportsUrl(entry.medical_reports)}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="btn btn-sm btn-outline-primary ms-2"
+                                              >
+                                                <FaEye className="me-1" /> View
+                                              </a>
+                                            </div>
+                                          )}
                                         </div>
                                       </Col>
                                     </Row>
@@ -362,7 +446,7 @@ const TotalConsultNow = () => {
                                       <Col md={6} className="mb-4">
                                         <h6 className="section-title text-success"><FaAppleAlt className="me-2" />Lifestyle & Habits</h6>
                                         <div className="info-group">
-                                          <div className="info-item"><span className="info-label">Habits:</span><span className="info-value">{displayArray(entry.habits)}</span></div>
+                                           <div className="info-item"><span className="info-label">Habits:</span><span className="info-value">{displayHabits(entry.habits)}</span></div>
                                           <div className="info-item"><span className="info-label">Exercise Type:</span><span className="info-value">{entry.type_of_exercise}</span></div>
                                           <div className="info-item"><span className="info-label"><FaAppleAlt className="me-2 text-success" />Appetite:</span><span className="info-value">{displayArray(entry.appetite)}</span></div>
                                           <div className="info-item"><span className="info-label"><FaBed className="me-2 text-success" />Sleep:</span><span className="info-value">{displayArray(entry.sleep)}</span></div>
@@ -433,8 +517,251 @@ const TotalConsultNow = () => {
                     )}
                   </>
                 )}
-              </>
+               </>
             )}
+
+            {/* View Details Modal */}
+            <Modal
+              show={showModal}
+              onHide={handleCloseModal}
+              size="lg"
+              centered
+            >
+              <Modal.Header closeButton>
+                <Modal.Title>Consultation Details</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                {selectedEntry && (
+                  <Table striped bordered hover responsive>
+                    <tbody>
+                      {/* Personal Information */}
+                      <tr>
+                        <th colSpan={2} className="bg-light">Personal Information</th>
+                      </tr>
+                      <tr>
+                        <td><strong>Full Name:</strong></td>
+                        <td>{selectedEntry.full_name}</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Contact:</strong></td>
+                        <td>{selectedEntry.mobile_number}</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Email:</strong></td>
+                        <td>{selectedEntry.email}</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Gender:</strong></td>
+                        <td>{selectedEntry.gender}</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Height:</strong></td>
+                        <td>{selectedEntry.height} cm</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Weight:</strong></td>
+                        <td>{selectedEntry.weight} kg</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Address:</strong></td>
+                        <td>{selectedEntry.address}</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Occupation:</strong></td>
+                        <td>{selectedEntry.occupation}</td>
+                      </tr>
+                      <tr>
+                        <td><strong>DOB:</strong></td>
+                        <td>{selectedEntry.formatted_dob}</td>
+                      </tr>
+
+                      {/* Medical Information */}
+                      <tr>
+                        <th colSpan={2} className="bg-light">Medical Information</th>
+                      </tr>
+                      <tr>
+                        <td><strong>Chief Complaint:</strong></td>
+                        <td>{selectedEntry.main_disease_problem}</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Problem Description:</strong></td>
+                        <td>{selectedEntry.problem_start_description}</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Mode of Onset:</strong></td>
+                        <td>{selectedEntry.mode_of_onset}</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Disease History:</strong></td>
+                        <td>{displayArray(selectedEntry.disease_history)}</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Past Medications:</strong></td>
+                        <td>{selectedEntry.past_medications}</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Surgeries:</strong></td>
+                        <td>{selectedEntry.surgeries}</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Diagnosis Date:</strong></td>
+                        <td>{selectedEntry.date_of_diagnosis}</td>
+                      </tr>
+                      {selectedEntry.medical_reports && (
+                        <tr>
+                          <td><strong>Medical Reports:</strong></td>
+                          <td>
+                            <a
+                              href={getMedicalReportsUrl(selectedEntry.medical_reports)}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="btn btn-sm btn-outline-primary"
+                            >
+                              <FaEye className="me-1" /> View Reports
+                            </a>
+                          </td>
+                        </tr>
+                      )}
+
+                      {/* Women's Health */}
+                      <tr>
+                        <th colSpan={2} className="bg-light">Women's Health</th>
+                      </tr>
+                      <tr>
+                        <td><strong>Number of Pregnancies:</strong></td>
+                        <td>{selectedEntry.number_of_pregnancies}</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Living Children:</strong></td>
+                        <td>{selectedEntry.number_of_living_children}</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Mode of Delivery:</strong></td>
+                        <td>{selectedEntry.mode_of_delivery}</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Menstrual History:</strong></td>
+                        <td>{selectedEntry.menstrual_history}</td>
+                      </tr>
+
+                      {/* Lifestyle & Habits */}
+                      <tr>
+                        <th colSpan={2} className="bg-light">Lifestyle & Habits</th>
+                      </tr>
+                      <tr>
+                        <td><strong>Habits:</strong></td>
+                        <td>{displayHabits(selectedEntry.habits)}</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Exercise Type:</strong></td>
+                        <td>{selectedEntry.type_of_exercise}</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Appetite:</strong></td>
+                        <td>{displayArray(selectedEntry.appetite)}</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Sleep:</strong></td>
+                        <td>{displayArray(selectedEntry.sleep)}</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Taste Preference:</strong></td>
+                        <td>{displayArray(selectedEntry.taste_preference)}</td>
+                      </tr>
+
+                      {/* Physical Health */}
+                      <tr>
+                        <th colSpan={2} className="bg-light">Physical Health</th>
+                      </tr>
+                      <tr>
+                        <td><strong>Body Build:</strong></td>
+                        <td>{displayArray(selectedEntry.body_build)}</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Complexion:</strong></td>
+                        <td>{displayArray(selectedEntry.complexion)}</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Skin Nature:</strong></td>
+                        <td>{displayArray(selectedEntry.skin_nature)}</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Hair Nature:</strong></td>
+                        <td>{displayArray(selectedEntry.hair_nature)}</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Joints:</strong></td>
+                        <td>{displayArray(selectedEntry.joint_characteristics)}</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Veins/Tendons:</strong></td>
+                        <td>{displayArray(selectedEntry.veins_and_tendons)}</td>
+                      </tr>
+
+                      {/* General Health */}
+                      <tr>
+                        <th colSpan={2} className="bg-light">General Health</th>
+                      </tr>
+                      <tr>
+                        <td><strong>Body Temp:</strong></td>
+                        <td>{displayArray(selectedEntry.body_temperature)}</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Temp Preference:</strong></td>
+                        <td>{displayArray(selectedEntry.temperature_preference)}</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Eyes:</strong></td>
+                        <td>{displayArray(selectedEntry.eyes)}</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Teeth & Gums:</strong></td>
+                        <td>{displayArray(selectedEntry.teeth_and_gums)}</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Voice Nature:</strong></td>
+                        <td>{displayArray(selectedEntry.voice_nature)}</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Sweating:</strong></td>
+                        <td>{displayArray(selectedEntry.sweating)}</td>
+                      </tr>
+
+                      {/* Excretory Habits */}
+                      <tr>
+                        <th colSpan={2} className="bg-light">Excretory Habits</th>
+                      </tr>
+                      <tr>
+                        <td><strong>Bowel Habits:</strong></td>
+                        <td>{displayArray(selectedEntry.bowel_habits)}</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Urination:</strong></td>
+                        <td>{displayArray(selectedEntry.urination)}</td>
+                      </tr>
+
+                      {/* Psychological Status */}
+                      <tr>
+                        <th colSpan={2} className="bg-light">Psychological Status</th>
+                      </tr>
+                      <tr>
+                        <td><strong>Psychological State:</strong></td>
+                        <td>{displayArray(selectedEntry.psychological_state)}</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Memory:</strong></td>
+                        <td>{displayArray(selectedEntry.memory)}</td>
+                      </tr>
+                    </tbody>
+                  </Table>
+                )}
+              </Modal.Body>
+              <Modal.Footer>
+                <button className="btn btn-secondary" onClick={handleCloseModal}>
+                  Close
+                </button>
+              </Modal.Footer>
+            </Modal>
           </Container>
         </div>
       </div>

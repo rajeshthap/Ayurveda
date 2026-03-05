@@ -14,7 +14,7 @@
 .step-indicator {
   position: relative;
   margin-bottom: 60px;
-  padding-bottom: 20px;
+  /* padding-bottom: 20px; */
 }
 
 .step-indicator::after {
@@ -108,9 +108,9 @@
   font-size: 28px;
   font-weight: 700;
   color: #2c3e50;
-  margin-bottom: 30px;
-  padding-bottom: 15px;
-  border-bottom: 3px solid #2ECC71;
+  margin-bottom: 20px;
+  /* padding-bottom: 15px; */
+  /* border-bottom: 3px solid #2ECC71; */
   position: relative;
 }
 
@@ -121,7 +121,7 @@
   left: 0;
   width: 80px;
   height: 3px;
-  background: #27ae60;
+  /* background: #27ae60; */
 }
 
 /* Form Fields */

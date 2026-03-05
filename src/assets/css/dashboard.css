@@ -353,6 +353,201 @@
     margin-bottom: 0.5rem;
 }
 
+/* Dashboard Specific Styles */
+.start-new-button {
+    background: linear-gradient(135deg, #2ECC71 0%, #27ae60 100%);
+    border: none;
+    padding: 12px 30px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 50px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+}
+
+.start-new-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(46, 204, 113, 0.4);
+    background: linear-gradient(135deg, #27ae60 0%, #2ECC71 100%);
+}
+
+.section-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #e9ecef;
+}
+
+/* Consultation Cards */
+.consultation-card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    height: 100%;
+    overflow: hidden;
+}
+
+.consultation-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+.consultation-card .card-title {
+    color: #2c3e50;
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.consultation-card .card-title i {
+    color: #2ECC71;
+}
+
+.consultation-details {
+    margin-bottom: 1.5rem;
+}
+
+.consultation-details p {
+    margin-bottom: 0.5rem;
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.consultation-details strong {
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+/* Progress Bar */
+.progress-container {
+    margin: 1rem 0;
+}
+
+.progress-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.status-badge {
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.status-complete {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-in-progress {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.status-not-started {
+    background: #d1ecf1;
+    color: #0c5460;
+}
+
+.progress {
+    height: 8px;
+    border-radius: 10px;
+    background: #e9ecef;
+    overflow: hidden;
+}
+
+.progress-bar {
+    border-radius: 10px;
+    transition: width 0.3s ease;
+}
+
+/* Card Actions */
+.card-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: auto;
+}
+
+.card-actions .btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-weight: 600;
+}
+
+.card-actions .btn-primary {
+    background: linear-gradient(135deg, #2ECC71 0%, #27ae60 100%);
+    border: none;
+}
+
+.card-actions .btn-primary:hover {
+    background: linear-gradient(135deg, #27ae60 0%, #2ECC71 100%);
+}
+
+.card-actions .btn-outline-primary {
+    border-color: #2ECC71;
+    color: #2ECC71;
+}
+
+.card-actions .btn-outline-primary:hover {
+    background: #2ECC71;
+    color: white;
+}
+
+.card-actions .btn-outline-secondary {
+    border-color: #6c757d;
+    color: #6c757d;
+}
+
+.card-actions .btn-outline-secondary:hover {
+    background: #6c757d;
+    color: white;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.empty-state i {
+    font-size: 4rem;
+    color: #dee2e6;
+    margin-bottom: 1rem;
+}
+
+.empty-state h3 {
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+
+.empty-state p {
+    color: #6c757d;
+    font-size: 1.1rem;
+}
+
+/* Loading State */
+.spinner-border {
+    width: 3rem;
+    height: 3rem;
+    border-width: 0.3em;
+}
+
 /* Stat Cards */
 
 

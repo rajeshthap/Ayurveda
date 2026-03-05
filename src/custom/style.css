@@ -91,6 +91,7 @@ a {
   font-size: 14px;
   color: #0d6efd;
   font-weight: 600;
+  margin: 8px 0px 8px 0px !important;
 }
 .medical-report p{
   color: #198754;
@@ -176,7 +177,12 @@ a {
   font-size: 0.875rem;
   margin-top: 0.5rem;
 }
-
+.consult-form-step h6{
+  font-size: 14px;
+  color: #0d6efd;
+  margin-top: 12px;
+  font-weight: 600;
+}
 .year-txt {
   color: #fff !important;
 }
@@ -209,6 +215,9 @@ a {
   will-change: transform;
   transform: perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1);
 }
+.whatsapp-link{
+  white-space: pre-line;
+}
 
 .ayur-testname img {
 
@@ -216,7 +225,9 @@ a {
   height: 72px;
   border-radius: 50% !important;
 }
-
+/* .whatsapp-link{
+  white-space: pre-line;
+} */
 @media only screen and (max-width: 568px) {
   .br-login {
     margin: var(--gov-space-200) var(--gov-space-0) var(--gov-space-0) var(--gov-space-0) !important;

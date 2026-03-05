@@ -338,7 +338,7 @@ const ContactUs = () => {
                 </div>
               )}
 
-              {/* Phone Module */}
+              {/* Phone Module - Modified to make phone numbers clickable for WhatsApp */}
               {contactInfo.phone_module && contactInfo.phone_module.length > 0 && (
                 <div className="trilok-info-item">
                   <div className="trilok-info-icon">
@@ -348,14 +348,33 @@ const ContactUs = () => {
                   </div>
                   <div className="trilok-info-content">
                     <h4>Phone</h4>
-                    {contactInfo.phone_module.map((phone, index) => (
-                      phone && <p key={index}>{phone}</p>
-                    ))}
+                    {contactInfo.phone_module.map((phone, index) => {
+                      // Clean the phone number for WhatsApp URL
+                      const cleanPhone = phone.replace(/\D/g, '');
+                      return (
+                        phone && (
+                          <p key={index} >
+                            <a 
+                              href={`https://wa.me/${cleanPhone}`} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="whatsapp-link "
+                              title="Chat on WhatsApp"
+                            >
+                              {phone}
+                             
+                            </a>
+                          </p>
+                          
+                        )
+                      );
+                    })}
                   </div>
+               
                 </div>
               )}
 
-              {/* Email Module */}
+              {/* Email Module - Modified to make emails clickable */}
               {contactInfo.email_module && contactInfo.email_module.length > 0 && (
                 <div className="trilok-info-item">
                   <div className="trilok-info-icon">
@@ -367,7 +386,19 @@ const ContactUs = () => {
                   <div className="trilok-info-content">
                     <h4>Email</h4>
                     {contactInfo.email_module.map((email, index) => (
-                      email && <p key={index}>{email}</p>
+                      email && (
+                        <p key={index}>
+                          <a 
+                            href={`mailto:${email}`} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="email-link"
+                            title="Send email"
+                          >
+                            {email}
+                          </a>
+                        </p>
+                      )
                     ))}
                   </div>
                 </div>
@@ -517,6 +548,26 @@ const ContactUs = () => {
           </div>
         </div>
       </div>
+      
+      {/* Add CSS for WhatsApp and email links */}
+      <style jsx>{`
+        .whatsapp-link, .email-link {
+          color: inherit;
+          text-decoration: none;
+          display: inline-flex;
+          align-items: center;
+        }
+        
+        .whatsapp-link:hover {
+          color: #25D366;
+          text-decoration: underline;
+        }
+        
+        .email-link:hover {
+          color: #007bff;
+          text-decoration: underline;
+        }
+      `}</style>
     </div>
   );
 };

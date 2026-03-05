@@ -259,7 +259,7 @@ export default function OTPFlow() {
                           type="email"
                           className="mb-3"
                           name="email"
-                          placeholder="example@email.com"
+                          placeholder="Enter the email address"
                           value={formData.email}
                           onChange={handleChange}
                           required

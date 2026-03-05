@@ -34,11 +34,11 @@ function Home() {
     <>
       <BannerSection />
       
-     <ClinicHome />
-      <CareHome />
-      <AimHome />
-      <CallHome/>
-      <SafetyHome/>
+     {/* <ClinicHome /> */}
+      {/* <CareHome /> */}
+      {/* <AimHome /> */}
+      {/* <CallHome/> */}
+      {/* <SafetyHome/> */}
       <OurExpertise />
        <PresentationAwards showBanner={false} showAboutUsClass={false} />
 

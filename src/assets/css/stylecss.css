@@ -344,7 +344,10 @@ p {
 .ayur-loader img {
   width: 80px;
 }
-
+.btn-info{
+  background-color: rgb(10, 110, 210) !important;
+  color: #fff !important;
+}
 /* loader css end */
 /* navmenu css start */
 .ayur-menu-wrapper {
@@ -352,7 +355,7 @@ p {
   content: '';
   left: 0;
   right: 0;
-  top: 0px;
+  top: 4px;
   box-shadow: none;
   background-color: #fdfcf4;
   padding: 6px 15px 9px;
@@ -386,7 +389,7 @@ p {
 
 .ayur-nav-menu ul li a::before,
 .ayur-nav-menu ul li.active a:before {
-  position: absolute;
+  /* position: absolute; */
   content: '';
   left: 0;
   top: 12px;
