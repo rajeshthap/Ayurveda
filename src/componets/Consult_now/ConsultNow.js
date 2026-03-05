@@ -2677,7 +2677,7 @@ function ConsultNow() {
         </div>
         <div className="col-lg-4 mb-3 col-md-6 col-sm-12">
           <label htmlFor="height" className="form-label">
-            Height (Inches) <span className="text-danger">*</span>
+            Height (Feet and Inches) <span className="text-danger">*</span>
           </label>
           <input
             type="number"
@@ -4499,7 +4499,7 @@ function ConsultNow() {
             >
               {formData.memory.length > 0
                 ? `${formData.memory.length} option(s) selected`
-                : "Select memory(s)"}
+                : "Select memory"}
             </button>
             {isDropdownOpen === 'memory' && (
               <ul
@@ -4507,7 +4507,7 @@ function ConsultNow() {
                 aria-labelledby="memoryDropdown"
               >
                 {[
-                  { value: "Insomnia", label: "Insomnia" },
+                  { value: "Poor", label: "Poor" },
                   { value: "Moderate", label: "Moderate" },
                   { value: "Sound", label: "Sound" },
                 ].map((option) => (

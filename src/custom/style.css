@@ -225,6 +225,9 @@ a {
   height: 72px;
   border-radius: 50% !important;
 }
+.ayur-about-img img{
+  max-height: 120vh;
+}
 /* .whatsapp-link{
   white-space: pre-line;
 } */

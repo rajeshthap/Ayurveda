@@ -173,47 +173,47 @@ function InternalOthercnds() {
                   </button>
                 </div>
 
-                <div className="row ">
-                  {/* Image */}
-                  <div className="col-lg-6 col-md-12 mb-4">
-                    <div className="ayur-about-img ayur-img-hover">
+                <div className="detail-container">
+                  {/* Image Column */}
+                  <div className="image-column">
+                    <div className="image-wrapper">
                       {selectedItem.image ? (
                         <img
                           src={`https://mahadevaaya.com/trilokayurveda/trilokabackend${selectedItem.image}`}
                           alt={selectedItem.title}
-                          className="img-fluid rounded"
+                          className="detail-image"
                         />
                       ) : (
-                        <div className="bg-light d-flex align-items-center justify-content-center rounded">
+                        <div className="no-image-placeholder">
                           <p className="text-muted">No image available</p>
                         </div>
                       )}
                     </div>
                   </div>
 
-                  {/* Content */}
-                  <div className="col-lg-6 col-md-12">
-                    <div className="ayur-heading-wrap ayur-about-head">
-                      {/* Title with icon */}
-                      <h3>
-                      
+                  {/* Content Column */}
+                  <div className="content-column">
+                    <div className="content-wrapper">
+                      <h3 className="detail-title">
                         {selectedItem.title}
                       </h3>
 
                       {selectedItem.module && selectedItem.module.length > 0 ? (
-                        selectedItem.module.map((module, index) => (
-                          <div key={index} className="ayur-info-card mb-4">
-                            <h5>
-                              {getModuleIcon(module[0])}
-                              {module[0].toUpperCase()}
-                            </h5>
-                            <ul className="ayur-icon-list">
-                              {module[1].split('\n').map((line, lineIndex) => (
-                                <li key={lineIndex}>{line}</li>
-                              ))}
-                            </ul>
-                          </div>
-                        ))
+                        <div className="modules-container">
+                          {selectedItem.module.map((module, index) => (
+                            <div key={index} className="ayur-info-card">
+                              <h5>
+                                {getModuleIcon(module[0])}
+                                {module[0].toUpperCase()}
+                              </h5>
+                              <ul className="ayur-icon-list">
+                                {module[1].split('\n').map((line, lineIndex) => (
+                                  <li key={lineIndex}>{line}</li>
+                                ))}
+                              </ul>
+                            </div>
+                          ))}
+                        </div>
                       ) : (
                         <Alert variant="info">
                           No detailed information available for this disease.
@@ -232,6 +232,125 @@ function InternalOthercnds() {
           </div>
         </div>
       </div>
+
+      <style jsx>{`
+        .detail-container {
+          display: flex;
+          gap: 30px;
+          margin-bottom: 30px;
+        }
+        
+        .image-column,
+        .content-column {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+        }
+        
+        .image-wrapper {
+          flex: 1;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          overflow: hidden;
+          border-radius: 8px;
+          background-color: #f8f9fa;
+        }
+        
+        .detail-image {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          display: block;
+        }
+        
+        .no-image-placeholder {
+          width: 100%;
+          height: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          min-height: 400px;
+        }
+        
+        .content-wrapper {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          padding: 20px;
+          background-color: #ffffff;
+          border-radius: 8px;
+          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .detail-title {
+          margin-bottom: 20px;
+          color: #2c3e50;
+        }
+        
+        .modules-container {
+          flex: 1;
+          overflow-y: auto;
+        }
+        
+        .ayur-info-card {
+          margin-bottom: 20px;
+        }
+        
+        .ayur-info-card:last-child {
+          margin-bottom: 0;
+        }
+        
+        .ayur-info-card h5 {
+          color: #28a745;
+          margin-bottom: 10px;
+          font-weight: 600;
+        }
+        
+        .ayur-icon-list {
+          padding-left: 20px;
+          margin: 0;
+        }
+        
+        .ayur-icon-list li {
+          margin-bottom: 8px;
+          line-height: 1.6;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 991px) {
+          .detail-container {
+            flex-direction: column;
+            gap: 20px;
+          }
+          
+          .image-wrapper {
+            min-height: 300px;
+          }
+          
+          .content-wrapper {
+            padding: 15px;
+          }
+        }
+        
+        @media (max-width: 576px) {
+          .detail-container {
+            gap: 15px;
+          }
+          
+          .image-wrapper {
+            min-height: 250px;
+          }
+          
+          .content-wrapper {
+            padding: 10px;
+          }
+          
+          .detail-title {
+            font-size: 1.5rem;
+          }
+        }
+      `}</style>
     </div>
   );
 }
